@@ -30,18 +30,22 @@ public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
 {
     public void Initialize()
     {
+        SDL_LogDebug(LogCategories.Runtime, "Initializing CanDoUrco.Engine.Runtime...");
         LinkUnhandledExceptionsHandler();
         InitializeSdlLogging();
+        SDL_LogDebug(LogCategories.Runtime, "CanDoUrco.Engine.Runtime initialized successfully.");
     }
 
     private unsafe void InitializeSdlLogging()
     {
+        SDL_LogDebug(LogCategories.Runtime, "Initializing SDL logging...");
         SDL_SetMainReady();
         var logLevel = SDL_LogPriority.FromLogger(logger);
         SDL_SetLogPriorities(logLevel);
 
         _logFunctionHandle = GCHandle.Alloc((LogFunction)Log);
         SDL_SetLogOutputFunction(&LogFunctionImpl, (void*)GCHandle.ToIntPtr(_logFunctionHandle));
+        SDL_LogDebug(LogCategories.Runtime, "SDL logging initialized successfully.");
     }
 
     #region IDisposable Support
@@ -55,6 +59,7 @@ public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
             return;
         }
 
+        SDL_LogDebug(LogCategories.Runtime, "Disposing CanDoUrco.Engine.Runtime...");
         if (disposing)
         {
             // Nothing to dispose in managed code for now.
@@ -63,10 +68,13 @@ public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
         SDL_Quit();
         if (_logFunctionHandle.IsAllocated)
         {
+            SDL_LogTrace(LogCategories.Runtime, "Freeing log function handle...");
             _logFunctionHandle.Free();
+            SDL_LogTrace(LogCategories.Runtime, "Log function handle freed successfully.");
         }
 
         _disposedValue = true;
+        SDL_LogDebug(LogCategories.Runtime, "CanDoUrco.Engine.Runtime disposed successfully.");
     }
 
     ~Runtime()
@@ -88,6 +96,7 @@ public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
 
     private static void LinkUnhandledExceptionsHandler()
     {
+        SDL_LogDebug(LogCategories.Runtime, "Linking unhandled exceptions handler...");
         AppDomain.CurrentDomain.UnhandledException += (_, e) =>
         {
             if (e.ExceptionObject is Exception ex)
@@ -102,6 +111,7 @@ public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
             // Exit the application with a non-zero exit code to indicate an error occurred.
             Environment.Exit(1);
         };
+        SDL_LogDebug(LogCategories.Runtime, "Unhandled exceptions handler linked successfully.");
     }
 
     private static void UnhandledException(Exception ex)
