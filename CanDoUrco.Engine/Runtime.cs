@@ -20,6 +20,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using CanDoUrco.Engine.CustomEventArgs;
 using CanDoUrco.Engine.Internals;
 using Microsoft.Extensions.Logging;
 using static CanDoUrco.Engine.NativeInterop.Ffi;
@@ -28,8 +29,24 @@ namespace CanDoUrco.Engine;
 
 public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
 {
-    public void Initialize()
+    private bool _running = true;
+
+    public void Run()
     {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        SDL_LogDebug(LogCategories.Runtime, "Running CanDoUrco.Engine.Runtime...");
+        Initialize();
+        while (_running)
+        {
+            ProcessSdlEvents();
+        }
+
+        SDL_LogDebug(LogCategories.Runtime, "CanDoUrco.Engine.Runtime finished running.");
+    }
+
+    private void Initialize()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
         SDL_LogDebug(LogCategories.Runtime, "Initializing CanDoUrco.Engine.Runtime...");
         LinkUnhandledExceptionsHandler();
         InitializeSdlLogging();
@@ -47,6 +64,31 @@ public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
         SDL_SetLogOutputFunction(&LogFunctionImpl, (void*)GCHandle.ToIntPtr(_logFunctionHandle));
         SDL_LogDebug(LogCategories.Runtime, "SDL logging initialized successfully.");
     }
+
+    private void ProcessSdlEvents()
+    {
+        while (SDL_PollEvent(out var e))
+        {
+            if (e.Type == SDL_EVENT_QUIT)
+            {
+                SDL_LogDebug(LogCategories.Runtime, $"{nameof(SDL_EVENT_QUIT)} event received.");
+                OnQuit(new QuitEventArgs(TimeSpan.FromTicks(e.Quit.TimeStamp)));
+                _running = false;
+            }
+        }
+    }
+
+    #region Events
+
+    public event EventHandler<QuitEventArgs>? Quit;
+
+    private void OnQuit(QuitEventArgs e)
+    {
+        SDL_LogDebug(LogCategories.Runtime, $"{nameof(Quit)} event triggered.");
+        Quit?.Invoke(this, e);
+    }
+
+    #endregion // Events
 
     #region IDisposable Support
 
