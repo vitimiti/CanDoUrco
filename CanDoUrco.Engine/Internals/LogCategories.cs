@@ -17,27 +17,24 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Diagnostics.CodeAnalysis;
 using static CanDoUrco.Engine.NativeInterop.Ffi;
 
 namespace CanDoUrco.Engine.Internals;
 
 internal static class LogCategories
 {
-    public readonly record struct CustomCategory(int Value)
+    public static SDL_LogCategory Runtime => new(SDL_LOG_CATEGORY_CUSTOM + 0);
+
+    public static bool TryGetName(SDL_LogCategory category, [NotNullWhen(true)] out string? name)
     {
-        public static implicit operator int(CustomCategory category) => category.Value;
+        if (category == Runtime)
+        {
+            name = nameof(Runtime);
+            return true;
+        }
 
-        public static implicit operator CustomCategory(int value) => new(value);
-
-        public static implicit operator SDL_LogCategory(CustomCategory category) =>
-            new(category.Value);
-
-        public override string ToString() =>
-            this == Runtime ? nameof(Runtime) : $"{nameof(CustomCategory)}({Value})";
+        name = null;
+        return false;
     }
-
-    public static CustomCategory Runtime => CreateCustomCategory(0);
-
-    private static CustomCategory CreateCustomCategory(int value) =>
-        new(SDL_LOG_CATEGORY_CUSTOM + value);
 }
