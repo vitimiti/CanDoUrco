@@ -20,6 +20,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using CanDoUrco.Engine.Internals;
 using CanDoUrco.Engine.NativeInterop.CustomMarshallers;
 using Microsoft.Extensions.Logging;
 
@@ -101,6 +102,10 @@ internal static unsafe partial class Ffi
             if (this == SDL_LOG_CATEGORY_GPU)
             {
                 return "GPU";
+            }
+            if (LogCategories.TryGetName(this, out var name))
+            {
+                return name;
             }
             if (this == SDL_LOG_CATEGORY_CUSTOM)
             {
