@@ -85,6 +85,15 @@ internal static unsafe partial class Ffi
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void SDL_Quit();
 
+    [LibraryImport(LibSdl3, StringMarshalling = StringMarshalling.Utf8)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [return: MarshalAs(UnmanagedType.I1)]
+    public static partial bool SDL_SetAppMetadata(
+        string? appname,
+        string? appversion,
+        string? appidentifier
+    );
+
     #endregion // SDL_init.h
 
     #region SDL_log.h

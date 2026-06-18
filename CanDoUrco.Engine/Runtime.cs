@@ -22,13 +22,18 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Engine.CustomEventArgs;
 using CanDoUrco.Engine.Internals;
+using CanDoUrco.Engine.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using static CanDoUrco.Engine.NativeInterop.Ffi;
 
 namespace CanDoUrco.Engine;
 
-public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
+public sealed partial class Runtime(ILogger<Runtime> logger, IOptions<AppSettings> options)
+    : IDisposable
 {
+    private readonly AppSettings _options = options.Value;
+
     private bool _running = true;
 
     public void Run()
@@ -48,8 +53,23 @@ public sealed partial class Runtime(ILogger<Runtime> logger) : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         SDL_LogDebug(LogCategories.Runtime, "Initializing CanDoUrco.Engine.Runtime...");
+
         LinkUnhandledExceptionsHandler();
         InitializeSdlLogging();
+        if (
+            !SDL_SetAppMetadata(
+                _options.ApplicationName,
+                _options.ApplicationVersion,
+                _options.ApplicationIdentifier
+            )
+        )
+        {
+            SDL_LogError(
+                LogCategories.Runtime,
+                $"Failed to set application metadata: {SDL_GetError()}."
+            );
+        }
+
         SDL_LogDebug(LogCategories.Runtime, "CanDoUrco.Engine.Runtime initialized successfully.");
     }
 
