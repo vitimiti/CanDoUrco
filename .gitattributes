@@ -105,3 +105,9 @@
 .gitattributes export-ignore
 .gitignore     export-ignore
 .gitkeep       export-ignore
+
+# Native runtimes
+
+*.so.*  binary
+*.dylib binary
+*.dll   binary
