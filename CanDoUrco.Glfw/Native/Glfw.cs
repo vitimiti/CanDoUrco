@@ -385,4 +385,54 @@ internal static unsafe class Glfw
 
         return 0;
     }
+
+    public struct Monitor;
+
+    public struct Window;
+
+    public struct Cursor;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct VidMode
+    {
+        public int Width;
+        public int Height;
+        public int RedBits;
+        public int GreenBits;
+        public int BlueBits;
+        public int RefreshRate;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct GammaRamp
+    {
+        public ushort* Red;
+        public ushort* Green;
+        public ushort* Blue;
+        public uint Size;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Image
+    {
+        public int Width;
+        public int Height;
+        public byte* Pixels;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct GamepadState
+    {
+        public fixed byte Buttons[15];
+        public fixed float Axes[6];
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Allocator
+    {
+        public delegate* unmanaged<nuint, void*, void*> Allocate;
+        public delegate* unmanaged<void*, nuint, void*, void*> Reallocate;
+        public delegate* unmanaged<void*, void*, void> Deallocate;
+        public void* User;
+    }
 }
