@@ -190,6 +190,86 @@ public sealed class GlfwMonitor : IDisposable
         return FromUnmanaged(*ptr);
     }
 
+    /// <summary>
+    /// Generates a gamma ramp and sets it.
+    /// </summary>
+    /// <param name="gamma">The desired exponent.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when setting the gamma ramp failed.</exception>
+    public unsafe void SetGamma(float gamma)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetGamma(_handle, gamma);
+        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+    }
+
+    /// <summary>
+    /// Gets the current monitor's gamma ramp.
+    /// </summary>
+    /// <returns>A new <see cref="GlfwGammaRamp"/> with the monitor's gamma ramp.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when getting the gamma ramp fails</exception>
+    public unsafe GlfwGammaRamp GetGammaRamp()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var ptr = Native.Glfw.GetGammaRamp(_handle);
+        if (ptr is null)
+        {
+            ErrorUtilities.CheckAndThrowErrorFromBadReturnMethod();
+        }
+
+        var channelSize = ptr->Size;
+        var redChannel = new Span<ushort>(ptr->Red, (int)channelSize);
+        var greenChannel = new Span<ushort>(ptr->Green, (int)channelSize);
+        var blueChannel = new Span<ushort>(ptr->Blue, (int)channelSize);
+        return new GlfwGammaRamp()
+        {
+            Red = redChannel.ToArray(),
+            Green = greenChannel.ToArray(),
+            Blue = blueChannel.ToArray(),
+        };
+    }
+
+    /// <summary>
+    /// Sets the current gamma ramp for the monitor.
+    /// </summary>
+    /// <param name="ramp">The <see cref="GlfwGammaRamp"/> to set.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
+    /// <exception cref="ArgumentException">Thrown when the <paramref name="ramp"/> contains channesl of differnt sizes.</exception>
+    /// <exception cref="GlfwException">Thrown when setting the gamma ramp failed.</exception>
+    public unsafe void SetGammaRamp(GlfwGammaRamp ramp)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        ArgumentNullException.ThrowIfNull(ramp);
+        if (
+            ramp.Red.Count != ramp.Green.Count
+            || ramp.Red.Count != ramp.Blue.Count
+            || ramp.Green.Count != ramp.Blue.Count
+        )
+        {
+            throw new ArgumentException(
+                "All channels of the gamma ramp must be the same size.",
+                nameof(ramp)
+            );
+        }
+
+        var rampSize = ramp.Red.Count;
+        Native.Glfw.GammaRamp nativeRamp = default;
+        nativeRamp.Size = (uint)rampSize;
+        nativeRamp.Red = (ushort*)NativeMemory.Alloc((nuint)(rampSize * sizeof(ushort)));
+        nativeRamp.Green = (ushort*)NativeMemory.Alloc((nuint)(rampSize * sizeof(ushort)));
+        nativeRamp.Blue = (ushort*)NativeMemory.Alloc((nuint)(rampSize * sizeof(ushort)));
+        for (var i = 0; i < rampSize; i++)
+        {
+            nativeRamp.Red[i] = ramp.Red.ElementAt(i);
+            nativeRamp.Green[i] = ramp.Green.ElementAt(i);
+            nativeRamp.Blue[i] = ramp.Blue.ElementAt(i);
+        }
+
+        Native.Glfw.SetGammaRamp(_handle, in nativeRamp);
+        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+    }
+
     private static GlfwVideoMode FromUnmanaged(Native.Glfw.VidMode mode) =>
         new()
         {
