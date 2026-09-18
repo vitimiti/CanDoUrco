@@ -4,6 +4,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Glfw.Exceptions;
 using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Utilities;
@@ -18,6 +19,30 @@ public sealed class GlfwNativeContext : IDisposable
     private static Native.Glfw.Allocator s_customAllocatorStruct;
 
     private bool _disposedValue;
+
+    /// <summary>
+    /// Gets the current runtime numeric version of GLFW.
+    /// </summary>
+    public static Version Version
+    {
+        get
+        {
+            Native.Glfw.GetVersion(out var major, out var minor, out var rev);
+            return new Version(major, minor, rev);
+        }
+    }
+
+    /// <summary>
+    /// Gets the current runtime complete version of GLFW.
+    /// </summary>
+    public static unsafe string VersionComplete
+    {
+        get
+        {
+            var stringPtr = Native.Glfw.GetVersionString();
+            return Utf8StringMarshaller.ConvertToManaged(stringPtr) ?? string.Empty;
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GlfwNativeContext"/> class.
