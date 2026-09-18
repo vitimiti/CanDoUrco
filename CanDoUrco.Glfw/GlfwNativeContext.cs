@@ -79,6 +79,37 @@ public sealed class GlfwNativeContext : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Gets the currently in use windowing and input platform.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwNativeContext"/> instance has already been disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when getting the platform failed.</exception>
+    public GlfwPlatform GetCurrentPlatform()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var result = (GlfwPlatform)Native.Glfw.GetPlatform();
+        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        return result;
+    }
+
+    /// <summary>
+    /// Gets a read-only dictionary with information as to whether a windowing and input platform is supported by the GLFW runtime.
+    /// </summary>
+    /// <returns>A read-only dictionary with <see cref="GlfwPlatform"/>:<see cref="bool"/> pairs.</returns>
+    public IReadOnlyDictionary<GlfwPlatform, bool> GetRuntimeSupportedPlatforms()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var platformValues = Enum.GetValues<GlfwPlatform>();
+        var result = new Dictionary<GlfwPlatform, bool>(platformValues.Length);
+        foreach (var platform in platformValues)
+        {
+            result.Add(platform, Native.Glfw.PlatformSupported((int)platform));
+            ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        }
+
+        return result;
+    }
+
     private static unsafe void SetInitHints(GlfwNativeContextOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
