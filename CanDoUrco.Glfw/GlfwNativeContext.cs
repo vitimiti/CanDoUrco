@@ -8,6 +8,7 @@ using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Glfw.Exceptions;
 using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Utilities;
+using CanDoUrco.Glfw.Video;
 
 namespace CanDoUrco.Glfw;
 
@@ -96,6 +97,8 @@ public sealed class GlfwNativeContext : IDisposable
     /// Gets a read-only dictionary with information as to whether a windowing and input platform is supported by the GLFW runtime.
     /// </summary>
     /// <returns>A read-only dictionary with <see cref="GlfwPlatform"/>:<see cref="bool"/> pairs.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwNativeContext"/> instance has already been disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when the platform support check failed.</exception>
     public IReadOnlyDictionary<GlfwPlatform, bool> GetRuntimeSupportedPlatforms()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -108,6 +111,45 @@ public sealed class GlfwNativeContext : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Gets a collection of the available monitors.
+    /// </summary>
+    /// <returns>A collection of <see cref="GlfwMonitor"/>, or an empty collection if no monitors could be found.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwNativeContext"/> instance has already been disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when getting the monitors failed.</exception>
+    public unsafe ICollection<GlfwMonitor> GetMonitors()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var monitorsPtr = Native.Glfw.GetMonitors(out var count);
+        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        if (monitorsPtr is null)
+        {
+            return [];
+        }
+
+        var monitors = new GlfwMonitor[count];
+        for (var i = 0; i < count; i++)
+        {
+            monitors[i] = new GlfwMonitor(monitorsPtr[i]);
+        }
+
+        return monitors;
+    }
+
+    /// <summary>
+    /// Gets the primary monitor.
+    /// </summary>
+    /// <returns>The primary monitor, or <see langword="null"/> if no monitor could be found.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwNativeContext"/> instance has already been disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when getting the primary monitor failed.</exception>
+    public unsafe GlfwMonitor? GetPrimaryMonitor()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var monitorPtr = Native.Glfw.GetPrimaryMonitor();
+        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        return monitorPtr is null ? null : new GlfwMonitor(monitorPtr);
     }
 
     private static unsafe void SetInitHints(GlfwNativeContextOptions options)
