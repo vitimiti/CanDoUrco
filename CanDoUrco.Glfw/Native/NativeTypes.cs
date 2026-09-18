@@ -46,9 +46,9 @@ internal static unsafe partial class Glfw
     [StructLayout(LayoutKind.Sequential)]
     public struct Allocator
     {
-        public delegate* unmanaged<nuint, void*, void*> Allocate;
-        public delegate* unmanaged<void*, nuint, void*, void*> Reallocate;
-        public delegate* unmanaged<void*, void*, void> Deallocate;
+        public delegate* unmanaged[Cdecl]<nuint, void*, void*> Allocate;
+        public delegate* unmanaged[Cdecl]<void*, nuint, void*, void*> Reallocate;
+        public delegate* unmanaged[Cdecl]<void*, void*, void> Deallocate;
         public void* User;
     }
 }
