@@ -464,18 +464,132 @@ public sealed class GlfwWindow : IDisposable
         ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
-    private unsafe void Dispose(bool disposing)
+    /// <summary>
+    /// Gets the current window attributes.
+    /// </summary>
+    /// <returns>A new <see cref="GlfwWindowAttributes"/>.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe GlfwWindowAttributes GetAttributes()
     {
-        if (!_disposedValue)
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        return new GlfwWindowAttributes()
         {
-            if (disposing)
-            {
-                Handles.Clear();
-            }
+            Focused = GetAttributeBool(_handle, Native.Glfw.FocusedDefine),
+            Iconified = GetAttributeBool(_handle, Native.Glfw.IconifiedDefine),
+            Maximized = GetAttributeBool(_handle, Native.Glfw.MaximizedDefine),
+            Hovered = GetAttributeBool(_handle, Native.Glfw.HoveredDefine),
+            Visible = GetAttributeBool(_handle, Native.Glfw.VisibleDefine),
+            Resizable = GetAttributeBool(_handle, Native.Glfw.ResizableDefine),
+            Decorated = GetAttributeBool(_handle, Native.Glfw.DecoratedDefine),
+            AutoIconify = GetAttributeBool(_handle, Native.Glfw.AutoIconifyDefine),
+            Floating = GetAttributeBool(_handle, Native.Glfw.FloatingDefine),
+            TransparentFramebuffer = GetAttributeBool(
+                _handle,
+                Native.Glfw.TransparentFramebufferDefine
+            ),
+            FocusOnShow = GetAttributeBool(_handle, Native.Glfw.FocusOnShowDefine),
+            MousePassthrough = GetAttributeBool(_handle, Native.Glfw.MousePassthroughDefine),
+            ClientApi = GetAttributeEnum<GlfwClientApi>(_handle, Native.Glfw.ClientApiDefine),
+            ContextCreationApi = GetAttributeEnum<GlfwContextCreationApi>(
+                _handle,
+                Native.Glfw.ContextCreationApiDefine
+            ),
+            ContextVersion = new Version(
+                GetAttribute(_handle, Native.Glfw.ContextVersionMajorDefine),
+                GetAttribute(_handle, Native.Glfw.ContextVersionMinorDefine),
+                GetAttribute(_handle, Native.Glfw.ContextRevisionDefine)
+            ),
+            OpenGlForwardCompat = GetAttributeBool(_handle, Native.Glfw.OpenGlForwardCompatDefine),
+            ContextDebug = GetAttributeBool(_handle, Native.Glfw.ContextDebugDefine),
+            OpenGlProfile = GetAttributeEnum<GlfwOpenGlProfile>(
+                _handle,
+                Native.Glfw.OpenGlProfileDefine
+            ),
+            ContextReleaseBehavior = GetAttributeEnum<GlfwContextReleaseBehavior>(
+                _handle,
+                Native.Glfw.ContextReleaseBehaviorDefine
+            ),
+            ContextNoError = GetAttributeBool(_handle, Native.Glfw.ContextNoErrorDefine),
+            ContextRobustness = GetAttributeEnum<GlfwContextRobustness>(
+                _handle,
+                Native.Glfw.ContextRobustnessDefine
+            ),
+            Doublebuffer = GetAttributeBool(_handle, Native.Glfw.DoublebufferDefine),
+        };
+    }
 
-            Native.Glfw.DestroyWindow(_handle);
-            _disposedValue = true;
-        }
+    /// <summary>
+    /// Sets the window attributes.
+    /// </summary>
+    /// <param name="attributes">The <see cref="GlfwWindowAttributes"/> to set.</param>
+    /// <remarks>
+    /// If you wish to only set a few attributes and not all, you may do the following:
+    /// <code>
+    /// window.SetAttributes(window.GetAttributes() with { Resizable = false });
+    /// </code>
+    /// If you are going to change attributes more often than once, cache the original attributes and update them as required.
+    /// </remarks>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetAttributes(GlfwWindowAttributes attributes)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        ArgumentNullException.ThrowIfNull(attributes);
+        SetAttribute(_handle, Native.Glfw.FocusedDefine, attributes.Focused);
+        SetAttribute(_handle, Native.Glfw.IconifiedDefine, attributes.Iconified);
+        SetAttribute(_handle, Native.Glfw.MaximizedDefine, attributes.Maximized);
+        SetAttribute(_handle, Native.Glfw.HoveredDefine, attributes.Hovered);
+        SetAttribute(_handle, Native.Glfw.VisibleDefine, attributes.Visible);
+        SetAttribute(_handle, Native.Glfw.ResizableDefine, attributes.Resizable);
+        SetAttribute(_handle, Native.Glfw.DecoratedDefine, attributes.Decorated);
+        SetAttribute(_handle, Native.Glfw.AutoIconifyDefine, attributes.AutoIconify);
+        SetAttribute(_handle, Native.Glfw.FloatingDefine, attributes.Floating);
+        SetAttribute(
+            _handle,
+            Native.Glfw.TransparentFramebufferDefine,
+            attributes.TransparentFramebuffer
+        );
+
+        SetAttribute(_handle, Native.Glfw.FocusOnShowDefine, attributes.FocusOnShow);
+        SetAttribute(_handle, Native.Glfw.MousePassthroughDefine, attributes.MousePassthrough);
+        SetAttribute(_handle, Native.Glfw.ClientApiDefine, attributes.ClientApi);
+        SetAttribute(_handle, Native.Glfw.ContextCreationApiDefine, attributes.ContextCreationApi);
+        SetAttribute(
+            _handle,
+            Native.Glfw.ContextVersionMajorDefine,
+            attributes.ContextVersion.Major
+        );
+
+        SetAttribute(
+            _handle,
+            Native.Glfw.ContextVersionMinorDefine,
+            attributes.ContextVersion.Minor
+        );
+
+        SetAttribute(
+            _handle,
+            Native.Glfw.ContextRevisionDefine,
+            attributes.ContextVersion.Revision
+        );
+
+        SetAttribute(
+            _handle,
+            Native.Glfw.OpenGlForwardCompatDefine,
+            attributes.OpenGlForwardCompat
+        );
+
+        SetAttribute(_handle, Native.Glfw.ContextDebugDefine, attributes.ContextDebug);
+        SetAttribute(_handle, Native.Glfw.OpenGlProfileDefine, attributes.OpenGlProfile);
+        SetAttribute(
+            _handle,
+            Native.Glfw.ContextReleaseBehaviorDefine,
+            attributes.ContextReleaseBehavior
+        );
+
+        SetAttribute(_handle, Native.Glfw.ContextNoErrorDefine, attributes.ContextNoError);
+        SetAttribute(_handle, Native.Glfw.ContextRobustnessDefine, attributes.ContextRobustness);
+        SetAttribute(_handle, Native.Glfw.DoublebufferDefine, attributes.Doublebuffer);
     }
 
     private static void SetHints(GlfwWindowOptions options)
@@ -576,4 +690,43 @@ public sealed class GlfwWindow : IDisposable
 
     private static void SetHint<T>(int hint, T value)
         where T : Enum => SetHint(hint, Convert.ToInt32(value));
+
+    private static unsafe int GetAttribute(Native.Glfw.Window* window, int attrib)
+    {
+        var result = Native.Glfw.GetWindowAttrib(window, attrib);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return result;
+    }
+
+    private static unsafe bool GetAttributeBool(Native.Glfw.Window* window, int attrib) =>
+        GetAttribute(window, attrib) == Native.Glfw.TrueDefine;
+
+    private static unsafe T GetAttributeEnum<T>(Native.Glfw.Window* window, int attrib)
+        where T : Enum => (T)Enum.ToObject(typeof(T), GetAttribute(window, attrib));
+
+    private static unsafe void SetAttribute(Native.Glfw.Window* window, int attrib, int value)
+    {
+        Native.Glfw.SetWindowAttrib(window, attrib, value);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    private static unsafe void SetAttribute(Native.Glfw.Window* window, int attrib, bool value) =>
+        SetAttribute(window, attrib, value ? Native.Glfw.TrueDefine : Native.Glfw.FalseDefine);
+
+    private static unsafe void SetAttribute<T>(Native.Glfw.Window* window, int attrib, T value)
+        where T : Enum => SetAttribute(window, attrib, Convert.ToInt32(value));
+
+    private unsafe void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                Handles.Clear();
+            }
+
+            Native.Glfw.DestroyWindow(_handle);
+            _disposedValue = true;
+        }
+    }
 }
