@@ -256,14 +256,22 @@ public sealed class GlfwMonitor : IDisposable
         var rampSize = ramp.Red.Count;
         Native.Glfw.GammaRamp nativeRamp = default;
         nativeRamp.Size = (uint)rampSize;
-        nativeRamp.Red = (ushort*)NativeMemory.Alloc((nuint)(rampSize * sizeof(ushort)));
-        nativeRamp.Green = (ushort*)NativeMemory.Alloc((nuint)(rampSize * sizeof(ushort)));
-        nativeRamp.Blue = (ushort*)NativeMemory.Alloc((nuint)(rampSize * sizeof(ushort)));
-        for (var i = 0; i < rampSize; i++)
+        var redSpan = ramp.Red.ToArray().AsSpan();
+        var greenSpan = ramp.Green.ToArray().AsSpan();
+        var blueSPan = ramp.Blue.ToArray().AsSpan();
+        fixed (ushort* redPtr = redSpan)
         {
-            nativeRamp.Red[i] = ramp.Red.ElementAt(i);
-            nativeRamp.Green[i] = ramp.Green.ElementAt(i);
-            nativeRamp.Blue[i] = ramp.Blue.ElementAt(i);
+            nativeRamp.Red = redPtr;
+        }
+
+        fixed (ushort* greenPtr = greenSpan)
+        {
+            nativeRamp.Green = greenPtr;
+        }
+
+        fixed (ushort* bluePtr = blueSPan)
+        {
+            nativeRamp.Blue = bluePtr;
         }
 
         Native.Glfw.SetGammaRamp(Handle, in nativeRamp);
