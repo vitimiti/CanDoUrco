@@ -142,7 +142,7 @@ internal static unsafe partial class Glfw
         StringMarshalling = StringMarshalling.Utf8
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void WindowHintString(int hint, string? value);
+    public static partial void WindowHintString(int hint, string value);
 
     [LibraryImport(
         DllName,
