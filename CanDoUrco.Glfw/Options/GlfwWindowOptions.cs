@@ -156,7 +156,7 @@ public sealed record GlfwWindowOptions
     public bool SrgbCapable { get; init; }
 
     /// <summary>
-    /// Gets whether the window uses a double buffer.
+    /// Gets whether the window uses a doublebuffer.
     /// </summary>
     /// <remarks>The default value is <see langword="true"/>.</remarks>
     public bool Doublebuffer { get; init; } = true;
