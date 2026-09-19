@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Glfw.Exceptions;
 using CanDoUrco.Glfw.Options;
@@ -143,6 +144,33 @@ public sealed class GlfwWindow : IDisposable
         ArgumentNullException.ThrowIfNull(title);
         Native.Glfw.SetWindowTitle(_handle, title);
         ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Sets the given images as the window icon.
+    /// </summary>
+    /// <param name="images">A <see cref="IReadOnlyCollection{T}"/> of <see cref="GlfwImage"/> with the window icon.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="images"/> are <see langword="null"/>.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetIcon(IReadOnlyCollection<GlfwImage> images)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        ArgumentNullException.ThrowIfNull(images);
+        var count = images.Count;
+        var nativeImages = new Native.Glfw.Image[count];
+        for (var i = 0; i < count; i++)
+        {
+            nativeImages[i].Width = images.ElementAt(i).Size.Width;
+            nativeImages[i].Height = images.ElementAt(i).Size.Height;
+            var pixelsSpan = images.ElementAt(i).PixelData.ToArray().AsSpan();
+            fixed (byte* pixelsPtr = pixelsSpan)
+            {
+                nativeImages[i].Pixels = pixelsPtr;
+            }
+        }
+
+        Native.Glfw.SetWindowIcon(_handle, count, nativeImages);
     }
 
     private unsafe void Dispose(bool disposing)
