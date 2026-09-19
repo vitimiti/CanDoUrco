@@ -24,20 +24,20 @@ public sealed class GlfwMonitor : IDisposable
 
     private static readonly Dictionary<GlfwMonitor, nint> Handles = [];
 
-    private readonly unsafe Native.Glfw.Monitor* _handle;
-
     private bool _disposedValue;
+
+    internal unsafe Native.Glfw.Monitor* Handle { get; private init; }
 
     internal unsafe GlfwMonitor(Native.Glfw.Monitor* handle)
     {
-        _handle = handle;
+        Handle = handle;
         if (Handles.ContainsKey(this))
         {
-            Handles[this] = (nint)_handle;
+            Handles[this] = (nint)Handle;
         }
         else
         {
-            Handles.Add(this, (nint)_handle);
+            Handles.Add(this, (nint)Handle);
         }
 
         Native.Glfw.SetMonitorCallback(&HandleEvent);
@@ -71,8 +71,8 @@ public sealed class GlfwMonitor : IDisposable
     public unsafe Point GetPosition()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
-        Native.Glfw.GetMonitorPosition(_handle, out var xPos, out var yPos);
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        Native.Glfw.GetMonitorPosition(Handle, out var xPos, out var yPos);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new Point(xPos, yPos);
     }
 
@@ -86,14 +86,14 @@ public sealed class GlfwMonitor : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.GetMonitorWorkArea(
-            _handle,
+            Handle,
             out var xPos,
             out var yPos,
             out var width,
             out var height
         );
 
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new Rectangle(xPos, yPos, width, height);
     }
 
@@ -107,12 +107,12 @@ public sealed class GlfwMonitor : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.GetMonitorPhysicalSize(
-            _handle,
+            Handle,
             out var widthMillimeters,
             out var heightMillimeters
         );
 
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new Size(widthMillimeters, heightMillimeters);
     }
 
@@ -125,8 +125,8 @@ public sealed class GlfwMonitor : IDisposable
     public unsafe PointF GetMonitorContentScale()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
-        Native.Glfw.GetMonitorContentScale(_handle, out var xScale, out var yScale);
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        Native.Glfw.GetMonitorContentScale(Handle, out var xScale, out var yScale);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new PointF(xScale, yScale);
     }
 
@@ -139,10 +139,10 @@ public sealed class GlfwMonitor : IDisposable
     public unsafe string GetName()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
-        var result = Native.Glfw.GetMonitorName(_handle);
+        var result = Native.Glfw.GetMonitorName(Handle);
         if (result is null)
         {
-            ErrorUtilities.CheckAndThrowErrorFromBadReturnMethod();
+            ErrorUtilities.ThrowError();
         }
 
         return Utf8StringMarshaller.ConvertToManaged(result) ?? string.Empty;
@@ -157,10 +157,10 @@ public sealed class GlfwMonitor : IDisposable
     public unsafe ICollection<GlfwVideoMode> GetVideoModes()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
-        var arrayPtr = Native.Glfw.GetVideoModes(_handle, out var count);
+        var arrayPtr = Native.Glfw.GetVideoModes(Handle, out var count);
         if (arrayPtr is null)
         {
-            ErrorUtilities.CheckAndThrowErrorFromBadReturnMethod();
+            ErrorUtilities.ThrowError();
         }
 
         var videoModes = new GlfwVideoMode[count];
@@ -181,10 +181,10 @@ public sealed class GlfwMonitor : IDisposable
     public unsafe GlfwVideoMode GetCurrentVideoMode()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
-        var ptr = Native.Glfw.GetVideoMode(_handle);
+        var ptr = Native.Glfw.GetVideoMode(Handle);
         if (ptr is null)
         {
-            ErrorUtilities.CheckAndThrowErrorFromBadReturnMethod();
+            ErrorUtilities.ThrowError();
         }
 
         return FromUnmanaged(*ptr);
@@ -199,8 +199,8 @@ public sealed class GlfwMonitor : IDisposable
     public unsafe void SetGamma(float gamma)
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
-        Native.Glfw.SetGamma(_handle, gamma);
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        Native.Glfw.SetGamma(Handle, gamma);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -212,10 +212,10 @@ public sealed class GlfwMonitor : IDisposable
     public unsafe GlfwGammaRamp GetGammaRamp()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
-        var ptr = Native.Glfw.GetGammaRamp(_handle);
+        var ptr = Native.Glfw.GetGammaRamp(Handle);
         if (ptr is null)
         {
-            ErrorUtilities.CheckAndThrowErrorFromBadReturnMethod();
+            ErrorUtilities.ThrowError();
         }
 
         var channelSize = ptr->Size;
@@ -266,8 +266,8 @@ public sealed class GlfwMonitor : IDisposable
             nativeRamp.Blue[i] = ramp.Blue.ElementAt(i);
         }
 
-        Native.Glfw.SetGammaRamp(_handle, in nativeRamp);
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        Native.Glfw.SetGammaRamp(Handle, in nativeRamp);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private static GlfwVideoMode FromUnmanaged(Native.Glfw.VidMode mode) =>

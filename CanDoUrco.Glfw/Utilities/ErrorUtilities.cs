@@ -9,7 +9,7 @@ namespace CanDoUrco.Glfw.Utilities;
 
 internal static unsafe class ErrorUtilities
 {
-    public static void CheckAndThrowErrorFromVoidMethod()
+    public static void CheckErrorCodeAndMaybeThrowError()
     {
         var errorCode = Native.Glfw.GetError(out var errorPtr);
         if (errorCode != Native.Glfw.NoErrorDefine)
@@ -19,7 +19,7 @@ internal static unsafe class ErrorUtilities
         }
     }
 
-    public static void CheckAndThrowErrorFromBadReturnMethod()
+    public static void ThrowError()
     {
         var errorCode = Native.Glfw.GetError(out var errorPtr);
         var error = Utf8StringMarshaller.ConvertToManaged(errorPtr);

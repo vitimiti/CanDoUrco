@@ -57,7 +57,7 @@ public sealed class GlfwNativeContext : IDisposable
         SetInitHints(opts);
         if (!Native.Glfw.Init())
         {
-            ErrorUtilities.CheckAndThrowErrorFromBadReturnMethod();
+            ErrorUtilities.ThrowError();
         }
     }
 
@@ -89,7 +89,7 @@ public sealed class GlfwNativeContext : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = (GlfwPlatform)Native.Glfw.GetPlatform();
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result;
     }
 
@@ -107,7 +107,7 @@ public sealed class GlfwNativeContext : IDisposable
         foreach (var platform in platformValues)
         {
             result.Add(platform, Native.Glfw.PlatformSupported((int)platform));
-            ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+            ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         }
 
         return result;
@@ -123,7 +123,7 @@ public sealed class GlfwNativeContext : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var monitorsPtr = Native.Glfw.GetMonitors(out var count);
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         if (monitorsPtr is null)
         {
             return [];
@@ -148,7 +148,7 @@ public sealed class GlfwNativeContext : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var monitorPtr = Native.Glfw.GetPrimaryMonitor();
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return monitorPtr is null ? null : new GlfwMonitor(monitorPtr);
     }
 
@@ -166,7 +166,7 @@ public sealed class GlfwNativeContext : IDisposable
             };
 
             Native.Glfw.InitAllocator(in s_customAllocatorStruct);
-            ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+            ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         }
 
         if (Native.Glfw.PlatformSupported((int)options.Platform))
@@ -224,7 +224,7 @@ public sealed class GlfwNativeContext : IDisposable
     private static void SetInitHint(int hint, int value)
     {
         Native.Glfw.InitHint(hint, value);
-        ErrorUtilities.CheckAndThrowErrorFromVoidMethod();
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private void Dispose(bool disposing)

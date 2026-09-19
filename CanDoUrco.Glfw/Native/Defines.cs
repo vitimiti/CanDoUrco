@@ -250,7 +250,7 @@ internal static partial class Glfw
     public const int ContextVersionMinorDefine = 0x00022003;
     public const int ContextRevisionDefine = 0x00022004;
     public const int ContextRobustnessDefine = 0x00022005;
-    public const int OpenGlFOrwardCompatDefine = 0x00022006;
+    public const int OpenGlForwardCompatDefine = 0x00022006;
     public const int ContextDebugDefine = 0x00022007;
     public const int OpenGlDebugContextDefine = ContextDebugDefine;
     public const int OpenGlProfileDefine = 0x00022008;
@@ -286,7 +286,7 @@ internal static partial class Glfw
     public const int CursorHiddenDefine = 0x00034002;
     public const int CursorDisabledDefine = 0x00034003;
     public const int CursorCapturedDefine = 0x00034004;
-    public const int AnyReleaseBehaviorDefine = 0x00035001;
+    public const int AnyReleaseBehaviorDefine = 0;
     public const int ReleaseBehaviorFlushDefine = 0x00035001;
     public const int ReleaseBehaviorNoneDefine = 0x00035002;
     public const int NativeContextApiDefine = 0x00036001;
