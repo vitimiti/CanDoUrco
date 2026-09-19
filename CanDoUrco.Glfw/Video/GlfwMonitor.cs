@@ -33,6 +33,7 @@ public sealed class GlfwMonitor : IDisposable
         Handle = handle;
         Handles[this] = (nint)Handle;
         Native.Glfw.SetMonitorCallback(&HandleEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
