@@ -67,7 +67,7 @@ public sealed class GlfwMonitor : IDisposable
     /// </summary>
     /// <returns>A new <see cref="Point"/> with the monitor's viewport position.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the poisition failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe Point GetPosition()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -81,7 +81,7 @@ public sealed class GlfwMonitor : IDisposable
     /// </summary>
     /// <returns>A new <see cref="Rectangle"/> with the monitor's work area.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the work area failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe Rectangle GetWorkArea()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -102,7 +102,7 @@ public sealed class GlfwMonitor : IDisposable
     /// </summary>
     /// <returns>A new <see cref="Size"/> with the monitor's physical size, in millimeters</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the monitors physical size failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe Size GetPhysicalSizeInMillimeters()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -121,7 +121,7 @@ public sealed class GlfwMonitor : IDisposable
     /// </summary>
     /// <returns>A new <see cref="PointF"/> with the monitor's content scale.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the monitor's content scale failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe PointF GetMonitorContentScale()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -135,7 +135,7 @@ public sealed class GlfwMonitor : IDisposable
     /// </summary>
     /// <returns>A new <see cref="string"/> with the name of the monitor.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the name of the monitor failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe string GetName()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -153,7 +153,7 @@ public sealed class GlfwMonitor : IDisposable
     /// </summary>
     /// <returns>A new <see cref="ICollection{T}"/> with the available video modes.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the collection of video modes failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe ICollection<GlfwVideoMode> GetVideoModes()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -177,7 +177,7 @@ public sealed class GlfwMonitor : IDisposable
     /// </summary>
     /// <returns>A new <see cref="GlfwVideoMode"/> with the current video mode.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the current video mode failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe GlfwVideoMode GetCurrentVideoMode()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -195,7 +195,7 @@ public sealed class GlfwMonitor : IDisposable
     /// </summary>
     /// <param name="gamma">The desired exponent.</param>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when setting the gamma ramp failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe void SetGamma(float gamma)
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -236,7 +236,7 @@ public sealed class GlfwMonitor : IDisposable
     /// <param name="ramp">The <see cref="GlfwGammaRamp"/> to set.</param>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwMonitor"/> instance is already disposed.</exception>
     /// <exception cref="ArgumentException">Thrown when the <paramref name="ramp"/> contains channesl of differnt sizes.</exception>
-    /// <exception cref="GlfwException">Thrown when setting the gamma ramp failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe void SetGammaRamp(GlfwGammaRamp ramp)
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);

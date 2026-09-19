@@ -49,7 +49,7 @@ public sealed class GlfwNativeContext : IDisposable
     /// Initializes a new instance of the <see cref="GlfwNativeContext"/> class.
     /// </summary>
     /// <param name="options">The <see cref="GlfwNativeContextOptions"/> to pass, or <see langword="null"/> to use the default.</param>
-    /// <exception cref="GlfwException">Thrown when setting the custom allocator, setting the initialization hints or initializing the library fails.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public GlfwNativeContext(Action<GlfwNativeContextOptions>? options = null)
     {
         var opts = new GlfwNativeContextOptions();
@@ -84,7 +84,7 @@ public sealed class GlfwNativeContext : IDisposable
     /// Gets the currently in use windowing and input platform.
     /// </summary>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwNativeContext"/> instance has already been disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the platform failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public GlfwPlatform GetCurrentPlatform()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -98,7 +98,7 @@ public sealed class GlfwNativeContext : IDisposable
     /// </summary>
     /// <returns>A read-only dictionary with <see cref="GlfwPlatform"/>:<see cref="bool"/> pairs.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwNativeContext"/> instance has already been disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when the platform support check failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public IReadOnlyDictionary<GlfwPlatform, bool> GetRuntimeSupportedPlatforms()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -118,7 +118,7 @@ public sealed class GlfwNativeContext : IDisposable
     /// </summary>
     /// <returns>A collection of <see cref="GlfwMonitor"/>, or an empty collection if no monitors could be found.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwNativeContext"/> instance has already been disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the monitors failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe ICollection<GlfwMonitor> GetMonitors()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
@@ -143,7 +143,7 @@ public sealed class GlfwNativeContext : IDisposable
     /// </summary>
     /// <returns>The primary monitor, or <see langword="null"/> if no monitor could be found.</returns>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwNativeContext"/> instance has already been disposed.</exception>
-    /// <exception cref="GlfwException">Thrown when getting the primary monitor failed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe GlfwMonitor? GetPrimaryMonitor()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
