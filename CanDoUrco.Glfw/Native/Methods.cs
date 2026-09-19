@@ -171,7 +171,7 @@ internal static unsafe partial class Glfw
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void SetWindowShouldClose(
         Window* window,
-        [MarshalAs(UnmanagedType.I4)] int value
+        [MarshalAs(UnmanagedType.I4)] bool value
     );
 
     [LibraryImport(DllName, EntryPoint = "glfwGetWindowTitle")]
