@@ -292,6 +292,8 @@ public sealed class GlfwMonitor : IDisposable
         }
 
         Native.Glfw.SetMonitorCallback(null);
+        // Ignore errors intentionally
+
         _disposedValue = true;
     }
 
