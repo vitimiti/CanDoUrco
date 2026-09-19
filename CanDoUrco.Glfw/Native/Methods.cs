@@ -153,7 +153,7 @@ internal static unsafe partial class Glfw
     public static partial Window* CreateWindow(
         int width,
         int height,
-        string? title,
+        string title,
         Monitor* monitor,
         Window* share
     );
