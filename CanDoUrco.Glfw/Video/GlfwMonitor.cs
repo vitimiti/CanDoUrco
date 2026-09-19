@@ -297,6 +297,11 @@ public sealed class GlfwMonitor : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleEvent(Native.Glfw.Monitor* monitor, int @event)
     {
+        if (monitor is null)
+        {
+            return;
+        }
+
         foreach (var (instance, handle) in Handles)
         {
             if (handle != (nint)monitor)
