@@ -31,15 +31,7 @@ public sealed class GlfwMonitor : IDisposable
     internal unsafe GlfwMonitor(Native.Glfw.Monitor* handle)
     {
         Handle = handle;
-        if (Handles.ContainsKey(this))
-        {
-            Handles[this] = (nint)Handle;
-        }
-        else
-        {
-            Handles.Add(this, (nint)Handle);
-        }
-
+        Handles[this] = (nint)Handle;
         Native.Glfw.SetMonitorCallback(&HandleEvent);
     }
 
