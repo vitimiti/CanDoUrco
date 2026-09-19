@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Glfw.Exceptions;
 using CanDoUrco.Glfw.Options;
@@ -14,6 +13,10 @@ namespace CanDoUrco.Glfw.Video;
 /// <summary>
 /// Represents a GLFW window.
 /// </summary>
+/// <remarks>
+/// <para>This class is sealed.</para>
+/// <para>This class inherits from <see cref="IDisposable"/>.</para>
+/// </remarks>
 public sealed class GlfwWindow : IDisposable
 {
     private static readonly Dictionary<GlfwWindow, nint> Handles = [];

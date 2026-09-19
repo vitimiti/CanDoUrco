@@ -9,6 +9,8 @@ namespace CanDoUrco.Glfw.Options;
 /// <summary>
 /// The possible <see cref="GlfwNativeContext"/> options.
 /// </summary>
+/// <remarks>This record is sealed.</remarks>
+/// <seealso cref="GlfwNativeContext"/>
 public sealed record GlfwNativeContextOptions
 {
     /// <summary>
