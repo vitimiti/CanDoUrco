@@ -57,14 +57,7 @@ public sealed class GlfwWindow : IDisposable
             ErrorUtilities.ThrowError();
         }
 
-        if (Handles.ContainsKey(this))
-        {
-            Handles[this] = (nint)_handle;
-        }
-        else
-        {
-            Handles.Add(this, (nint)_handle);
-        }
+        Handles[this] = (nint)_handle;
     }
 
     /// <summary>
@@ -171,6 +164,301 @@ public sealed class GlfwWindow : IDisposable
         }
 
         Native.Glfw.SetWindowIcon(_handle, count, nativeImages);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Gets the window position.
+    /// </summary>
+    /// <returns>A new <see cref="Point"/> with the window position.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe Point GetPosition()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.GetWindowPos(_handle, out var xPos, out var yPos);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return new Point(xPos, yPos);
+    }
+
+    /// <summary>
+    /// Sets the window position.
+    /// </summary>
+    /// <param name="position">A new <see cref="Point"/> with the window position.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetPosition(Point position)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetWindowPos(_handle, position.X, position.Y);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Gets the window size.
+    /// </summary>
+    /// <returns>A new <see cref="Size"/> with the window size.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe Size GetSize()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.GetWindowSize(_handle, out var width, out var height);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return new Size(width, height);
+    }
+
+    /// <summary>
+    /// Sets the window's size limits.
+    /// </summary>
+    /// <param name="minimum">A <see cref="Size"/> with the minimum size.</param>
+    /// <param name="maximum">A <see cref="Size"/> with the maximum size.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetSizeLimits(Size minimum, Size maximum)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetWindowSizeLimits(
+            _handle,
+            minimum.Width,
+            minimum.Height,
+            maximum.Width,
+            maximum.Height
+        );
+
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Sets the window's aspect ratio.
+    /// </summary>
+    /// <param name="numerator">An <see cref="int"/> with the numerator value.</param>
+    /// <param name="denominator">An <see cref="int"/> with the denominator value.</param>
+    public unsafe void SetAspectRatio(int numerator, int denominator)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetWindowAspectRatio(_handle, numerator, denominator);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Sets the window size.
+    /// </summary>
+    /// <param name="size">A <see cref="Size"/> with the window's size.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetSize(Size size)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetWindowSize(_handle, size.Width, size.Height);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Gets the current framebuffer size.
+    /// </summary>
+    /// <returns>A new <see cref="Size"/> with the framebuffer size.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe Size GetFramebufferSize()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.GetFramebufferSize(_handle, out var width, out var height);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return new Size(width, height);
+    }
+
+    /// <summary>
+    /// Gets the current window's frame size.
+    /// </summary>
+    /// <returns>A tuple with the left, top, right and bottom sizes of the frame.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe (int Left, int Top, int Right, int Bottom) GetFrameSize()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.GetWindowFrameSize(
+            _handle,
+            out var left,
+            out var top,
+            out var right,
+            out var bottom
+        );
+
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return (left, top, right, bottom);
+    }
+
+    /// <summary>
+    /// Gets the scale of the window's contents.
+    /// </summary>
+    /// <returns>A new <see cref="PointF"/> with the window's contents.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe PointF GetContentScale()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.GetWindowContentScale(_handle, out var xScale, out var yScale);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return new PointF(xScale, yScale);
+    }
+
+    /// <summary>
+    /// Gets the opacity of the window.
+    /// </summary>
+    /// <returns>A new <see cref="float"/> with the opacity of the window.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe float GetOpacity()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var result = Native.Glfw.GetWindowOpacity(_handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return result;
+    }
+
+    /// <summary>
+    /// Sets the window opacity.
+    /// </summary>
+    /// <param name="opacity">A <see cref="float"/> with the window opacity.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetOpacity(float opacity)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetWindowOpacity(_handle, opacity);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Iconfies the window.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void Iconify()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.IconifyWindow(_handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Restores the window.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void RestoreWindow()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.RestoreWindow(_handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Maximizes the window.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void Maximize()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.MaximizeWindow(_handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Shows the window
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void Show()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.ShowWindow(_handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Hides the window.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void Hide()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.HideWindow(_handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Brings the window to the front and sets input focus.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void Focus()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.FocusWindow(_handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Requests user attention to the window.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void RequestAttention()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.RequestWindowAttentionWindow(_handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Gets the window monitor used for full screen mode.
+    /// </summary>
+    /// <returns>A new <see cref="GlfwMonitor"/> or <see langword="null"/> if the window is in windowed mode.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe GlfwMonitor? GetMonitor()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var ptr = Native.Glfw.GetWindowMonitor(_handle);
+        if (ptr is null)
+        {
+            return null;
+        }
+
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return new GlfwMonitor(ptr);
+    }
+
+    /// <summary>
+    /// Sets the mode, monitor, video mode and placement of the window.
+    /// </summary>
+    /// <param name="monitor">A <see cref="GlfwMonitor"/>, or <see langword="null"/> to set windowed mode.</param>
+    /// <param name="contentArea">The desired dimentions of the content area.</param>
+    /// <param name="refreshRateInHertz">The desired refresh rate, in hertz, of the video mode, or <see cref="SpecialValues.DontCare"/>./param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetMonitor(
+        GlfwMonitor? monitor,
+        Rectangle contentArea,
+        int refreshRateInHertz
+    )
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetWindowMonitor(
+            _handle,
+            monitor is null ? null : monitor.Handle,
+            contentArea.X,
+            contentArea.Y,
+            contentArea.Width,
+            contentArea.Height,
+            refreshRateInHertz
+        );
+
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private unsafe void Dispose(bool disposing)
