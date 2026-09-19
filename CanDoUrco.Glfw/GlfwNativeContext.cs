@@ -174,10 +174,7 @@ public sealed class GlfwNativeContext : IDisposable
             SetInitHint(Native.Glfw.PlatfromDefine, (int)options.Platform);
         }
 
-        SetInitHint(
-            Native.Glfw.JoystickHatButtonsDefine,
-            options.ExposeJoystickHatsAsButtons ? Native.Glfw.TrueDefine : Native.Glfw.FalseDefine
-        );
+        SetInitHint(Native.Glfw.JoystickHatButtonsDefine, options.ExposeJoystickHatsAsButtons);
 
         SetInitHint(Native.Glfw.AnglePlatformTypeDefine, (int)options.AnglePlatformType);
 
@@ -186,14 +183,9 @@ public sealed class GlfwNativeContext : IDisposable
             SetInitHint(
                 Native.Glfw.CocoaChDirResourcesDefine,
                 options.CocoaChangeDirectoryToResources
-                    ? Native.Glfw.TrueDefine
-                    : Native.Glfw.FalseDefine
             );
 
-            SetInitHint(
-                Native.Glfw.CocoaMenuBarDefine,
-                options.CocoaCreateMenuBar ? Native.Glfw.TrueDefine : Native.Glfw.FalseDefine
-            );
+            SetInitHint(Native.Glfw.CocoaMenuBarDefine, options.CocoaCreateMenuBar);
         }
 
         if (
@@ -201,12 +193,7 @@ public sealed class GlfwNativeContext : IDisposable
             && Native.Glfw.PlatformSupported(Native.Glfw.PlatformWaylandDefine)
         )
         {
-            SetInitHint(
-                Native.Glfw.WaylandLibDecorDefine,
-                options.WaylandPreferLibDecor
-                    ? Native.Glfw.WaylandPreferLibDecorDefine
-                    : Native.Glfw.WaylandDisableLibDecorDefine
-            );
+            SetInitHint(Native.Glfw.WaylandLibDecorDefine, options.WaylandPreferLibDecor);
         }
 
         if (
@@ -214,10 +201,7 @@ public sealed class GlfwNativeContext : IDisposable
             && Native.Glfw.PlatformSupported(Native.Glfw.PlatformX11Define)
         )
         {
-            SetInitHint(
-                Native.Glfw.X11XcbVulkanSurfaceDefine,
-                options.X11XcbVulkanSurfaces ? Native.Glfw.TrueDefine : Native.Glfw.FalseDefine
-            );
+            SetInitHint(Native.Glfw.X11XcbVulkanSurfaceDefine, options.X11XcbVulkanSurfaces);
         }
     }
 
@@ -226,6 +210,9 @@ public sealed class GlfwNativeContext : IDisposable
         Native.Glfw.InitHint(hint, value);
         ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
+
+    private static void SetInitHint(int hint, bool value) =>
+        SetInitHint(hint, value ? Native.Glfw.TrueDefine : Native.Glfw.FalseDefine);
 
     private void Dispose(bool disposing)
     {
