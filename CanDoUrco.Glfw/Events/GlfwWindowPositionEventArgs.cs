@@ -1,0 +1,19 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+using System.Drawing;
+
+namespace CanDoUrco.Glfw.Events;
+
+/// <summary>
+/// An event that happens when a window is repositioned.
+/// </summary>
+/// <param name="position">A <see cref="Point"/> with the new position.</param>
+public sealed class GlfwWindowPositionEventArgs(Point position) : EventArgs
+{
+    /// <summary>
+    /// Gets the window position.
+    /// </summary>
+    public Point Position { get; init; } = position;
+}

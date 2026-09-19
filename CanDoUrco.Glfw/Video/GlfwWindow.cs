@@ -3,7 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using System.Drawing;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using CanDoUrco.Glfw.Events;
 using CanDoUrco.Glfw.Exceptions;
 using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Utilities;
@@ -19,6 +22,51 @@ namespace CanDoUrco.Glfw.Video;
 /// </remarks>
 public sealed class GlfwWindow : IDisposable
 {
+    /// <summary>
+    /// An event that happens when the window position is updated.
+    /// </summary>
+    public event EventHandler<GlfwWindowPositionEventArgs>? PositionUpdate;
+
+    /// <summary>
+    /// An event that happens when the window size is updated.
+    /// </summary>
+    public event EventHandler<GlfwWindowSizeEventArgs>? SizeUpdate;
+
+    /// <summary>
+    /// An event that happens when the window is closed.
+    /// </summary>
+    public event EventHandler<GlfwWindowCloseEventArgs>? Close;
+
+    /// <summary>
+    /// An event that happens when the window is refreshed.
+    /// </summary>
+    public event EventHandler<GlfwWindowRefreshEventArgs>? Refresh;
+
+    /// <summary>
+    /// An event that happens when the window is focused or unfocused.
+    /// </summary>
+    public event EventHandler<GlfwWindowIsFocusedEventArgs>? IsFocused;
+
+    /// <summary>
+    /// An event that happens when the window is iconified or not.
+    /// </summary>
+    public event EventHandler<GlfwWindowIsIconifiedEventArgs>? IsIconified;
+
+    /// <summary>
+    /// An event that happens when the window is maximized or not.
+    /// </summary>
+    public event EventHandler<GlfwWindowIsMaximizedEventArgs>? IsMaximized;
+
+    /// <summary>
+    /// An event that happens when the window framebuffer size is updated.
+    /// </summary>
+    public event EventHandler<GlfwWindowFramebufferSizeEventArgs>? FramebufferSizeUpdate;
+
+    /// <summary>
+    /// An event that happens when the window content scale is updated.
+    /// </summary>
+    public event EventHandler<GlfwWindowContentScaleEventArgs>? ContentScaleUpdate;
+
     private static readonly Dictionary<GlfwWindow, nint> Handles = [];
 
     private readonly unsafe Native.Glfw.Window* _handle;
@@ -61,6 +109,23 @@ public sealed class GlfwWindow : IDisposable
         }
 
         Handles[this] = (nint)_handle;
+        Native.Glfw.SetWindowPosCallback(_handle, &HandlePositionEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        Native.Glfw.SetWindowSizeCallback(_handle, &HandleSizeEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        Native.Glfw.SetWindowCloseCallback(_handle, &HandleCloseEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        Native.Glfw.SetWindowRefreshCallback(_handle, &HandleRefreshEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        Native.Glfw.SetWindowFocusCallback(_handle, &HandleIsFocusedEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        Native.Glfw.SetWindowIconifyCallback(_handle, &HandleIsIconifiedEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        Native.Glfw.SetWindowMaximizeCallback(_handle, &HandleIsMaximizedEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        Native.Glfw.SetWindowFramebufferSizeCallback(_handle, &HandleFramebufferSizeEvent);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        Native.Glfw.SetWindowContentScaleCallback(_handle, &HandleContentScaleEvent);
     }
 
     /// <summary>
@@ -726,7 +791,218 @@ public sealed class GlfwWindow : IDisposable
             }
 
             Native.Glfw.DestroyWindow(_handle);
+            Native.Glfw.SetWindowPosCallback(_handle, null);
+            Native.Glfw.SetWindowSizeCallback(_handle, null);
+            Native.Glfw.SetWindowCloseCallback(_handle, null);
+            Native.Glfw.SetWindowRefreshCallback(_handle, null);
+            Native.Glfw.SetWindowFocusCallback(_handle, null);
+            Native.Glfw.SetWindowIconifyCallback(_handle, null);
+            Native.Glfw.SetWindowMaximizeCallback(_handle, null);
+            Native.Glfw.SetWindowFramebufferSizeCallback(_handle, null);
+            Native.Glfw.SetWindowContentScaleCallback(_handle, null);
+            // Ignore errors intentionally
+
             _disposedValue = true;
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandlePositionEvent(Native.Glfw.Window* window, int xPos, int yPos)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.PositionUpdate?.Invoke(
+                instance,
+                new GlfwWindowPositionEventArgs(new Point(xPos, yPos))
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleSizeEvent(Native.Glfw.Window* window, int width, int height)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.SizeUpdate?.Invoke(
+                instance,
+                new GlfwWindowSizeEventArgs(new Size(width, height))
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleCloseEvent(Native.Glfw.Window* window)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.Close?.Invoke(instance, new GlfwWindowCloseEventArgs());
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleRefreshEvent(Native.Glfw.Window* window)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.Refresh?.Invoke(instance, new GlfwWindowRefreshEventArgs());
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleIsFocusedEvent(Native.Glfw.Window* window, int focused)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.IsFocused?.Invoke(
+                instance,
+                new GlfwWindowIsFocusedEventArgs(focused == Native.Glfw.TrueDefine)
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleIsIconifiedEvent(Native.Glfw.Window* window, int iconified)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.IsIconified?.Invoke(
+                instance,
+                new GlfwWindowIsIconifiedEventArgs(iconified == Native.Glfw.TrueDefine)
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleIsMaximizedEvent(Native.Glfw.Window* window, int maximized)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.IsMaximized?.Invoke(
+                instance,
+                new GlfwWindowIsMaximizedEventArgs(maximized == Native.Glfw.TrueDefine)
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleFramebufferSizeEvent(
+        Native.Glfw.Window* window,
+        int width,
+        int height
+    )
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.FramebufferSizeUpdate?.Invoke(
+                instance,
+                new GlfwWindowFramebufferSizeEventArgs(new Size(width, height))
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleContentScaleEvent(
+        Native.Glfw.Window* window,
+        float xScale,
+        float yScale
+    )
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.ContentScaleUpdate?.Invoke(
+                instance,
+                new GlfwWindowContentScaleEventArgs(new PointF(xScale, yScale))
+            );
         }
     }
 }
