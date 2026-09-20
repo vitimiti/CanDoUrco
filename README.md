@@ -86,6 +86,7 @@ int main(void)
 However, with this library, you can do the same in CSharp, in this form:
 
 ```csharp
+using System.Drawing;
 using CanDoUrco.Glfw;
 using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
@@ -103,9 +104,9 @@ using var window = new GlfwWindow(
     }
 );
 
-window.KeyAction += (key, _, _, _) =>
+window.KeyAction += (_, args) =>
 {
-    if (key is GlfwKey.Escape)
+    if (args.Key is GlfwKey.Escape)
     {
         window.SetShouldClose(value: true);
     }

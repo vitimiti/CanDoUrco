@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
+  <Project Path="Playground/Playground.csproj" />
 </Solution>
