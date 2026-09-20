@@ -103,6 +103,11 @@ public sealed class GlfwWindow : IDisposable
     /// </summary>
     public event EventHandler<GlfwScrollEventArgs>? Scrolled;
 
+    /// <summary>
+    /// An event that happens when files are dropped onto the window.
+    /// </summary>
+    public event EventHandler<GlfwDropEventArgs>? Dropped;
+
     private static readonly Dictionary<GlfwWindow, nint> Handles = [];
 
     private readonly unsafe Native.Glfw.Window* _handle;
@@ -1081,6 +1086,7 @@ public sealed class GlfwWindow : IDisposable
         SetCallback(() => Native.Glfw.SetCursorPosCallback(_handle, &HandleCursorPosition));
         SetCallback(() => Native.Glfw.SetCursorEnterCallback(_handle, &HandleCursorEnter));
         SetCallback(() => Native.Glfw.SetScrollCallback(_handle, &HandleScroll));
+        SetCallback(() => Native.Glfw.SetDropCallback(_handle, &HandleDrop));
     }
 
     private unsafe void UnsetCallbacks()
@@ -1102,6 +1108,7 @@ public sealed class GlfwWindow : IDisposable
         Native.Glfw.SetCursorEnterCallback(_handle, null);
         Native.Glfw.SetCursorEnterCallback(_handle, null);
         Native.Glfw.SetScrollCallback(_handle, null);
+        Native.Glfw.SetDropCallback(_handle, null);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
@@ -1487,6 +1494,34 @@ public sealed class GlfwWindow : IDisposable
                 instance,
                 new GlfwScrollEventArgs(new PointF((float)xScroll, (float)yScroll))
             );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleDrop(Native.Glfw.Window* window, int count, byte** paths)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            var pathsArray = new string[count];
+            if (paths is not null)
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    pathsArray[i] = Utf8StringMarshaller.ConvertToManaged(paths[i]) ?? string.Empty;
+                }
+            }
+
+            instance.Dropped?.Invoke(instance, new GlfwDropEventArgs(pathsArray));
         }
     }
 }
