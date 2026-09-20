@@ -83,6 +83,11 @@ public sealed class GlfwWindow : IDisposable
     /// </summary>
     public event EventHandler<GlfwUnicodeCharacterWithModifiersEventArgs>? UnicodeCharacterWithKeyModifiersInput;
 
+    /// <summary>
+    /// An event that happens when a mouse button action happens.
+    /// </summary>
+    public event EventHandler<GlfwMouseButtonActionEventArgs>? MouseButtonAction;
+
     private static readonly Dictionary<GlfwWindow, nint> Handles = [];
 
     private readonly unsafe Native.Glfw.Window* _handle;
@@ -1057,6 +1062,7 @@ public sealed class GlfwWindow : IDisposable
         SetCallback(() => Native.Glfw.SetKeyCallback(_handle, &HandleKeyAction));
         SetCallback(() => Native.Glfw.SetCharCallback(_handle, &HandleUnicodeInput));
         SetCallback(() => Native.Glfw.SetCharModsCallback(_handle, &HandleUnicodeWithModsInput));
+        SetCallback(() => Native.Glfw.SetMouseButtonCallback(_handle, &HandleMouseButton));
     }
 
     private unsafe void UnsetCallbacks()
@@ -1074,6 +1080,7 @@ public sealed class GlfwWindow : IDisposable
         Native.Glfw.SetKeyCallback(_handle, null);
         Native.Glfw.SetCharCallback(_handle, null);
         Native.Glfw.SetCharModsCallback(_handle, null);
+        Native.Glfw.SetMouseButtonCallback(_handle, null);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
@@ -1353,6 +1360,37 @@ public sealed class GlfwWindow : IDisposable
             instance.UnicodeCharacterWithKeyModifiersInput?.Invoke(
                 instance,
                 new GlfwUnicodeCharacterWithModifiersEventArgs(codepoint, (GlfwKeyModifiers)mods)
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleMouseButton(
+        Native.Glfw.Window* window,
+        int button,
+        int action,
+        int mods
+    )
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.MouseButtonAction?.Invoke(
+                instance,
+                new GlfwMouseButtonActionEventArgs(
+                    (GlfwMouseButton)button,
+                    (GlfwMouseButtonAction)action,
+                    (GlfwKeyModifiers)mods
+                )
             );
         }
     }
