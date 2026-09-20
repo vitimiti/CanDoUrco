@@ -88,6 +88,21 @@ public sealed class GlfwWindow : IDisposable
     /// </summary>
     public event EventHandler<GlfwMouseButtonActionEventArgs>? MouseButtonAction;
 
+    /// <summary>
+    /// An event that happens when the cursor position is updated.
+    /// </summary>
+    public event EventHandler<GlfwCursorPositionEventArgs>? CursorPositionUpdate;
+
+    /// <summary>
+    /// An event that happens when the cursor enteres of leaves the window.
+    /// </summary>
+    public event EventHandler<GlfwCursorEnteredEventArgs>? CursorEnterd;
+
+    /// <summary>
+    /// An event that happens when the user scrolled.
+    /// </summary>
+    public event EventHandler<GlfwScrollEventArgs>? Scrolled;
+
     private static readonly Dictionary<GlfwWindow, nint> Handles = [];
 
     private readonly unsafe Native.Glfw.Window* _handle;
@@ -1063,6 +1078,9 @@ public sealed class GlfwWindow : IDisposable
         SetCallback(() => Native.Glfw.SetCharCallback(_handle, &HandleUnicodeInput));
         SetCallback(() => Native.Glfw.SetCharModsCallback(_handle, &HandleUnicodeWithModsInput));
         SetCallback(() => Native.Glfw.SetMouseButtonCallback(_handle, &HandleMouseButton));
+        SetCallback(() => Native.Glfw.SetCursorPosCallback(_handle, &HandleCursorPosition));
+        SetCallback(() => Native.Glfw.SetCursorEnterCallback(_handle, &HandleCursorEnter));
+        SetCallback(() => Native.Glfw.SetScrollCallback(_handle, &HandleScroll));
     }
 
     private unsafe void UnsetCallbacks()
@@ -1081,6 +1099,9 @@ public sealed class GlfwWindow : IDisposable
         Native.Glfw.SetCharCallback(_handle, null);
         Native.Glfw.SetCharModsCallback(_handle, null);
         Native.Glfw.SetMouseButtonCallback(_handle, null);
+        Native.Glfw.SetCursorEnterCallback(_handle, null);
+        Native.Glfw.SetCursorEnterCallback(_handle, null);
+        Native.Glfw.SetScrollCallback(_handle, null);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
@@ -1391,6 +1412,80 @@ public sealed class GlfwWindow : IDisposable
                     (GlfwMouseButtonAction)action,
                     (GlfwKeyModifiers)mods
                 )
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleCursorPosition(
+        Native.Glfw.Window* window,
+        double xPos,
+        double yPos
+    )
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.CursorPositionUpdate?.Invoke(
+                instance,
+                new GlfwCursorPositionEventArgs(new PointF((float)xPos, (float)yPos))
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleCursorEnter(Native.Glfw.Window* window, int entered)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.CursorEnterd?.Invoke(
+                instance,
+                new GlfwCursorEnteredEventArgs(entered == Native.Glfw.TrueDefine)
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleScroll(
+        Native.Glfw.Window* window,
+        double xScroll,
+        double yScroll
+    )
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.Scrolled?.Invoke(
+                instance,
+                new GlfwScrollEventArgs(new PointF((float)xScroll, (float)yScroll))
             );
         }
     }
