@@ -25,33 +25,76 @@ internal static partial class Glfw
             return 0;
         }
 
+        string platform;
         if (OperatingSystem.IsWindows())
         {
-            if (NativeLibrary.TryLoad("glfw3.dll", assembly, searchPath, out var handle))
+            platform = "win";
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            platform = "osx";
+        }
+        else if (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())
+        {
+            platform = "linux";
+        }
+        else
+        {
+            return 0;
+        }
+
+        var cpuid = RuntimeInformation.ProcessArchitecture switch
+        {
+            Architecture.X86 => "x86",
+            Architecture.X64 => "x64",
+            Architecture.Arm64 => "arm64",
+            _ => null,
+        };
+
+        if (cpuid is null)
+        {
+            return 0;
+        }
+
+        var basePath = Path.Combine(AppContext.BaseDirectory, "runtimes", $"{platform}-{cpuid}");
+        if (OperatingSystem.IsWindows())
+        {
+            if (
+                NativeLibrary.TryLoad(
+                    Path.Combine(basePath, "glfw3.dll"),
+                    assembly,
+                    searchPath,
+                    out var handle
+                )
+            )
             {
                 return handle;
             }
         }
         else if (OperatingSystem.IsMacOS())
         {
-            if (NativeLibrary.TryLoad("libglfw.3.dylib", assembly, searchPath, out var handle))
-            {
-                return handle;
-            }
-
-            if (NativeLibrary.TryLoad("libglfw.dylib", assembly, searchPath, out handle))
+            if (
+                NativeLibrary.TryLoad(
+                    Path.Combine(basePath, "libglfw.3.dylib"),
+                    assembly,
+                    searchPath,
+                    out var handle
+                )
+            )
             {
                 return handle;
             }
         }
         else if (OperatingSystem.IsLinux())
         {
-            if (NativeLibrary.TryLoad("libglfw.so.3", assembly, searchPath, out var handle))
-            {
-                return handle;
-            }
-
-            if (NativeLibrary.TryLoad("libglfw.so", assembly, searchPath, out handle))
+            if (
+                NativeLibrary.TryLoad(
+                    Path.Combine(basePath, "libglfw.so.3"),
+                    assembly,
+                    searchPath,
+                    out var handle
+                )
+            )
             {
                 return handle;
             }
