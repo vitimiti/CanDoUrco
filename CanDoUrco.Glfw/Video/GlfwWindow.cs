@@ -111,6 +111,7 @@ public sealed class GlfwWindow : IDisposable
     private static readonly Dictionary<GlfwWindow, nint> Handles = [];
 
     private readonly unsafe Native.Glfw.Window* _handle;
+    private readonly bool _ownsHandle = true;
 
     private bool _disposedValue;
 
@@ -153,6 +154,12 @@ public sealed class GlfwWindow : IDisposable
         SetCallbacks();
     }
 
+    private unsafe GlfwWindow(Native.Glfw.Window* handle, bool ownsHandle)
+    {
+        _handle = handle;
+        _ownsHandle = ownsHandle;
+    }
+
     /// <summary>
     /// Finalises the <see cref="GlfwWindow"/> instance.
     /// </summary>
@@ -160,6 +167,17 @@ public sealed class GlfwWindow : IDisposable
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: false);
+    }
+
+    /// <summary>
+    /// Gets the window whose context is current on the calling thread.
+    /// </summary>
+    /// <returns>The <see cref="GlfwWindow"/> whose context is current, or <see langword="null"/> if no window's context is current.</returns>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public static unsafe GlfwWindow? GetCurrentContext()
+    {
+        var ptr = Native.Glfw.GetCurrentContext();
+        return ptr is null ? null : new GlfwWindow(ptr, ownsHandle: false);
     }
 
     /// <summary>
@@ -921,6 +939,18 @@ public sealed class GlfwWindow : IDisposable
         return Utf8StringMarshaller.ConvertToManaged(ptr) ?? string.Empty;
     }
 
+    /// <summary>
+    /// Makes the context of this window current for the calling thread.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void MakeContextCurrent()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.MakeContextCurrent(_handle);
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
     private static void SetCallback(Action registerCallback)
     {
         ArgumentNullException.ThrowIfNull(registerCallback);
@@ -1079,19 +1109,21 @@ public sealed class GlfwWindow : IDisposable
 
     private unsafe void Dispose(bool disposing)
     {
-        if (!_disposedValue)
+        if (_disposedValue || !_ownsHandle)
         {
-            if (disposing)
-            {
-                Handles.Remove(this);
-            }
-
-            Native.Glfw.DestroyWindow(_handle);
-            // Ignore errors intentionally
-            UnsetCallbacks();
-
-            _disposedValue = true;
+            return;
         }
+
+        if (disposing)
+        {
+            Handles.Remove(this);
+        }
+
+        Native.Glfw.DestroyWindow(_handle);
+        // Ignore errors intentionally
+        UnsetCallbacks();
+
+        _disposedValue = true;
     }
 
     private unsafe void SetCallbacks()
