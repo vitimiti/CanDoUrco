@@ -1052,7 +1052,7 @@ public sealed class GlfwWindow : IDisposable
         {
             if (disposing)
             {
-                Handles.Clear();
+                Handles.Remove(this);
             }
 
             UnsetCallbacks();

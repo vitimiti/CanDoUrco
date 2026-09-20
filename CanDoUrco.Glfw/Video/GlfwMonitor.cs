@@ -288,7 +288,7 @@ public sealed class GlfwMonitor : IDisposable
 
         if (disposing)
         {
-            Handles.Clear();
+            Handles.Remove(this);
         }
 
         Native.Glfw.SetMonitorCallback(null);
