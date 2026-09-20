@@ -20,4 +20,17 @@ public sealed record GlfwImage
     /// Gets the pixel data of the image.
     /// </summary>
     public ICollection<byte> PixelData { get; init; } = [];
+
+    internal unsafe Native.Glfw.Image ConvertToUnmanaged()
+    {
+        var nativeImage = new Native.Glfw.Image { Width = Size.Width, Height = Size.Height };
+
+        var pixelsSpan = PixelData.ToArray().AsSpan();
+        fixed (byte* pixelsPtr = pixelsSpan)
+        {
+            nativeImage.Pixels = pixelsPtr;
+        }
+
+        return nativeImage;
+    }
 }

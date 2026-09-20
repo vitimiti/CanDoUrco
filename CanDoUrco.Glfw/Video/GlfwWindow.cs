@@ -223,13 +223,7 @@ public sealed class GlfwWindow : IDisposable
         var nativeImages = new Native.Glfw.Image[count];
         for (var i = 0; i < count; i++)
         {
-            nativeImages[i].Width = images.ElementAt(i).Size.Width;
-            nativeImages[i].Height = images.ElementAt(i).Size.Height;
-            var pixelsSpan = images.ElementAt(i).PixelData.ToArray().AsSpan();
-            fixed (byte* pixelsPtr = pixelsSpan)
-            {
-                nativeImages[i].Pixels = pixelsPtr;
-            }
+            nativeImages[i] = images.ElementAt(i).ConvertToUnmanaged();
         }
 
         Native.Glfw.SetWindowIcon(_handle, count, nativeImages);
@@ -830,6 +824,46 @@ public sealed class GlfwWindow : IDisposable
         var result = Native.Glfw.GetMouseButton(_handle, (int)button);
         ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return (GlfwMouseButtonState)result;
+    }
+
+    /// <summary>
+    /// Gets the current position of the cursor relative to the upper-left corner of the content area of the window.
+    /// </summary>
+    /// <returns>A new <see cref="PointF"/> with the cursor position.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe PointF GetCursorPosition()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.GetCursorPosition(_handle, out var xPos, out var yPos);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return new PointF((float)xPos, (float)yPos);
+    }
+
+    /// <summary>
+    /// Sets the position of the cursor, relative to the upper-left corner of the content area of the window.
+    /// </summary>
+    /// <param name="cursorPosition">The <see cref="PointF"/> with the new cursor position.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetCursorPosition(PointF cursorPosition)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetCursorPos(_handle, cursorPosition.X, cursorPosition.Y);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Sets the cursor of the window.
+    /// </summary>
+    /// <param name="cursor">The <see cref="GlfwCursor"/> to set, or <see langword="null"/> to switch back to the default arrow cursor.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetCursor(GlfwCursor? cursor)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetCursor(_handle, cursor is null ? null : cursor.Handle);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private static void SetHints(GlfwWindowOptions options)
