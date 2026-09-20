@@ -1046,7 +1046,7 @@ public sealed class GlfwWindow : IDisposable
     private static unsafe void SetInputMode(Native.Glfw.Window* window, int mode, bool value) =>
         SetInputMode(window, mode, value ? Native.Glfw.TrueDefine : Native.Glfw.FalseDefine);
 
-    private void Dispose(bool disposing)
+    private unsafe void Dispose(bool disposing)
     {
         if (!_disposedValue)
         {
@@ -1055,8 +1055,9 @@ public sealed class GlfwWindow : IDisposable
                 Handles.Remove(this);
             }
 
-            UnsetCallbacks();
+            Native.Glfw.DestroyWindow(_handle);
             // Ignore errors intentionally
+            UnsetCallbacks();
 
             _disposedValue = true;
         }
@@ -1091,7 +1092,11 @@ public sealed class GlfwWindow : IDisposable
 
     private unsafe void UnsetCallbacks()
     {
-        Native.Glfw.DestroyWindow(_handle);
+        if (Handles.Count != 0)
+        {
+            return;
+        }
+
         Native.Glfw.SetWindowPosCallback(_handle, null);
         Native.Glfw.SetWindowSizeCallback(_handle, null);
         Native.Glfw.SetWindowCloseCallback(_handle, null);
@@ -1109,6 +1114,7 @@ public sealed class GlfwWindow : IDisposable
         Native.Glfw.SetCursorEnterCallback(_handle, null);
         Native.Glfw.SetScrollCallback(_handle, null);
         Native.Glfw.SetDropCallback(_handle, null);
+        // Ignore errors intentionally
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]

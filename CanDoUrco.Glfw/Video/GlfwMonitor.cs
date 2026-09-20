@@ -291,8 +291,11 @@ public sealed class GlfwMonitor : IDisposable
             Handles.Remove(this);
         }
 
-        Native.Glfw.SetMonitorCallback(null);
-        // Ignore errors intentionally
+        if (Handles.Count == 0)
+        {
+            Native.Glfw.SetMonitorCallback(null);
+            // Ignore errors intentionally
+        }
 
         _disposedValue = true;
     }
