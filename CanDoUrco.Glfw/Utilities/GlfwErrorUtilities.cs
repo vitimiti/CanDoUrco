@@ -7,7 +7,7 @@ using CanDoUrco.Glfw.Exceptions;
 
 namespace CanDoUrco.Glfw.Utilities;
 
-internal static unsafe class ErrorUtilities
+internal static unsafe class GlfwErrorUtilities
 {
     public static void CheckErrorCodeAndMaybeThrowError()
     {

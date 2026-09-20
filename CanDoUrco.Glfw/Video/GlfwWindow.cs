@@ -146,7 +146,7 @@ public sealed class GlfwWindow : IDisposable
 
         if (_handle is null)
         {
-            ErrorUtilities.ThrowError();
+            GlfwErrorUtilities.ThrowError();
         }
 
         Handles[this] = (nint)_handle;
@@ -182,7 +182,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.WindowShouldClose(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result;
     }
 
@@ -196,7 +196,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.SetWindowShouldClose(_handle, value);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -211,7 +211,7 @@ public sealed class GlfwWindow : IDisposable
         var ptr = Native.Glfw.GetWindowTitle(_handle);
         if (ptr is null)
         {
-            ErrorUtilities.ThrowError();
+            GlfwErrorUtilities.ThrowError();
         }
 
         return Utf8StringMarshaller.ConvertToManaged(ptr) ?? string.Empty;
@@ -229,7 +229,7 @@ public sealed class GlfwWindow : IDisposable
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         ArgumentNullException.ThrowIfNull(title);
         Native.Glfw.SetWindowTitle(_handle, title);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -251,7 +251,7 @@ public sealed class GlfwWindow : IDisposable
         }
 
         Native.Glfw.SetWindowIcon(_handle, count, nativeImages);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -264,7 +264,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.GetWindowPos(_handle, out var xPos, out var yPos);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new Point(xPos, yPos);
     }
 
@@ -278,7 +278,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.SetWindowPos(_handle, position.X, position.Y);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -291,7 +291,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.GetWindowSize(_handle, out var width, out var height);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new Size(width, height);
     }
 
@@ -313,7 +313,7 @@ public sealed class GlfwWindow : IDisposable
             maximum.Height
         );
 
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -325,7 +325,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.SetWindowAspectRatio(_handle, numerator, denominator);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -338,7 +338,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.SetWindowSize(_handle, size.Width, size.Height);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -351,7 +351,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.GetFramebufferSize(_handle, out var width, out var height);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new Size(width, height);
     }
 
@@ -372,7 +372,7 @@ public sealed class GlfwWindow : IDisposable
             out var bottom
         );
 
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return (left, top, right, bottom);
     }
 
@@ -386,7 +386,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.GetWindowContentScale(_handle, out var xScale, out var yScale);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new PointF(xScale, yScale);
     }
 
@@ -400,7 +400,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.GetWindowOpacity(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result;
     }
 
@@ -414,7 +414,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.SetWindowOpacity(_handle, opacity);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -426,7 +426,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.IconifyWindow(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -438,7 +438,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.RestoreWindow(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -450,7 +450,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.MaximizeWindow(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -462,7 +462,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.ShowWindow(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -474,7 +474,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.HideWindow(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -486,7 +486,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.FocusWindow(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -498,7 +498,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.RequestWindowAttentionWindow(_handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -516,7 +516,7 @@ public sealed class GlfwWindow : IDisposable
             return null;
         }
 
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new GlfwMonitor(ptr);
     }
 
@@ -525,7 +525,7 @@ public sealed class GlfwWindow : IDisposable
     /// </summary>
     /// <param name="monitor">A <see cref="GlfwMonitor"/>, or <see langword="null"/> to set windowed mode.</param>
     /// <param name="contentArea">The desired dimentions of the content area.</param>
-    /// <param name="refreshRateInHertz">The desired refresh rate, in hertz, of the video mode, or <see cref="SpecialValues.DontCare"/>./param>
+    /// <param name="refreshRateInHertz">The desired refresh rate, in hertz, of the video mode, or <see cref="GlfwSpecialValues.DontCare"/>./param>
     /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
     /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe void SetMonitor(
@@ -545,7 +545,7 @@ public sealed class GlfwWindow : IDisposable
             refreshRateInHertz
         );
 
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -829,7 +829,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.GetKey(_handle, (int)key);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return (GlfwKeyState)result;
     }
 
@@ -846,7 +846,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.GetMouseButton(_handle, (int)button);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return (GlfwMouseButtonState)result;
     }
 
@@ -860,7 +860,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.GetCursorPosition(_handle, out var xPos, out var yPos);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return new PointF((float)xPos, (float)yPos);
     }
 
@@ -874,7 +874,7 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.SetCursorPos(_handle, cursorPosition.X, cursorPosition.Y);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -887,14 +887,14 @@ public sealed class GlfwWindow : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Native.Glfw.SetCursor(_handle, cursor is null ? null : cursor.Handle);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private static void SetCallback(Action registerCallback)
     {
         ArgumentNullException.ThrowIfNull(registerCallback);
         registerCallback();
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private static void SetHints(GlfwWindowOptions options)
@@ -980,14 +980,14 @@ public sealed class GlfwWindow : IDisposable
     private static void SetHint(int hint, int value)
     {
         Native.Glfw.WindowHint(hint, value);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private static void SetHint(int hint, string value)
     {
         ArgumentNullException.ThrowIfNull(value);
         Native.Glfw.WindowHintString(hint, value);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private static void SetHint(int hint, bool value) =>
@@ -999,7 +999,7 @@ public sealed class GlfwWindow : IDisposable
     private static unsafe int GetAttribute(Native.Glfw.Window* window, int attrib)
     {
         var result = Native.Glfw.GetWindowAttrib(window, attrib);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result;
     }
 
@@ -1012,7 +1012,7 @@ public sealed class GlfwWindow : IDisposable
     private static unsafe void SetAttribute(Native.Glfw.Window* window, int attrib, int value)
     {
         Native.Glfw.SetWindowAttrib(window, attrib, value);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private static unsafe void SetAttribute(Native.Glfw.Window* window, int attrib, bool value) =>
@@ -1024,7 +1024,7 @@ public sealed class GlfwWindow : IDisposable
     private static unsafe int GetInputMode(Native.Glfw.Window* window, int mode)
     {
         var result = Native.Glfw.GetInputMode(window, mode);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result;
     }
 
@@ -1037,7 +1037,7 @@ public sealed class GlfwWindow : IDisposable
     private static unsafe void SetInputMode(Native.Glfw.Window* window, int mode, int value)
     {
         Native.Glfw.SetInputMode(window, mode, value);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     private static unsafe void SetInputMode<T>(Native.Glfw.Window* window, int mode, T value)

@@ -18,7 +18,7 @@ public static class GlfwInputDetails
     public static bool IsRawMouseMotionSupported()
     {
         var result = Native.Glfw.RawMouseMotionSupported();
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result;
     }
 
@@ -33,7 +33,7 @@ public static class GlfwInputDetails
     public static unsafe string? GetKeyName(GlfwKey key, int scancode)
     {
         var ptr = Native.Glfw.GetKeyName((int)key, scancode);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return Utf8StringMarshaller.ConvertToManaged(ptr);
     }
 
@@ -47,7 +47,7 @@ public static class GlfwInputDetails
     public static int GetKeyScancode(GlfwKey key)
     {
         var result = Native.Glfw.GetKeyScancode((int)key);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result;
     }
 }

@@ -38,7 +38,7 @@ public sealed class GlfwJoystick : IDisposable
         _id = id;
         Ids[this] = _id;
         Native.Glfw.SetJoystickCallback(&HandleEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public sealed class GlfwJoystick : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.JoystickPresent((int)_id);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result;
     }
 
@@ -86,7 +86,7 @@ public sealed class GlfwJoystick : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.GetJoystickAxes((int)_id, out var count);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result is null
             ? throw ExceptionIfNotPresent()
             : new Span<float>(result, count).ToArray();
@@ -103,7 +103,7 @@ public sealed class GlfwJoystick : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.GetJoystickButtons((int)_id, out var count);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result is null
             ? throw ExceptionIfNotPresent()
             : new Span<GlfwJoystickButtonState>((GlfwJoystickButtonState*)result, count).ToArray();
@@ -120,7 +120,7 @@ public sealed class GlfwJoystick : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.GetJoystickHats((int)_id, out var count);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return result is null
             ? throw ExceptionIfNotPresent()
             : new Span<GlfwJoystickHatStates>((GlfwJoystickHatStates*)result, count).ToArray();
@@ -137,7 +137,7 @@ public sealed class GlfwJoystick : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.GetJoystickName((int)_id);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return Utf8StringMarshaller.ConvertToManaged(result) ?? throw ExceptionIfNotPresent();
     }
 
@@ -152,7 +152,7 @@ public sealed class GlfwJoystick : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.GetJoystickGuid((int)_id);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         var str = Utf8StringMarshaller.ConvertToManaged(result) ?? throw ExceptionIfNotPresent();
 
         return new Guid(str);
@@ -169,7 +169,7 @@ public sealed class GlfwJoystick : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var result = Native.Glfw.JoystickIsGamepad((int)_id);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return !result ? throw ExceptionIfNotPresent() : result;
     }
 
@@ -185,7 +185,7 @@ public sealed class GlfwJoystick : IDisposable
         ArgumentNullException.ThrowIfNull(@string);
         if (!Native.Glfw.UpdateGamepadMappings(@string))
         {
-            ErrorUtilities.ThrowError();
+            GlfwErrorUtilities.ThrowError();
         }
     }
 
@@ -200,7 +200,7 @@ public sealed class GlfwJoystick : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         var ptr = Native.Glfw.GetGamepadName((int)_id);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         return Utf8StringMarshaller.ConvertToManaged(ptr)
             ?? throw ExceptionIfNotPresentOrNoMappings();
     }

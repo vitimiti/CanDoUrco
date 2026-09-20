@@ -97,51 +97,51 @@ public sealed record GlfwWindowOptions
     /// <summary>
     /// Gets the window position.
     /// </summary>
-    /// <remarks>The default value is { <see cref="SpecialValues.AnyPosition"/>, <see cref="SpecialValues.AnyPosition"/> }.</remarks>
+    /// <remarks>The default value is { <see cref="GlfwSpecialValues.AnyPosition"/>, <see cref="GlfwSpecialValues.AnyPosition"/> }.</remarks>
     public Point Position { get; init; } =
-        new Point(SpecialValues.AnyPosition, SpecialValues.AnyPosition);
+        new Point(GlfwSpecialValues.AnyPosition, GlfwSpecialValues.AnyPosition);
 
     /// <summary>
     /// Gets the window color bits.
     /// </summary>
-    /// <remarks>The default value is { 8, 8, 8, 8 }. You may set these values to <see cref="SpecialValues.DontCare"/>.</remarks>
+    /// <remarks>The default value is { 8, 8, 8, 8 }. You may set these values to <see cref="GlfwSpecialValues.DontCare"/>.</remarks>
     public (int Red, int Green, int Blue, int Alpha) ColorBits { get; init; } = (8, 8, 8, 8);
 
     /// <summary>
     /// Gets the window depth bits.
     /// </summary>
-    /// <remarks>The default value is 24. You may set this value to <see cref="SpecialValues.DontCare"/>.</remarks>
+    /// <remarks>The default value is 24. You may set this value to <see cref="GlfwSpecialValues.DontCare"/>.</remarks>
     public int DepthBits { get; init; } = 24;
 
     /// <summary>
     /// Gets the window stencil bits.
     /// </summary>
-    /// <remarks>The default value is 8. You may set this value to <see cref="SpecialValues.DontCare"/>.</remarks>
+    /// <remarks>The default value is 8. You may set this value to <see cref="GlfwSpecialValues.DontCare"/>.</remarks>
     public int StencilBits { get; init; } = 8;
 
     /// <summary>
     /// Gets the window accum bits.
     /// </summary>
-    /// <remarks>The default value is { 0, 0, 0, 0 }. You may set these values to <see cref="SpecialValues.DontCare"/>.</remarks>
+    /// <remarks>The default value is { 0, 0, 0, 0 }. You may set these values to <see cref="GlfwSpecialValues.DontCare"/>.</remarks>
     public (int Red, int Green, int Blue, int Alpha) AccumBits { get; init; }
 
     /// <summary>
     /// Gets the window aux buffers.
     /// </summary>
-    /// <remarks>The default value is 0. You may set this value to <see cref="SpecialValues.DontCare"/>.</remarks>
+    /// <remarks>The default value is 0. You may set this value to <see cref="GlfwSpecialValues.DontCare"/>.</remarks>
     public int AuxBuffers { get; init; }
 
     /// <summary>
     /// Gets the window samples.
     /// </summary>
-    /// <remarks>The default value is 0. You may set this value to <see cref="SpecialValues.DontCare"/>.</remarks>
+    /// <remarks>The default value is 0. You may set this value to <see cref="GlfwSpecialValues.DontCare"/>.</remarks>
     public int Samples { get; init; }
 
     /// <summary>
     /// Gets the window refresh rate.
     /// </summary>
-    /// <remarks>The default value is <see cref="SpecialValues.DontCare"/>.</remarks>
-    public int RefreshRate { get; init; } = SpecialValues.DontCare;
+    /// <remarks>The default value is <see cref="GlfwSpecialValues.DontCare"/>.</remarks>
+    public int RefreshRate { get; init; } = GlfwSpecialValues.DontCare;
 
     /// <summary>
     /// Gets whether the window uses stereo.

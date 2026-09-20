@@ -7,7 +7,7 @@ namespace CanDoUrco.Glfw.Utilities;
 /// <summary>
 /// These are special values accepted by certain GLFW data.
 /// </summary>
-public static class SpecialValues
+public static class GlfwSpecialValues
 {
     /// <summary>
     /// Gets a value indicating that any position is acceptable.

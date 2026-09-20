@@ -21,7 +21,7 @@ public sealed class GlfwCursor : IDisposable
         Handle = Native.Glfw.CreateCursor(in nativeImage, hotspot.X, hotspot.Y);
         if (Handle is null)
         {
-            ErrorUtilities.ThrowError();
+            GlfwErrorUtilities.ThrowError();
         }
     }
 
@@ -30,7 +30,7 @@ public sealed class GlfwCursor : IDisposable
         Handle = Native.Glfw.CreateStandardCursor((int)shape);
         if (Handle is null)
         {
-            ErrorUtilities.ThrowError();
+            GlfwErrorUtilities.ThrowError();
         }
     }
 
