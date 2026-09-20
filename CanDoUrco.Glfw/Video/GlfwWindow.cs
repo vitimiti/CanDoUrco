@@ -68,6 +68,21 @@ public sealed class GlfwWindow : IDisposable
     /// </summary>
     public event EventHandler<GlfwWindowContentScaleEventArgs>? ContentScaleUpdate;
 
+    /// <summary>
+    /// An event that happens when a keyboard key action happens.
+    /// </summary>
+    public event EventHandler<GlfwKeyActionEventArgs>? KeyAction;
+
+    /// <summary>
+    /// An event that happens when a Unicode character is input.
+    /// </summary>
+    public event EventHandler<GlfwUnicodeCharacterEventArgs>? UnicodeCharacterInput;
+
+    /// <summary>
+    /// An event that happens when a Unicode character is input with key modifiers.
+    /// </summary>
+    public event EventHandler<GlfwUnicodeCharacterWithModifiersEventArgs>? UnicodeCharacterWithKeyModifiersInput;
+
     private static readonly Dictionary<GlfwWindow, nint> Handles = [];
 
     private readonly unsafe Native.Glfw.Window* _handle;
@@ -110,23 +125,7 @@ public sealed class GlfwWindow : IDisposable
         }
 
         Handles[this] = (nint)_handle;
-        Native.Glfw.SetWindowPosCallback(_handle, &HandlePositionEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
-        Native.Glfw.SetWindowSizeCallback(_handle, &HandleSizeEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
-        Native.Glfw.SetWindowCloseCallback(_handle, &HandleCloseEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
-        Native.Glfw.SetWindowRefreshCallback(_handle, &HandleRefreshEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
-        Native.Glfw.SetWindowFocusCallback(_handle, &HandleIsFocusedEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
-        Native.Glfw.SetWindowIconifyCallback(_handle, &HandleIsIconifiedEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
-        Native.Glfw.SetWindowMaximizeCallback(_handle, &HandleIsMaximizedEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
-        Native.Glfw.SetWindowFramebufferSizeCallback(_handle, &HandleFramebufferSizeEvent);
-        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
-        Native.Glfw.SetWindowContentScaleCallback(_handle, &HandleContentScaleEvent);
+        SetCallbacks();
     }
 
     /// <summary>
@@ -866,6 +865,13 @@ public sealed class GlfwWindow : IDisposable
         ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
+    private static void SetCallback(Action registerCallback)
+    {
+        ArgumentNullException.ThrowIfNull(registerCallback);
+        registerCallback();
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
     private static void SetHints(GlfwWindowOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -1015,7 +1021,7 @@ public sealed class GlfwWindow : IDisposable
     private static unsafe void SetInputMode(Native.Glfw.Window* window, int mode, bool value) =>
         SetInputMode(window, mode, value ? Native.Glfw.TrueDefine : Native.Glfw.FalseDefine);
 
-    private unsafe void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!_disposedValue)
         {
@@ -1024,20 +1030,50 @@ public sealed class GlfwWindow : IDisposable
                 Handles.Clear();
             }
 
-            Native.Glfw.DestroyWindow(_handle);
-            Native.Glfw.SetWindowPosCallback(_handle, null);
-            Native.Glfw.SetWindowSizeCallback(_handle, null);
-            Native.Glfw.SetWindowCloseCallback(_handle, null);
-            Native.Glfw.SetWindowRefreshCallback(_handle, null);
-            Native.Glfw.SetWindowFocusCallback(_handle, null);
-            Native.Glfw.SetWindowIconifyCallback(_handle, null);
-            Native.Glfw.SetWindowMaximizeCallback(_handle, null);
-            Native.Glfw.SetWindowFramebufferSizeCallback(_handle, null);
-            Native.Glfw.SetWindowContentScaleCallback(_handle, null);
+            UnsetCallbacks();
             // Ignore errors intentionally
 
             _disposedValue = true;
         }
+    }
+
+    private unsafe void SetCallbacks()
+    {
+        SetCallback(() => Native.Glfw.SetWindowPosCallback(_handle, &HandlePositionEvent));
+        SetCallback(() => Native.Glfw.SetWindowSizeCallback(_handle, &HandleSizeEvent));
+        SetCallback(() => Native.Glfw.SetWindowCloseCallback(_handle, &HandleCloseEvent));
+        SetCallback(() => Native.Glfw.SetWindowRefreshCallback(_handle, &HandleRefreshEvent));
+        SetCallback(() => Native.Glfw.SetWindowFocusCallback(_handle, &HandleIsFocusedEvent));
+        SetCallback(() => Native.Glfw.SetWindowIconifyCallback(_handle, &HandleIsIconifiedEvent));
+        SetCallback(() => Native.Glfw.SetWindowMaximizeCallback(_handle, &HandleIsMaximizedEvent));
+        SetCallback(() =>
+            Native.Glfw.SetWindowFramebufferSizeCallback(_handle, &HandleFramebufferSizeEvent)
+        );
+
+        SetCallback(() =>
+            Native.Glfw.SetWindowContentScaleCallback(_handle, &HandleContentScaleEvent)
+        );
+
+        SetCallback(() => Native.Glfw.SetKeyCallback(_handle, &HandleKeyAction));
+        SetCallback(() => Native.Glfw.SetCharCallback(_handle, &HandleUnicodeInput));
+        SetCallback(() => Native.Glfw.SetCharModsCallback(_handle, &HandleUnicodeWithModsInput));
+    }
+
+    private unsafe void UnsetCallbacks()
+    {
+        Native.Glfw.DestroyWindow(_handle);
+        Native.Glfw.SetWindowPosCallback(_handle, null);
+        Native.Glfw.SetWindowSizeCallback(_handle, null);
+        Native.Glfw.SetWindowCloseCallback(_handle, null);
+        Native.Glfw.SetWindowRefreshCallback(_handle, null);
+        Native.Glfw.SetWindowFocusCallback(_handle, null);
+        Native.Glfw.SetWindowIconifyCallback(_handle, null);
+        Native.Glfw.SetWindowMaximizeCallback(_handle, null);
+        Native.Glfw.SetWindowFramebufferSizeCallback(_handle, null);
+        Native.Glfw.SetWindowContentScaleCallback(_handle, null);
+        Native.Glfw.SetKeyCallback(_handle, null);
+        Native.Glfw.SetCharCallback(_handle, null);
+        Native.Glfw.SetCharModsCallback(_handle, null);
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
@@ -1236,6 +1272,87 @@ public sealed class GlfwWindow : IDisposable
             instance.ContentScaleUpdate?.Invoke(
                 instance,
                 new GlfwWindowContentScaleEventArgs(new PointF(xScale, yScale))
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleKeyAction(
+        Native.Glfw.Window* window,
+        int key,
+        int scancode,
+        int action,
+        int mods
+    )
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.KeyAction?.Invoke(
+                instance,
+                new GlfwKeyActionEventArgs(
+                    (GlfwKey)key,
+                    scancode,
+                    (GlfwKeyAction)action,
+                    (GlfwKeyModifiers)mods
+                )
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleUnicodeInput(Native.Glfw.Window* window, uint codepoint)
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.UnicodeCharacterInput?.Invoke(
+                instance,
+                new GlfwUnicodeCharacterEventArgs(codepoint)
+            );
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe void HandleUnicodeWithModsInput(
+        Native.Glfw.Window* window,
+        uint codepoint,
+        int mods
+    )
+    {
+        if (window is null)
+        {
+            return;
+        }
+
+        foreach (var (instance, handle) in Handles)
+        {
+            if (handle != (nint)window)
+            {
+                continue;
+            }
+
+            instance.UnicodeCharacterWithKeyModifiersInput?.Invoke(
+                instance,
+                new GlfwUnicodeCharacterWithModifiersEventArgs(codepoint, (GlfwKeyModifiers)mods)
             );
         }
     }
