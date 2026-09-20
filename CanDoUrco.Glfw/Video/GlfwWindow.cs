@@ -792,10 +792,27 @@ public sealed class GlfwWindow : IDisposable
     /// Sets whether the unlimited mouse buttons input mode is enabled.
     /// </summary>
     /// <param name="enabled"><see langword="true"/> to enable the unlimited mouse buttons input mode, <see langword="false"/> to disable it.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
     public unsafe void EnableUnlimitedMouseButtons(bool enabled)
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         SetInputMode(_handle, Native.Glfw.UnlimitedMouseButtonsDefine, enabled);
+    }
+
+    /// <summary>
+    /// Gets the las reported state of a keyboard key.
+    /// </summary>
+    /// <param name="key">The <see cref="GlfwKey"/> to get the state from.</param>
+    /// <returns>One of the <see cref="GlfwKeyState"/> values.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe GlfwKeyState GetKeyState(GlfwKey key)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var result = Native.Glfw.GetKey(_handle, (int)key);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return (GlfwKeyState)result;
     }
 
     private static void SetHints(GlfwWindowOptions options)
