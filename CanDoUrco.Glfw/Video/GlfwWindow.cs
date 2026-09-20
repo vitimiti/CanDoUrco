@@ -1148,7 +1148,7 @@ public sealed class GlfwWindow : IDisposable
         SetCallback(() => Native.Glfw.SetWindowIconifyCallback(_handle, &HandleIsIconifiedEvent));
         SetCallback(() => Native.Glfw.SetWindowMaximizeCallback(_handle, &HandleIsMaximizedEvent));
         SetCallback(() =>
-            Native.Glfw.SetWindowFramebufferSizeCallback(_handle, &HandleFramebufferSizeEvent)
+            Native.Glfw.SetFramebufferSizeCallback(_handle, &HandleFramebufferSizeEvent)
         );
 
         SetCallback(() =>
@@ -1179,7 +1179,7 @@ public sealed class GlfwWindow : IDisposable
         Native.Glfw.SetWindowFocusCallback(_handle, null);
         Native.Glfw.SetWindowIconifyCallback(_handle, null);
         Native.Glfw.SetWindowMaximizeCallback(_handle, null);
-        Native.Glfw.SetWindowFramebufferSizeCallback(_handle, null);
+        Native.Glfw.SetFramebufferSizeCallback(_handle, null);
         Native.Glfw.SetWindowContentScaleCallback(_handle, null);
         Native.Glfw.SetKeyCallback(_handle, null);
         Native.Glfw.SetCharCallback(_handle, null);

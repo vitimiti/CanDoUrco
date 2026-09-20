@@ -365,13 +365,13 @@ internal static unsafe partial class Glfw
         delegate* unmanaged[Cdecl]<Window*, int, void> callback
     );
 
-    [LibraryImport(DllName, EntryPoint = "glfwSetWindowFramebufferSizeCallback")]
+    [LibraryImport(DllName, EntryPoint = "glfwSetFramebufferSizeCallback")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial delegate* unmanaged[Cdecl]<
         Window*,
         int,
         int,
-        void> SetWindowFramebufferSizeCallback(
+        void> SetFramebufferSizeCallback(
         Window* window,
         delegate* unmanaged[Cdecl]<Window*, int, int, void> callback
     );
@@ -456,7 +456,7 @@ internal static unsafe partial class Glfw
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void SetCursor(Window* window, Cursor* cursor);
 
-    [LibraryImport(DllName, EntryPoint = "glfwSetkeyCallback")]
+    [LibraryImport(DllName, EntryPoint = "glfwSetKeyCallback")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial delegate* unmanaged[Cdecl]<
         Window*,

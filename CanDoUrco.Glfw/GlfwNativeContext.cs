@@ -50,7 +50,7 @@ public sealed class GlfwNativeContext : IDisposable
     /// </summary>
     /// <param name="options">The <see cref="GlfwNativeContextOptions"/> to pass, or <see langword="null"/> to use the default.</param>
     /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
-    public GlfwNativeContext(Action<GlfwNativeContextOptions>? options = null)
+    public unsafe GlfwNativeContext(Action<GlfwNativeContextOptions>? options = null)
     {
         var opts = new GlfwNativeContextOptions();
         options?.Invoke(opts);
@@ -169,15 +169,16 @@ public sealed class GlfwNativeContext : IDisposable
             GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         }
 
-        if (Native.Glfw.PlatformSupported((int)options.Platform))
+        if (
+            options.Platform is not GlfwPlatform.Any
+            && Native.Glfw.PlatformSupported((int)options.Platform)
+        )
         {
             SetInitHint(Native.Glfw.PlatfromDefine, (int)options.Platform);
         }
 
         SetInitHint(Native.Glfw.JoystickHatButtonsDefine, options.ExposeJoystickHatsAsButtons);
-
         SetInitHint(Native.Glfw.AnglePlatformTypeDefine, (int)options.AnglePlatformType);
-
         if (OperatingSystem.IsMacOS())
         {
             SetInitHint(
@@ -193,7 +194,12 @@ public sealed class GlfwNativeContext : IDisposable
             && Native.Glfw.PlatformSupported(Native.Glfw.PlatformWaylandDefine)
         )
         {
-            SetInitHint(Native.Glfw.WaylandLibDecorDefine, options.WaylandPreferLibDecor);
+            SetInitHint(
+                Native.Glfw.WaylandLibDecorDefine,
+                options.WaylandPreferLibDecor
+                    ? Native.Glfw.WaylandPreferLibDecorDefine
+                    : Native.Glfw.WaylandDisableLibDecorDefine
+            );
         }
 
         if (
