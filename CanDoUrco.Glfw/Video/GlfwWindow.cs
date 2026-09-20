@@ -815,6 +815,23 @@ public sealed class GlfwWindow : IDisposable
         return (GlfwKeyState)result;
     }
 
+    /// <summary>
+    /// Gets the last reported state of a mouse button.
+    /// </summary>
+    /// <param name="button">The <see cref="GlfwMouseButton"/> to get the state from.</param>
+    /// <returns>One of the <see cref="GlfwMouseButtonState"/> values.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    /// <remarks>If <see cref="EnableUnlimitedMouseButtons(bool)"/> has been set to <see langword="true"/>, you can add extra buttons to this enum such as: <c>(GlfwMouseButton)25</c>.
+    /// </remarks>
+    public unsafe GlfwMouseButtonState GetMouseButtonState(GlfwMouseButton button)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var result = Native.Glfw.GetMouseButton(_handle, (int)button);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return (GlfwMouseButtonState)result;
+    }
+
     private static void SetHints(GlfwWindowOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
