@@ -951,6 +951,18 @@ public sealed class GlfwWindow : IDisposable
         GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
+    /// <summary>
+    /// Swaps the front and back buffers of the window.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SwapBuffers()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SwapBuffers(_handle);
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
     private static void SetCallback(Action registerCallback)
     {
         ArgumentNullException.ThrowIfNull(registerCallback);
