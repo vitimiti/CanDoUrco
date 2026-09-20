@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Glfw.Events;
 using CanDoUrco.Glfw.Exceptions;
+using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Utilities;
 
@@ -657,6 +658,146 @@ public sealed class GlfwWindow : IDisposable
         SetAttribute(_handle, Native.Glfw.DoublebufferDefine, attributes.Doublebuffer);
     }
 
+    /// <summary>
+    /// Gets the current cursor mode.
+    /// </summary>
+    /// <returns>A value from <see cref="GlfwCursorMode"/> with the current cursor mode.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe GlfwCursorMode GetCursorMode()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        return GetInputModeEnum<GlfwCursorMode>(_handle, Native.Glfw.CursorDefine);
+    }
+
+    /// <summary>
+    /// Gets whether the sticky keys input mode is enabled.
+    /// </summary>
+    /// <returns><see langword="true"/> if the sticky keys are enabled, <see langword="false"/> otherwise.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe bool StickyKeysEnabled()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        return GetInputModeBool(_handle, Native.Glfw.StickyKeysDefine);
+    }
+
+    /// <summary>
+    /// Gets whether the sticky mouse buttons input mode is enabled.
+    /// </summary>
+    /// <returns><see langword="true"/> if the sticky mouse buttons are enabled, <see langword="false"/> otherwise.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe bool StickyMouseButtonsEnabled()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        return GetInputModeBool(_handle, Native.Glfw.StickyMouseButtonsDefine);
+    }
+
+    /// <summary>
+    /// Gets whether the lock key modifier bits are enabled.
+    /// </summary>
+    /// <returns><see langword="true"/> if the lock key modifier bits are enabled, <see langword="false"/> otherwise.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe bool LockKeyModifiersEnabled()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        return GetInputModeBool(_handle, Native.Glfw.LockKeyModsDefine);
+    }
+
+    /// <summary>
+    /// Gets whether the raw mouse motion is enabled.
+    /// </summary>
+    /// <returns><see langword="true"/> if the raw mouse motion is enabled, <see langword="false"/> otherwise.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe bool RawMouseMotionEnabled()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        return GetInputModeBool(_handle, Native.Glfw.RawMouseMotionDefine);
+    }
+
+    /// <summary>
+    /// Gets whether the unlimited mouse buttons input mode is enabled.
+    /// </summary>
+    /// <returns><see langword="true"/> if the unlimited mouse buttons input mode is enabled, <see langword="false"/> otherwise.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe bool UnlimitedMouseButtonsEnabled()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        return GetInputModeBool(_handle, Native.Glfw.UnlimitedMouseButtonsDefine);
+    }
+
+    /// <summary>
+    /// Sets the cursor input mode.
+    /// </summary>
+    /// <param name="cursorMode">The <see cref="GlfwCursorMode"/> to set.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetCursorMode(GlfwCursorMode cursorMode)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        SetInputMode(_handle, Native.Glfw.CursorDefine, cursorMode);
+    }
+
+    /// <summary>
+    /// Sets whether the sticky keys input mode should be enabled.
+    /// </summary>
+    /// <param name="enabled"><see langword="true"/> to enable the sticky keys input mode, <see langword="false"/> to disable it.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void EnableStickKeys(bool enabled)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        SetInputMode(_handle, Native.Glfw.StickyKeysDefine, enabled);
+    }
+
+    /// <summary>
+    /// Sets whether the sticky mouse buttons input mode should be enabled.
+    /// </summary>
+    /// <param name="enabled"><see langword="true"/> to enable the sticky mouse buttons input mode, <see langword="false"/> to disable it.</param>
+    public unsafe void EnableStickyMouseButtons(bool enabled)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        SetInputMode(_handle, Native.Glfw.StickyMouseButtonsDefine, enabled);
+    }
+
+    /// <summary>
+    /// Sets whether the lock key modifier bits are enabled.
+    /// </summary>
+    /// <param name="enabled"><see langword="true"/> to enable the lock key modifier bits, <see langword="false"/> to disable it.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void EnableLockKeyModifiers(bool enabled)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        SetInputMode(_handle, Native.Glfw.LockKeyModsDefine, enabled);
+    }
+
+    /// <summary>
+    /// Sets whether the raw mouse motion input mode is enabled.
+    /// </summary>
+    /// <param name="enabled"><see langword="true"/> to enable the raw mouse motion input mode, <see langword="false"/> otherwise.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void EnableRawMouseMotion(bool enabled)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        SetInputMode(_handle, Native.Glfw.RawMouseMotionDefine, enabled);
+    }
+
+    /// <summary>
+    /// Sets whether the unlimited mouse buttons input mode is enabled.
+    /// </summary>
+    /// <param name="enabled"><see langword="true"/> to enable the unlimited mouse buttons input mode, <see langword="false"/> to disable it.</param>
+    public unsafe void EnableUnlimitedMouseButtons(bool enabled)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        SetInputMode(_handle, Native.Glfw.UnlimitedMouseButtonsDefine, enabled);
+    }
+
     private static void SetHints(GlfwWindowOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -780,6 +921,31 @@ public sealed class GlfwWindow : IDisposable
 
     private static unsafe void SetAttribute<T>(Native.Glfw.Window* window, int attrib, T value)
         where T : Enum => SetAttribute(window, attrib, Convert.ToInt32(value));
+
+    private static unsafe int GetInputMode(Native.Glfw.Window* window, int mode)
+    {
+        var result = Native.Glfw.GetInputMode(window, mode);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return result;
+    }
+
+    private static unsafe T GetInputModeEnum<T>(Native.Glfw.Window* window, int mode)
+        where T : Enum => (T)Enum.ToObject(typeof(T), GetInputMode(window, mode));
+
+    private static unsafe bool GetInputModeBool(Native.Glfw.Window* window, int mode) =>
+        GetInputMode(window, mode) == Native.Glfw.TrueDefine;
+
+    private static unsafe void SetInputMode(Native.Glfw.Window* window, int mode, int value)
+    {
+        Native.Glfw.SetInputMode(window, mode, value);
+        ErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    private static unsafe void SetInputMode<T>(Native.Glfw.Window* window, int mode, T value)
+        where T : Enum => SetInputMode(window, mode, Convert.ToInt32(value));
+
+    private static unsafe void SetInputMode(Native.Glfw.Window* window, int mode, bool value) =>
+        SetInputMode(window, mode, value ? Native.Glfw.TrueDefine : Native.Glfw.FalseDefine);
 
     private unsafe void Dispose(bool disposing)
     {
