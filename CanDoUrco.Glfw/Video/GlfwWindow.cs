@@ -1120,7 +1120,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandlePositionEvent(Native.Glfw.Window* window, int xPos, int yPos)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1142,7 +1142,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleSizeEvent(Native.Glfw.Window* window, int width, int height)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1164,7 +1164,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleCloseEvent(Native.Glfw.Window* window)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1183,7 +1183,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleRefreshEvent(Native.Glfw.Window* window)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1202,7 +1202,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleIsFocusedEvent(Native.Glfw.Window* window, int focused)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1224,7 +1224,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleIsIconifiedEvent(Native.Glfw.Window* window, int iconified)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1246,7 +1246,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleIsMaximizedEvent(Native.Glfw.Window* window, int maximized)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1272,7 +1272,7 @@ public sealed class GlfwWindow : IDisposable
         int height
     )
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1298,7 +1298,7 @@ public sealed class GlfwWindow : IDisposable
         float yScale
     )
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1326,7 +1326,7 @@ public sealed class GlfwWindow : IDisposable
         int mods
     )
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1353,7 +1353,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleUnicodeInput(Native.Glfw.Window* window, uint codepoint)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1379,7 +1379,7 @@ public sealed class GlfwWindow : IDisposable
         int mods
     )
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1406,7 +1406,7 @@ public sealed class GlfwWindow : IDisposable
         int mods
     )
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1436,7 +1436,7 @@ public sealed class GlfwWindow : IDisposable
         double yPos
     )
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1458,7 +1458,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleCursorEnter(Native.Glfw.Window* window, int entered)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1484,7 +1484,7 @@ public sealed class GlfwWindow : IDisposable
         double yScroll
     )
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }
@@ -1506,7 +1506,7 @@ public sealed class GlfwWindow : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleDrop(Native.Glfw.Window* window, int count, byte** paths)
     {
-        if (window is null)
+        if (window is null || Handles.Count == 0)
         {
             return;
         }

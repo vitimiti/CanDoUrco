@@ -303,7 +303,7 @@ public sealed class GlfwMonitor : IDisposable
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe void HandleEvent(Native.Glfw.Monitor* monitor, int @event)
     {
-        if (monitor is null)
+        if (monitor is null || Handles.Count == 0)
         {
             return;
         }
