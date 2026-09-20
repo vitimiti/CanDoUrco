@@ -890,6 +890,37 @@ public sealed class GlfwWindow : IDisposable
         GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
     }
 
+    /// <summary>
+    /// Sets the window's clipboard to the specified string.
+    /// </summary>
+    /// <param name="string">The <see cref="string"/> to set the clipboard to.</param>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe void SetClipboardString(string? @string)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Native.Glfw.SetClipboardString(_handle, @string);
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+    }
+
+    /// <summary>
+    /// Gets the window's clipboard string.
+    /// </summary>
+    /// <returns>A new <see cref="string"/> with the clipboard text.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown when the <see cref="GlfwWindow"/> instance was already disposed.</exception>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    public unsafe string GetClipboardString()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        var ptr = Native.Glfw.GetClipboardString(_handle);
+        if (ptr is null)
+        {
+            GlfwErrorUtilities.ThrowError();
+        }
+
+        return Utf8StringMarshaller.ConvertToManaged(ptr) ?? string.Empty;
+    }
+
     private static void SetCallback(Action registerCallback)
     {
         ArgumentNullException.ThrowIfNull(registerCallback);
