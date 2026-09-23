@@ -15,4 +15,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="registry\gl.xml" />
+    <AdditionalFiles Include="registry\glx.xml" />
+    <AdditionalFiles Include="registry\wgl.xml" />
+  </ItemGroup>
 </Project>
