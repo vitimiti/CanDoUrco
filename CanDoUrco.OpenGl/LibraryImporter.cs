@@ -90,16 +90,10 @@ internal static class LibraryImporter
         sb.AppendLine("        {");
         sb.AppendLine("            yield return \"/System/Library/Frameworks/OpenGL.framework/OpenGL\"");
         sb.AppendLine("        }");
-        sb.AppendLine("        else if (OperatingSystem.IsLinux())");
+        sb.AppendLine("        else if (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())");
         sb.AppendLine("        {");
         sb.AppendLine("            yield return \"libOpenGL.so.0\";");
         sb.AppendLine("            yield return \"libGL.so.1\";");
-        sb.AppendLine("            yield return \"libGL.so\";");
-        sb.AppendLine("        }");
-        sb.AppendLine("        else if (OperatingSystem.IsFreeBSD())");
-        sb.AppendLine("        {");
-        sb.AppendLine("            yield return \"libGL.so.1\";");
-        sb.AppendLine("            yield return \"libOpenGL.so.0\";");
         sb.AppendLine("            yield return \"libGL.so\";");
         sb.AppendLine("        }");
         sb.AppendLine();
