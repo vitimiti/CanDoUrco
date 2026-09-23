@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace CanDoUrco.OpenGl;
+namespace CanDoUrco.OpenGl.Attributes;
 
 /// <summary>
 /// An attribute that goes on a partial class to indicate what version and OpenGL mode to use.
