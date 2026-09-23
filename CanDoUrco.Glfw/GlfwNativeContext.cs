@@ -71,6 +71,10 @@ public sealed class GlfwNativeContext : IDisposable
         {
             GlfwErrorUtilities.ThrowError();
         }
+
+        // Clear previous errors to prevent errors we don't care about from causing crashes.
+        // This is specially important in sandboxed environments like Bazzite development.
+        Native.Glfw.GetError(out _);
     }
 
     /// <summary>
