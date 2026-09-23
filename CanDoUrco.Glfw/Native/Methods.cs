@@ -106,14 +106,6 @@ internal static unsafe partial class Glfw
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial byte* GetMonitorName(Monitor* monitor);
 
-    [LibraryImport(DllName, EntryPoint = "glfwSetMonitorUserPointer")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void SetMonitorUserPointer(Monitor* monitor, void* pointer);
-
-    [LibraryImport(DllName, EntryPoint = "glfwGetMonitorUserPointer")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void* GetMonitorUserPointer(Monitor* monitor);
-
     [LibraryImport(DllName, EntryPoint = "glfwSetMonitorCallback")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial delegate* unmanaged[Cdecl]<Monitor*, int, void> SetMonitorCallback(
@@ -319,14 +311,6 @@ internal static unsafe partial class Glfw
     [LibraryImport(DllName, EntryPoint = "glfwSetWindowAttrib")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void SetWindowAttrib(Window* window, int attrib, int value);
-
-    [LibraryImport(DllName, EntryPoint = "glfwSetWindowUserPointer")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void SetWindowUserPointer(Window* window, void* pointer);
-
-    [LibraryImport(DllName, EntryPoint = "glfwGetWindowUserPointer")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void* GetWindowUserPointer(Window* window);
 
     [LibraryImport(DllName, EntryPoint = "glfwSetWindowPosCallback")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -567,14 +551,6 @@ internal static unsafe partial class Glfw
     [LibraryImport(DllName, EntryPoint = "glfwGetJoystickGUID")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial byte* GetJoystickGuid(int jid);
-
-    [LibraryImport(DllName, EntryPoint = "glfwSetJoystickUserPointer")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void SetJoystickUserPointer(int jid, void* pointer);
-
-    [LibraryImport(DllName, EntryPoint = "glfwGetJoystickUserPointer")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void* GetJoystickUserPointer(int jid);
 
     [LibraryImport(DllName, EntryPoint = "glfwJoystickIsGamepad")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
