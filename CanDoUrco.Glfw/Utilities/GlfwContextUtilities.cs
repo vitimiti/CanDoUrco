@@ -37,6 +37,20 @@ public static class GlfwContextUtilities
     }
 
     /// <summary>
+    /// Gets the address of the specified client API or context creation API function for the current context.
+    /// </summary>
+    /// <param name="procName">The name of the function to look up.</param>
+    /// <returns>The address of the function, or <see cref="nint.Zero"/> if the function is not found or no context is current.</returns>
+    /// <exception cref="GlfwException">Thrown when an internal GLFW error happens.</exception>
+    /// <remarks>This function does not apply to Vulkan; use Vulkan's own loading mechanism instead.</remarks>
+    public static nint GetProcAddress(string procName)
+    {
+        var result = Native.Glfw.GetProcAddress(procName);
+        GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
+        return result;
+    }
+
+    /// <summary>
     /// Gets whether a given extension is available.
     /// </summary>
     /// <param name="extension">A <see cref="string"/> with the extension to check.</param>

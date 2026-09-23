@@ -634,7 +634,13 @@ internal static unsafe partial class Glfw
     [return: MarshalAs(UnmanagedType.I4)]
     public static partial bool ExtensionSupported(string extension);
 
-    // WARNING: glfwGetProcAddress intentionally unimplemented
+    [LibraryImport(
+        DllName,
+        EntryPoint = "glfwGetProcAddress",
+        StringMarshalling = StringMarshalling.Utf8
+    )]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial nint GetProcAddress(string procname);
 
     [LibraryImport(DllName, EntryPoint = "glfwVulkanSupported")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
