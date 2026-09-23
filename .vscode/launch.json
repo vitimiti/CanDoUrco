@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Playground",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "dotnet: build ${workspaceFolder}/Playground/Playground.csproj",
+            "program": "${workspaceFolder}/Playground/bin/Debug/net10.0/Playground.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Playground/bin/Debug/net10.0",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "linux": {
+                "env": {
+                    "DISPLAY": ":0",
+                    "WAYLAND_DISPLAY": "wayland-0",
+                    "XDG_RUNTIME_DIR": "/run/usr/1000"
+                }
+            }
+        }
+    ]
+}
