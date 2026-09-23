@@ -46,7 +46,6 @@ internal static class LibraryImporter
         sb.AppendLine(
             "        NativeLibrary.SetDllImportResolver(Assembly.GetExecutingAssembly(), ResolveOpenGlLibrary);"
         );
-        sb.AppendLine("}");
 
         sb.AppendLine();
 
