@@ -30,30 +30,30 @@ public enum GlfwKeyModifiers
     /// <summary>
     /// If this is set, one ore more Shift keys were held down.
     /// </summary>
-    Shift = 0x0001,
+    Shift = Native.Glfw.ModShiftDefine,
 
     /// <summary>
     /// If this is set, one ore more Control keys were held down.
     /// </summary>
-    Control = 0x0002,
+    Control = Native.Glfw.ModControlDefine,
 
     /// <summary>
     /// If this is set, one ore more Alt keys were held down.
     /// </summary>
-    Alt = 0x0004,
+    Alt = Native.Glfw.ModAltDefine,
 
     /// <summary>
     /// If this is set, one ore more Super keys were held down.
     /// </summary>
-    Super = 0x0008,
+    Super = Native.Glfw.ModSuperDefine,
 
     /// <summary>
     /// If this is set, one ore more CapsLock keys were held down.
     /// </summary>
-    CapsLock = 0x0010,
+    CapsLock = Native.Glfw.ModCapsLockDefine,
 
     /// <summary>
     /// If this is set, one ore more NumLock keys were held down.
     /// </summary>
-    NumLock = 0x0020,
+    NumLock = Native.Glfw.ModNumLockDefine,
 }
