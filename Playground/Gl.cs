@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using CanDoUrco.OpenGl.Attributes;
+using CanDoUrco.OpenGl.Common.Attributes;
 
 namespace Playground;
 

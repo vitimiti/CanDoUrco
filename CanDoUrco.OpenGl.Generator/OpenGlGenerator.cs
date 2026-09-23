@@ -26,10 +26,10 @@ namespace CanDourco.OpenGl.Generator;
 public sealed class OpenGlGenerator : IIncrementalGenerator
 {
     private const string SpecificationAttribute =
-        "CanDoUrco.OpenGl.Attributes.OpenGlSpecificationAttribute";
+        "CanDoUrco.OpenGl.Common.Attributes.OpenGlSpecificationAttribute";
 
     private const string ExtensionAttribute =
-        "CanDoUrco.OpenGl.Attributes.OpenGlExtensionAttribute";
+        "CanDoUrco.OpenGl.Common.Attributes.OpenGlExtensionAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {

@@ -14,18 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace CanDoUrco.OpenGl.Attributes;
+namespace CanDoUrco.OpenGl.Common.Attributes;
 
 /// <summary>
-/// An attribute to indicate an extension desired during generation.
+/// The OpenGL profile.
 /// </summary>
-/// <param name="extension">The extension to generate code for.</param>
-/// <remarks>Each extension will have its own attribute, and adding lists either space separated, comma separated or otherwise is not supported and will be treated as the full name of the extension.</remarks>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-public sealed class OpenGlExtensionAttribute(string extension) : Attribute
+/// <seealso cref="OpenGlSpecificationAttribute"/>
+public enum OpenGlProfile
 {
     /// <summary>
-    /// Gets or sets the OpenGL extension required.
+    /// Compatibility mode.
     /// </summary>
-    public string Extension { get; set; } = extension;
+    Compat,
+
+    /// <summary>
+    /// Core mode.
+    /// </summary>
+    Core,
 }
