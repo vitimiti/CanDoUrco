@@ -21,6 +21,7 @@ using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Utilities;
 using CanDoUrco.Glfw.Video;
 
+Console.WriteLine($"Running GLFW v{GlfwNativeContext.Version}");
 using var context = new GlfwNativeContext();
 using var window = new GlfwWindow(
     new Size(640, 480),
