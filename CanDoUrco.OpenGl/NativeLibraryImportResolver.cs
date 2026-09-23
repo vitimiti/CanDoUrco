@@ -69,6 +69,9 @@ internal static class LibraNativeLibraryImportResolverryImporter
         sb.AppendLine("        else if (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())"                                          );
         sb.AppendLine("        {"                                                                                                           );
         sb.AppendLine("            yield return \"libOpenGL.so.0\";"                                                                        );
+        sb.AppendLine("            yield return \"libOpenGL.so\";"                                                                          );
+        sb.AppendLine("            yield return \"libEGL.so.1\";"                                                                           );
+        sb.AppendLine("            yield return \"libEGL.so\";"                                                                             );
         sb.AppendLine("            yield return \"libGL.so.1\";"                                                                            );
         sb.AppendLine("            yield return \"libGL.so\";"                                                                              );
         sb.AppendLine("        }"                                                                                                           );
