@@ -5,9 +5,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishTrimmed>true</PublishTrimmed>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="../CanDoUrco.OpenGl.Generator/registry/gl.xml" />
+    <AdditionalFiles Include="../CanDoUrco.OpenGl.Generator/registry/glx.xml" />
+    <AdditionalFiles Include="../CanDoUrco.OpenGl.Generator/registry/wgl.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
+    <ProjectReference Include="../CanDoUrco.OpenGl/CanDoUrco.OpenGl.csproj" />
+    <ProjectReference
+      Include="../CanDoUrco.OpenGl.Generator/CanDoUrco.OpenGl.Generator.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+    />
   </ItemGroup>
 </Project>
