@@ -4,6 +4,5 @@
   </Folder>
   <Project Path="CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
   <Project Path="CanDoUrco.OpenGl.Generator/CanDoUrco.OpenGl.Generator.csproj" />
-  <Project Path="CanDoUrco.OpenGl10/CanDoUrco.OpenGl10.csproj" />
   <Project Path="Playground/Playground.csproj" />
 </Solution>
