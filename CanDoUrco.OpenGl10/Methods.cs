@@ -64,4 +64,15 @@ internal static partial class Gl10
             Gl.Enums.NoError
         );
     }
+
+    public static void PointSize(float size)
+    {
+        Gl.PointSize ??= Loader.GetDelegate<Gl.PointSizeDelegate>("glPointSize");
+        Gl.PointSize(size);
+        Error.PerApiCallErrorThrower(
+            GetError,
+            $"Error occurred while calling {nameof(PointSize)} with args: [{size}]",
+            Gl.Enums.NoError
+        );
+    }
 }
