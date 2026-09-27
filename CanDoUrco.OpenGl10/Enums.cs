@@ -32,4 +32,20 @@ internal static partial class Gl10
         Clockwise = Gl.Enums.Cw,
         CounterClockwise = Gl.Enums.Ccw,
     }
+
+    public enum HintTarget : uint
+    {
+        Fog = Gl.Enums.FogHint,
+        LineSmooth = Gl.Enums.LineSmoothHint,
+        PerspectiveCorrection = Gl.Enums.PerspectiveCorrectionHint,
+        PointSmooth = Gl.Enums.PointSmoothHint,
+        PolygonSmooth = Gl.Enums.PolygonSmoothHint,
+    }
+
+    public enum HintMode : uint
+    {
+        DontCare = Gl.Enums.DontCare,
+        Fastest = Gl.Enums.Fastest,
+        Nicest = Gl.Enums.Nicest,
+    }
 }

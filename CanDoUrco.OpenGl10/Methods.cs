@@ -42,4 +42,15 @@ internal static partial class Gl10
             Gl.Enums.NoError
         );
     }
+
+    public static void Hint(HintTarget target, HintMode mode)
+    {
+        Gl.Hint ??= Loader.GetDelegate<Gl.HintDelegate>("glHint");
+        Gl.Hint((uint)target, (uint)mode);
+        Error.PerApiCallErrorThrower(
+            GetError,
+            $"Error occurred while calling {nameof(Hint)} with args: [{target}, {mode}]",
+            Gl.Enums.NoError
+        );
+    }
 }
