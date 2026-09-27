@@ -4,6 +4,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsAotCompatible>true</IsAotCompatible>
+    <IsTrimmable>true</IsTrimmable>
+    <VerifyReferenceTrimCompatibility>true</VerifyReferenceTrimCompatibility>
   </PropertyGroup>
 
   <ItemGroup>
