@@ -53,4 +53,15 @@ internal static partial class Gl10
             Gl.Enums.NoError
         );
     }
+
+    public static void LineWidth(float width)
+    {
+        Gl.LineWidth ??= Loader.GetDelegate<Gl.LineWidthDelegate>("glLineWidth");
+        Gl.LineWidth(width);
+        Error.PerApiCallErrorThrower(
+            GetError,
+            $"Error occurred while calling {nameof(LineWidth)} with args: [{width}]",
+            Gl.Enums.NoError
+        );
+    }
 }
