@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsAotCompatible>true</IsAotCompatible>
+    <IsTrimmable>true</IsTrimmable>
+    <VerifyReferenceTrimCompatibility>true</VerifyReferenceTrimCompatibility>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="../CanDoUrco.OpenGl.Generator/registry/gl.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
+    <ProjectReference Include="../CanDoUrco.OpenGl.Common/CanDoUrco.OpenGl.Common.csproj" />
+    <ProjectReference
+      Include="../CanDoUrco.OpenGl.Generator/CanDoUrco.OpenGl.Generator.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+    />
+  </ItemGroup>
+</Project>
