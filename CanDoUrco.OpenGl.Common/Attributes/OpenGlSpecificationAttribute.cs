@@ -1,4 +1,4 @@
-// A generator to import required OpenGL and its extensions.
+// Common utilities for OpenGL importing and generation.
 // Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
 // This program is free software: you can redistribute it and/or modify
