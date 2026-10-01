@@ -18,12 +18,23 @@ using System.Runtime.InteropServices;
 
 namespace CanDoUrco.OpenGl.Utilities;
 
+/// <summary>
+/// Provides functionality to load OpenGL methods dynamically from the appropriate system libraries.
+/// </summary>
 public static class OpenGlLoader
 {
+    /// <summary>
+    /// Loads an OpenGL method with the specified name and returns it as a delegate of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of delegate representing the OpenGL method.</typeparam>
+    /// <param name="methodName">The name of the OpenGL method to load.</param>
+    /// <returns>A delegate of type <typeparamref name="T"/> representing the loaded OpenGL method.</returns>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="methodName"/> is <see langword="null"/> or empty.</exception>
+    /// <exception cref="EntryPointNotFoundException">Thrown if the specified OpenGL method cannot be found in any known OpenGL library.</exception>
     public static T LoadMethod<T>(string methodName)
         where T : Delegate
     {
-        ArgumentNullException.ThrowIfNull(methodName);
+        ArgumentException.ThrowIfNullOrEmpty(methodName);
         foreach (var library in EnumerateLibraries())
         {
             if (!NativeLibrary.TryLoad(library, out var handle))
