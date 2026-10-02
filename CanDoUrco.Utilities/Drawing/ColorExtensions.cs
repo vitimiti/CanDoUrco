@@ -28,5 +28,9 @@ public static class ColorExtensions
         /// <returns>A <see cref="Vector4"/> containing the normalized RGBA components.</returns>
         public Vector4 ToNormalized() =>
             new(color.R / 255F, color.G / 255F, color.B / 255F, color.A / 255F);
+
+        /// <summary>Returns the RGB components normalized to the range <c>[0, 1]</c>.</summary>
+        /// <returns>A <see cref="Vector3"/> containing the normalized RGB components.</returns>
+        public Vector3 ToNormalizedRgb() => new(color.R / 255F, color.G / 255F, color.B / 255F);
     }
 }
