@@ -16,7 +16,7 @@
 
 using System.Drawing;
 
-namespace CanDoUrco.IO.Images.Specifics;
+namespace CanDoUrco.IO.Images.Decoders;
 
 /// <summary>
 /// A self-contained decoder for baseline and extended sequential (Huffman, 8-bit) JPEG images.

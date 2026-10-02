@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using CanDoUrco.IO.Images.Specifics;
+using CanDoUrco.IO.Images.Decoders;
 
 namespace CanDoUrco.IO.Images;
 
