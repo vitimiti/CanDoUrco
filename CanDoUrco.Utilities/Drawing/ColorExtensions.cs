@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 
 using System.Drawing;
+using System.Numerics;
 
 namespace CanDoUrco.Utilities.Drawing;
 
@@ -24,8 +25,8 @@ public static class ColorExtensions
     extension(Color color)
     {
         /// <summary>Returns the color components normalized to the range <c>[0, 1]</c>.</summary>
-        /// <returns>A tuple containing the normalized RGBA components.</returns>
-        public (float R, float G, float B, float A) ToNormalized() =>
-            (color.R / 255F, color.G / 255F, color.B / 255F, color.A / 255F);
+        /// <returns>A <see cref="Vector4"/> containing the normalized RGBA components.</returns>
+        public Vector4 ToNormalized() =>
+            new(color.R / 255F, color.G / 255F, color.B / 255F, color.A / 255F);
     }
 }
