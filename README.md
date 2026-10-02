@@ -224,3 +224,18 @@ return CrashReporter.Run(() =>
 - **Fallback:** if no dialog is possible (for example no display), the error is written to stderr.
 
 Only managed exceptions can be reported. Native crashes, such as an access violation in a driver, cannot be caught.
+
+#### Matrix4x4Extensions
+
+`CanDoUrco.Utilities.Mathematics` has helpers to pass `System.Numerics.Matrix4x4` values to OpenGL without copying them element by element.
+
+```csharp
+Span<float> mvp = stackalloc float[16];
+(model * projection).CopyTo(mvp);
+Gl.UniformMatrix4fv(location, 1, transpose: false, mvp);
+```
+
+- `CopyTo(Span<float>)` copies the 16 elements in row-major order without allocating.
+- `ToArray()` returns them as a new `float[]`.
+
+`System.Numerics` uses row vectors, so the multiplication order and the `transpose` argument must match your shader.

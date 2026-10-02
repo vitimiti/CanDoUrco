@@ -23,6 +23,7 @@ using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Utilities;
 using CanDoUrco.Glfw.Video;
 using CanDoUrco.Utilities;
+using CanDoUrco.Utilities.Mathematics;
 using Playground;
 
 return CrashReporter.Run(() =>
@@ -109,6 +110,7 @@ return CrashReporter.Run(() =>
     Gl.LinkProgram(program);
 
     var mvpLocation = Gl.GetUniformLocation(program, "MVP");
+    Span<float> mvpFloats = stackalloc float[16];
     var vPosLocation = Gl.GetAttribLocation(program, "vPos");
     var vColLocation = Gl.GetAttribLocation(program, "vCol");
 
@@ -154,24 +156,7 @@ return CrashReporter.Run(() =>
             zFarPlane: -1F
         );
 
-        var mvp = m * p;
-        var mvpFloats = new float[16];
-        mvpFloats[0] = mvp.M11;
-        mvpFloats[1] = mvp.M12;
-        mvpFloats[2] = mvp.M13;
-        mvpFloats[3] = mvp.M14;
-        mvpFloats[4] = mvp.M21;
-        mvpFloats[5] = mvp.M22;
-        mvpFloats[6] = mvp.M23;
-        mvpFloats[7] = mvp.M24;
-        mvpFloats[8] = mvp.M31;
-        mvpFloats[9] = mvp.M32;
-        mvpFloats[10] = mvp.M33;
-        mvpFloats[11] = mvp.M34;
-        mvpFloats[12] = mvp.M41;
-        mvpFloats[13] = mvp.M42;
-        mvpFloats[14] = mvp.M43;
-        mvpFloats[15] = mvp.M44;
+        (m * p).CopyTo(mvpFloats);
 
         Gl.UseProgram(program);
         Gl.UniformMatrix4fv(mvpLocation, 1, transpose: false, mvpFloats);
