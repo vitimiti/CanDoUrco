@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
+    <ProjectReference Include="../CanDoUrco.Utilities/CanDoUrco.Utilities.csproj" />
     <ProjectReference
       Include="../CanDoUrco.OpenGl.Generator/CanDoUrco.OpenGl.Generator.csproj"
       OutputItemType="Analyzer"

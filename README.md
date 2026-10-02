@@ -9,10 +9,12 @@ This readme is to be completed.
 - [Libraries](#libraries)
   - [CanDoUrco.Glfw](#candourcoglfw)
   - [CanDoUrco.OpenGl.Generator](#candourcoopenglgenerator)
+  - [CanDoUrco.Utilities](#candourcoutilities)
 
 ## Libraries
 
 - [CanDourco.Glfw](#candourcoglfw): A safe import library for GLFW v3.5.1
+- [CanDoUrco.Utilities](#candourcoutilities): Shared utilities, such as crash reporting
 - [CanDoUrco.OpenGl.Generator](#candourcoopenglgenerator): A source generator that creates safe OpenGL bindings from the Khronos `gl.xml`
 
 ### CanDoUrco.Glfw
@@ -200,3 +202,25 @@ OpenGlLibraryLoader.ProcAddressLoader = GlfwContextUtilities.GetProcAddress;
 ```
 
 Remember that a context must be current (for GLFW, `window.MakeContextCurrent()`) before the first call to an OpenGL function.
+
+### CanDoUrco.Utilities
+
+Shared utilities for the other projects.
+
+#### CrashReporter
+
+Shows unhandled exceptions in a dialog, so applications without a terminal (set `<OutputType>WinExe</OutputType>`) don't crash silently.
+
+```csharp
+return CrashReporter.Run(() =>
+{
+    // Your program.
+});
+```
+
+- **Windows:** a native `MessageBox`.
+- **macOS:** an `osascript` alert.
+- **Linux/BSD:** `kdialog` on KDE (otherwise `zenity` first), falling back to the other and then `xmessage`.
+- **Fallback:** if no dialog is possible (for example no display), the error is written to stderr.
+
+Only managed exceptions can be reported. Native crashes, such as an access violation in a driver, cannot be caught.
