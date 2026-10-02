@@ -1,8 +1,6 @@
 <Solution>
-  <Folder Name="/CanDoUrco.OpenGl.Utilities/">
-    <Project Path="CanDoUrco.OpenGl.Utilities/CanDoUrco.OpenGl.Utilities.csproj" />
-  </Folder>
+  <Folder Name="/CanDoUrco.OpenGl.Utilities/" />
   <Project Path="CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
-  <Project Path="CanDoUrco.OpenGl10/CanDoUrco.OpenGl10.csproj" />
+  <Project Path="CanDoUrco.OpenGl.Generator/CanDoUrco.OpenGl.Generator.csproj" />
   <Project Path="Playground/Playground.csproj" />
 </Solution>
