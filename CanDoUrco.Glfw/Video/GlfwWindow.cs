@@ -614,11 +614,11 @@ public sealed class GlfwWindow : IDisposable
                 GetAttribute(_handle, Native.Glfw.ContextVersionMinorDefine),
                 GetAttribute(_handle, Native.Glfw.ContextRevisionDefine)
             ),
-            OpenGlForwardCompat = GetAttributeBool(_handle, Native.Glfw.OpenGlForwardCompatDefine),
+            OpenGLForwardCompat = GetAttributeBool(_handle, Native.Glfw.OpenGLForwardCompatDefine),
             ContextDebug = GetAttributeBool(_handle, Native.Glfw.ContextDebugDefine),
-            OpenGlProfile = GetAttributeEnum<GlfwOpenGlProfile>(
+            OpenGLProfile = GetAttributeEnum<GlfwOpenGLProfile>(
                 _handle,
-                Native.Glfw.OpenGlProfileDefine
+                Native.Glfw.OpenGLProfileDefine
             ),
             ContextReleaseBehavior = GetAttributeEnum<GlfwContextReleaseBehavior>(
                 _handle,
@@ -689,12 +689,12 @@ public sealed class GlfwWindow : IDisposable
 
         SetAttribute(
             _handle,
-            Native.Glfw.OpenGlForwardCompatDefine,
-            attributes.OpenGlForwardCompat
+            Native.Glfw.OpenGLForwardCompatDefine,
+            attributes.OpenGLForwardCompat
         );
 
         SetAttribute(_handle, Native.Glfw.ContextDebugDefine, attributes.ContextDebug);
-        SetAttribute(_handle, Native.Glfw.OpenGlProfileDefine, attributes.OpenGlProfile);
+        SetAttribute(_handle, Native.Glfw.OpenGLProfileDefine, attributes.OpenGLProfile);
         SetAttribute(
             _handle,
             Native.Glfw.ContextReleaseBehaviorDefine,
@@ -1022,9 +1022,9 @@ public sealed class GlfwWindow : IDisposable
         SetHint(Native.Glfw.ContextVersionMinorDefine, options.ContextVersion.Minor);
         SetHint(Native.Glfw.ContextRobustnessDefine, options.ContextRobustness);
         SetHint(Native.Glfw.ContextReleaseBehaviorDefine, options.ContextReleaseBehavior);
-        SetHint(Native.Glfw.OpenGlForwardCompatDefine, options.OpenGlForwardCompat);
+        SetHint(Native.Glfw.OpenGLForwardCompatDefine, options.OpenGLForwardCompat);
         SetHint(Native.Glfw.ContextDebugDefine, options.ContextDebug);
-        SetHint(Native.Glfw.OpenGlProfileDefine, options.OpenGlProfile);
+        SetHint(Native.Glfw.OpenGLProfileDefine, options.OpenGLProfile);
 
         if (
             OperatingSystem.IsWindows()

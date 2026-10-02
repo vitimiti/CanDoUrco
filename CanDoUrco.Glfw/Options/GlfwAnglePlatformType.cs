@@ -32,12 +32,12 @@ public enum GlfwAnglePlatformType
     /// <summary>
     /// Request ANGLE to use OpenGL.
     /// </summary>
-    OpenGl = Native.Glfw.AnglePlatformTypeOpenGlDefine,
+    OpenGL = Native.Glfw.AnglePlatformTypeOpenGLDefine,
 
     /// <summary>
     /// Request ANGLE to use OpenGLES.
     /// </summary>
-    OpenGlEs = Native.Glfw.AnglePlatformTypeOpenGlEsDefine,
+    OpenGLES = Native.Glfw.AnglePlatformTypeOpenGLESDefine,
 
     /// <summary>
     /// Request ANGLE to use D3D9.

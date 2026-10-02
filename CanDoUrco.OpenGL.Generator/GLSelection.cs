@@ -15,9 +15,9 @@
 
 using System.Text.RegularExpressions;
 
-namespace CanDoUrco.OpenGl.Generator;
+namespace CanDoUrco.OpenGL.Generator;
 
-internal sealed class GlSelection
+internal sealed class GLSelection
 {
     public string Api { get; private set; } = "gl";
     public List<string> Enums { get; } = [];
@@ -26,9 +26,14 @@ internal sealed class GlSelection
 
     public static bool IsVersion(string text) => Regex.IsMatch(text, @"^\d+\.\d+$");
 
-    public static GlSelection Create(GlRegistry registry, string? version, int profile, string[] extensions)
+    public static GLSelection Create(
+        GLRegistry registry,
+        string? version,
+        int profile,
+        string[] extensions
+    )
     {
-        var selection = new GlSelection();
+        var selection = new GLSelection();
         var profileName = profile switch
         {
             0 => "core",
@@ -88,7 +93,10 @@ internal sealed class GlSelection
             if (!extension.Supported.Contains(supportKey))
             {
                 selection.Problems.Add(
-                    ("OGL003", $"OpenGL extension '{name}' is not supported by the selected API/profile.")
+                    (
+                        "OGL003",
+                        $"OpenGL extension '{name}' is not supported by the selected API/profile."
+                    )
                 );
                 continue;
             }

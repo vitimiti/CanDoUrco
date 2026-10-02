@@ -14,25 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace CanDoUrco.Glfw.Options;
+using CanDoUrco.OpenGL.Generator;
 
-/// <summary>
-/// The possible OpenGL profiles.
-/// </summary>
-public enum GlfwOpenGLProfile
-{
-    /// <summary>
-    /// Use any available profile.
-    /// </summary>
-    Any = Native.Glfw.OpenGLAnyProfileDefine,
+namespace Playground;
 
-    /// <summary>
-    /// Use the compatibility profile.
-    /// </summary>
-    Compat = Native.Glfw.OpenGLCompatProfileDefine,
-
-    /// <summary>
-    /// Use the core profile.
-    /// </summary>
-    Core = Native.Glfw.OpenGLCoreProfileDefine,
-}
+[OpenGL("3.3", Profile = OpenGLProfile.Core)]
+internal static partial class GL;

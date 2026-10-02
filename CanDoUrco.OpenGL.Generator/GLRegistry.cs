@@ -18,7 +18,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
-namespace CanDoUrco.OpenGl.Generator;
+namespace CanDoUrco.OpenGL.Generator;
 
 internal sealed class EnumDef(string name, decimal value, string? api, string[] groups)
 {
@@ -28,7 +28,14 @@ internal sealed class EnumDef(string name, decimal value, string? api, string[] 
     public string[] Groups { get; } = groups;
 }
 
-internal sealed class ParamDef(string name, string baseType, bool isConst, int depth, string? len, string? group)
+internal sealed class ParamDef(
+    string name,
+    string baseType,
+    bool isConst,
+    int depth,
+    string? len,
+    string? group
+)
 {
     public string Name { get; } = name;
     public string BaseType { get; } = baseType;
@@ -68,15 +75,15 @@ internal sealed class ExtensionDef(string name, HashSet<string> supported)
     public List<RequireBlock> Blocks { get; } = [];
 }
 
-internal sealed class GlRegistry
+internal sealed class GLRegistry
 {
-    private const string ResourceName = "OpenGlGenerator.Resources.Gl.xml";
+    private const string ResourceName = "OpenGLGenerator.Resources.GL.xml";
 
-    private static readonly Lazy<GlRegistry> s_instance = new(Load);
+    private static readonly Lazy<GLRegistry> LazyInstance = new(Load);
 
-    private GlRegistry() { }
+    private GLRegistry() { }
 
-    public static GlRegistry Instance => s_instance.Value;
+    public static GLRegistry Instance => LazyInstance.Value;
 
     public Dictionary<string, List<EnumDef>> Enums { get; } = [];
     public HashSet<string> BitmaskGroups { get; } = [];
@@ -84,13 +91,14 @@ internal sealed class GlRegistry
     public List<FeatureDef> Features { get; } = [];
     public Dictionary<string, ExtensionDef> Extensions { get; } = [];
 
-    private static GlRegistry Load()
+    private static GLRegistry Load()
     {
         using var stream =
             Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName)
             ?? throw new InvalidOperationException($"Missing embedded resource {ResourceName}.");
+
         var root = XDocument.Load(stream).Root!;
-        var registry = new GlRegistry();
+        var registry = new GLRegistry();
 
         foreach (var block in root.Elements("enums"))
         {
@@ -107,9 +115,11 @@ internal sealed class GlRegistry
                 var groupText = (string?)e.Attribute("group");
                 var groups = groupText is null
                     ? []
-                    : groupText.Split([','], StringSplitOptions.RemoveEmptyEntries)
+                    : groupText
+                        .Split([','], StringSplitOptions.RemoveEmptyEntries)
                         .Select(g => g.Trim())
                         .ToArray();
+
                 if (isBitmask)
                 {
                     foreach (var g in groups)
@@ -145,10 +155,7 @@ internal sealed class GlRegistry
         foreach (var f in root.Elements("feature"))
         {
             var api = (string?)f.Attribute("api");
-            if (
-                api is null
-                || !Version.TryParse((string?)f.Attribute("number"), out var number)
-            )
+            if (api is null || !Version.TryParse((string?)f.Attribute("number"), out var number))
             {
                 continue;
             }
@@ -169,6 +176,7 @@ internal sealed class GlRegistry
             var supported = new HashSet<string>(
                 ((string?)x.Attribute("supported") ?? "").Split('|')
             );
+
             var extension = new ExtensionDef(name, supported);
             extension.Blocks.AddRange(x.Elements().Select(ParseBlock).OfType<RequireBlock>());
             registry.Extensions[name] = extension;
@@ -189,6 +197,7 @@ internal sealed class GlRegistry
             (string?)element.Attribute("profile"),
             element.Name == "remove"
         );
+
         foreach (var item in element.Elements())
         {
             var name = (string?)item.Attribute("name");
@@ -259,7 +268,9 @@ internal sealed class GlRegistry
                 return null;
             }
 
-            parameters.Add(ParseType(name, p, (string?)p.Attribute("group"), (string?)p.Attribute("len")));
+            parameters.Add(
+                ParseType(name, p, (string?)p.Attribute("group"), (string?)p.Attribute("len"))
+            );
         }
 
         return new CommandDef(protoName, returnType, parameters);
@@ -290,10 +301,7 @@ internal sealed class GlRegistry
         var full = text.ToString();
         var marker = full.IndexOf('@');
         var before = marker >= 0 ? full.Substring(0, marker) : full;
-        if (baseType is null)
-        {
-            baseType = "void";
-        }
+        baseType ??= "void";
 
         var firstStar = full.IndexOf('*');
         var constRegion = firstStar >= 0 ? full.Substring(0, firstStar) : full;

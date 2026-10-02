@@ -13,11 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 
-namespace CanDoUrco.OpenGl.Generator;
+namespace CanDoUrco.OpenGL.Generator;
 
-internal static class Attributes
+internal static class GLAttributes
 {
-    public const string AttributeMetadataName = "CanDoUrco.OpenGl.Generator.OpenGlAttribute";
+    public const string AttributeMetadataName = "CanDoUrco.OpenGL.Generator.OpenGLAttribute";
 
     public static string Generate() =>
         """
@@ -25,9 +25,9 @@ internal static class Attributes
             #nullable enable
             using System;
 
-            namespace CanDoUrco.OpenGl.Generator
+            namespace CanDoUrco.OpenGL.Generator
             {
-                internal enum OpenGlProfile
+                internal enum OpenGLProfile
                 {
                     Core,
                     Compatibility,
@@ -35,16 +35,16 @@ internal static class Attributes
                 }
 
                 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-                internal sealed class OpenGlAttribute : Attribute
+                internal sealed class OpenGLAttribute : Attribute
                 {
-                    public OpenGlAttribute(string versionOrExtension)
+                    public OpenGLAttribute(string versionOrExtension)
                     {
                         VersionOrExtension = versionOrExtension;
                     }
 
                     public string VersionOrExtension { get; }
 
-                    public OpenGlProfile Profile { get; set; } = OpenGlProfile.Core;
+                    public OpenGLProfile Profile { get; set; } = OpenGLProfile.Core;
 
                     public string? LoaderMethod { get; set; }
                 }

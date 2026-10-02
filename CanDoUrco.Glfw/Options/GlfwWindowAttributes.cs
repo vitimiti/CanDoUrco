@@ -105,7 +105,7 @@ public sealed record class GlfwWindowAttributes
     /// <summary>
     /// Gets whether the window supports forward compat mode for OpenGL.
     /// </summary>
-    public bool OpenGlForwardCompat { get; init; }
+    public bool OpenGLForwardCompat { get; init; }
 
     /// <summary>
     /// Gets whether the window's context is in debug mode.
@@ -115,8 +115,8 @@ public sealed record class GlfwWindowAttributes
     /// <summary>
     /// Gets the OpenGL profile of the window.
     /// </summary>
-    /// <seealso cref="GlfwOpenGlProfile"/>
-    public GlfwOpenGlProfile OpenGlProfile { get; init; }
+    /// <seealso cref="GlfwOpenGLProfile"/>
+    public GlfwOpenGLProfile OpenGLProfile { get; init; }
 
     /// <summary>
     /// Gets the context release behaviour of the window.

@@ -12,9 +12,15 @@
     <ProjectReference Include="../CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
     <ProjectReference Include="../CanDoUrco.Utilities/CanDoUrco.Utilities.csproj" />
     <ProjectReference
-      Include="../CanDoUrco.OpenGl.Generator/CanDoUrco.OpenGl.Generator.csproj"
+      Include="../CanDoUrco.OpenGL.Generator/CanDoUrco.OpenGL.Generator.csproj"
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false"
     />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Shaders\Core.Vertex.glsl" />
+    <EmbeddedResource Include="Resources\Shaders\Core.Fragment.glsl" />
+    <EmbeddedResource Include="Resources\Textures\Wall.jpg" />
   </ItemGroup>
 </Project>

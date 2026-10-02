@@ -29,10 +29,10 @@ public enum GlfwClientApi
     /// <summary>
     /// Use the OpenGL API.
     /// </summary>
-    OpenGl = Native.Glfw.OpenGlApiDefine,
+    OpenGL = Native.Glfw.OpenGLApiDefine,
 
     /// <summary>
     /// Use the OpenGLES API.
     /// </summary>
-    OpenGlEs = Native.Glfw.OpenGlEsApiDefine,
+    OpenGLES = Native.Glfw.OpenGLESApiDefine,
 }

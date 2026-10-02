@@ -1,3 +1,5 @@
+#version 330 core
+
 // This is a small testing ground for CanDoUrco.
 // Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
@@ -14,25 +16,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace CanDoUrco.Glfw.Options;
+out vec4 FragColor;
 
-/// <summary>
-/// The possible OpenGL profiles.
-/// </summary>
-public enum GlfwOpenGLProfile
-{
-    /// <summary>
-    /// Use any available profile.
-    /// </summary>
-    Any = Native.Glfw.OpenGLAnyProfileDefine,
+in vec3 ourColor;
 
-    /// <summary>
-    /// Use the compatibility profile.
-    /// </summary>
-    Compat = Native.Glfw.OpenGLCompatProfileDefine,
-
-    /// <summary>
-    /// Use the core profile.
-    /// </summary>
-    Core = Native.Glfw.OpenGLCoreProfileDefine,
-}
+void main() { FragColor = vec4(ourColor, 1.0); }

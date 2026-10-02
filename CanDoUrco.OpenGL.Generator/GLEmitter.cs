@@ -17,11 +17,11 @@ using System.Globalization;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace CanDoUrco.OpenGl.Generator;
+namespace CanDoUrco.OpenGL.Generator;
 
-internal static class GlEmitter
+internal static class GLEmitter
 {
-    private const string Loader = "global::CanDoUrco.OpenGl.Generator.OpenGlLibraryLoader";
+    private const string Loader = "global::CanDoUrco.OpenGL.Generator.OpenGLLibraryLoader";
     private const string Marshal = "global::System.Runtime.InteropServices.Marshal";
 
     private enum Kind
@@ -55,7 +55,7 @@ internal static class GlEmitter
         public string? GenericName { get; set; }
     }
 
-    public static string Emit(GlTarget target, GlRegistry registry, GlSelection selection)
+    public static string Emit(GLTarget target, GLRegistry registry, GLSelection selection)
     {
         var enumDefs = new Dictionary<string, EnumDef>();
         foreach (var name in selection.Enums)
@@ -119,6 +119,7 @@ internal static class GlEmitter
             indent,
             $"{target.Accessibility} {(target.IsStatic ? "static " : "")}partial class {target.Name}"
         );
+
         Line(sb, indent, "{");
         indent++;
 
@@ -182,7 +183,10 @@ internal static class GlEmitter
 
     private static string MemberName(string glName)
     {
-        var name = glName.StartsWith("GL_", StringComparison.Ordinal) ? glName.Substring(3) : glName;
+        var name = glName.StartsWith("GL_", StringComparison.Ordinal)
+            ? glName.Substring(3)
+            : glName;
+
         var sb = new StringBuilder();
         foreach (var token in name.Split(['_'], StringSplitOptions.RemoveEmptyEntries))
         {
@@ -192,7 +196,8 @@ internal static class GlEmitter
             }
             else
             {
-                sb.Append(char.ToUpperInvariant(token[0])).Append(token.Substring(1).ToLowerInvariant());
+                sb.Append(char.ToUpperInvariant(token[0]))
+                    .Append(token.Substring(1).ToLowerInvariant());
             }
         }
 
@@ -233,7 +238,13 @@ internal static class GlEmitter
         };
     }
 
-    private static void EmitEnum(StringBuilder sb, int indent, string group, List<EnumDef> defs, bool isBitmask)
+    private static void EmitEnum(
+        StringBuilder sb,
+        int indent,
+        string group,
+        List<EnumDef> defs,
+        bool isBitmask
+    )
     {
         var typeName = EnumTypeName(group);
         var underlying = group == "Boolean" ? "byte" : ConstType(defs).Type;
@@ -300,13 +311,15 @@ internal static class GlEmitter
         var methodName = command.Name.StartsWith("gl", StringComparison.Ordinal)
             ? command.Name.Substring(2)
             : command.Name;
+
         if (methodName.Length == 0 || !emittedNames.Add(methodName))
         {
             return;
         }
 
         var delegateName = methodName + "Delegate";
-        var fieldName = "_" + char.ToLowerInvariant(methodName[0]) + methodName.Substring(1) + "Pointer";
+        var fieldName =
+            "_" + char.ToLowerInvariant(methodName[0]) + methodName.Substring(1) + "Pointer";
 
         var parameters = command
             .Parameters.Select(p => new Param
@@ -321,7 +334,9 @@ internal static class GlEmitter
         Classify(parameters, enumTypes);
 
         var returnDef = command.Return;
-        var rawReturn = returnDef.BaseType == "void" && returnDef.Depth == 0 ? "void" : RawParamType(returnDef);
+        var rawReturn =
+            returnDef.BaseType == "void" && returnDef.Depth == 0 ? "void" : RawParamType(returnDef);
+
         var publicReturn = rawReturn;
         var returnIsString = false;
         var returnIsBool = false;
@@ -354,18 +369,54 @@ internal static class GlEmitter
         Line(sb, indent, $"private delegate {rawReturn} {delegateName}({delegateParams});");
         Line(sb, indent, $"private static {delegateName}? {fieldName};");
 
-        var hasGeneric = parameters.Any(p => p.Kind is Kind.GenericSpan or Kind.GenericReadOnlySpan);
-        EmitMethod(sb, indent, methodName, delegateName, fieldName, command.Name, parameters, publicReturn, returnIsString, returnIsBool, returnEnum, rawReturn, loaderMethod);
+        var hasGeneric = parameters.Any(p =>
+            p.Kind is Kind.GenericSpan or Kind.GenericReadOnlySpan
+        );
+
+        EmitMethod(
+            sb,
+            indent,
+            methodName,
+            delegateName,
+            fieldName,
+            command.Name,
+            parameters,
+            publicReturn,
+            returnIsString,
+            returnIsBool,
+            returnEnum,
+            rawReturn,
+            loaderMethod
+        );
+
         if (hasGeneric)
         {
-            foreach (var p in parameters.Where(p => p.Kind is Kind.GenericSpan or Kind.GenericReadOnlySpan))
+            foreach (
+                var p in parameters.Where(p =>
+                    p.Kind is Kind.GenericSpan or Kind.GenericReadOnlySpan
+                )
+            )
             {
                 p.Kind = Kind.Pointer;
                 p.PublicType = "nint";
                 p.GenericName = null;
             }
 
-            EmitMethod(sb, indent, methodName, delegateName, fieldName, command.Name, parameters, publicReturn, returnIsString, returnIsBool, returnEnum, rawReturn, loaderMethod);
+            EmitMethod(
+                sb,
+                indent,
+                methodName,
+                delegateName,
+                fieldName,
+                command.Name,
+                parameters,
+                publicReturn,
+                returnIsString,
+                returnIsBool,
+                returnEnum,
+                rawReturn,
+                loaderMethod
+            );
         }
     }
 
@@ -426,11 +477,15 @@ internal static class GlEmitter
             }
             else if (def.Depth <= 2)
             {
-                p.Element = def.Depth == 2 ? "nint" : def.BaseType == "GLboolean" ? "bool" : MapType(def.BaseType);
+                p.Element =
+                    def.Depth == 2 ? "nint"
+                    : def.BaseType == "GLboolean" ? "bool"
+                    : MapType(def.BaseType);
                 if (isArray)
                 {
                     p.Kind = def.IsConst ? Kind.ReadOnlySpan : Kind.Span;
-                    p.PublicType = $"global::System.{(def.IsConst ? "ReadOnlySpan" : "Span")}<{p.Element}>";
+                    p.PublicType =
+                        $"global::System.{(def.IsConst ? "ReadOnlySpan" : "Span")}<{p.Element}>";
                 }
                 else
                 {
@@ -445,10 +500,14 @@ internal static class GlEmitter
             }
         }
 
-        foreach (var array in parameters.Where(p => p.Kind is Kind.Span or Kind.ReadOnlySpan or Kind.StringArray))
+        foreach (
+            var array in parameters.Where(p =>
+                p.Kind is Kind.Span or Kind.ReadOnlySpan or Kind.StringArray
+            )
+        )
         {
-            var target = parameters.FirstOrDefault(
-                p => p.Def.Name == array.Def.Len && p.Kind == Kind.Value && p.Def.Depth == 0
+            var target = parameters.FirstOrDefault(p =>
+                p.Def.Name == array.Def.Len && p.Kind == Kind.Value && p.Def.Depth == 0
             );
             if (target is not null && target.Raw is "int" or "uint" or "long" or "ulong" or "nint")
             {
@@ -476,18 +535,22 @@ internal static class GlEmitter
     {
         var loaderArgument = loaderMethod is null ? "" : ", " + loaderMethod;
         var visible = parameters.Where(p => p.Kind != Kind.Hidden).ToList();
-        var generics = visible.Where(p => p.GenericName is not null).Select(p => p.GenericName!).ToList();
-        var needsUnsafe = parameters.Any(
-            p =>
-                p.Kind
-                    is Kind.Ref
-                        or Kind.In
-                        or Kind.Span
-                        or Kind.ReadOnlySpan
-                        or Kind.GenericSpan
-                        or Kind.GenericReadOnlySpan
-                        or Kind.StringArray
+        var generics = visible
+            .Where(p => p.GenericName is not null)
+            .Select(p => p.GenericName!)
+            .ToList();
+
+        var needsUnsafe = parameters.Any(p =>
+            p.Kind
+                is Kind.Ref
+                    or Kind.In
+                    or Kind.Span
+                    or Kind.ReadOnlySpan
+                    or Kind.GenericSpan
+                    or Kind.GenericReadOnlySpan
+                    or Kind.StringArray
         );
+
         var signature = string.Join(", ", visible.Select(p => $"{p.PublicType} {p.Name}"));
         var typeParams = generics.Count > 0 ? $"<{string.Join(", ", generics)}>" : "";
 
@@ -496,6 +559,7 @@ internal static class GlEmitter
             indent,
             $"public static {(needsUnsafe ? "unsafe " : "")}{publicReturn} {methodName}{typeParams}({signature})"
         );
+
         if (generics.Count > 0)
         {
             foreach (var g in generics)
@@ -506,7 +570,11 @@ internal static class GlEmitter
 
         Line(sb, indent, "{");
         var body = indent + 1;
-        Line(sb, body, $"{fieldName} ??= {Loader}.LoadMethod<{delegateName}>(\"{nativeName}\"{loaderArgument});");
+        Line(
+            sb,
+            body,
+            $"{fieldName} ??= {Loader}.LoadMethod<{delegateName}>(\"{nativeName}\"{loaderArgument});"
+        );
 
         var strings = parameters.Where(p => p.Kind is Kind.String).ToList();
         var stringArrays = parameters.Where(p => p.Kind is Kind.StringArray).ToList();
@@ -536,7 +604,12 @@ internal static class GlEmitter
             {
                 Line(sb, inner, $"for (var i = 0; i < {a.Name}.Length; i++)");
                 Line(sb, inner, "{");
-                Line(sb, inner + 1, $"{a.Local}Strings[i] = {Marshal}.StringToCoTaskMemUTF8({a.Name}[i]);");
+                Line(
+                    sb,
+                    inner + 1,
+                    $"{a.Local}Strings[i] = {Marshal}.StringToCoTaskMemUTF8({a.Name}[i]);"
+                );
+
                 Line(sb, inner, "}");
                 Line(sb, inner, "");
             }
@@ -553,6 +626,7 @@ internal static class GlEmitter
                 Kind.StringArray => $"nint* {p.Local} = {p.Local}Strings",
                 _ => null,
             };
+
             if (pin is null)
             {
                 continue;
@@ -572,12 +646,18 @@ internal static class GlEmitter
                     Kind.Bool => $"(byte)({p.Name} ? 1 : 0)",
                     Kind.Hidden => p.LengthSource!,
                     Kind.String => p.Local,
-                    Kind.Ref or Kind.In or Kind.Span or Kind.ReadOnlySpan or Kind.GenericSpan
-                        or Kind.GenericReadOnlySpan or Kind.StringArray => $"(nint){p.Local}",
+                    Kind.Ref
+                    or Kind.In
+                    or Kind.Span
+                    or Kind.ReadOnlySpan
+                    or Kind.GenericSpan
+                    or Kind.GenericReadOnlySpan
+                    or Kind.StringArray => $"(nint){p.Local}",
                     _ => p.Name,
                 }
             )
         );
+
         var call = $"{fieldName}({args})";
         if (rawReturn == "void")
         {

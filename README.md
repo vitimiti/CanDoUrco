@@ -8,13 +8,13 @@ This readme is to be completed.
 
 - [Libraries](#libraries)
   - [CanDoUrco.Glfw](#candourcoglfw)
-  - [CanDoUrco.OpenGl.Generator](#candourcoopenglgenerator)
+  - [CanDoUrco.OpenGL.Generator](#candourcoopenglgenerator)
   - [CanDoUrco.Utilities](#candourcoutilities)
 
 ## Libraries
 
 - [CanDourco.Glfw](#candourcoglfw): A safe import library for GLFW v3.5.1
-- [CanDoUrco.OpenGl.Generator](#candourcoopenglgenerator): A source generator that creates safe OpenGL bindings from the Khronos `gl.xml`
+- [CanDoUrco.OpenGL.Generator](#candourcoopenglgenerator): A source generator that creates safe OpenGL bindings from the Khronos `gl.xml`
 - [CanDoUrco.Utilities](#candourcoutilities): Shared utilities, such as crash reporting
 
 ### CanDoUrco.Glfw
@@ -52,7 +52,7 @@ int main(void)
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OpenGL_PROFILE, GLFW_OpenGL_CORE_PROFILE);
 
     GLFWwindow* window = glfwCreateWindow(640, 480, "OpenGL Triangle", NULL, NULL);
     if (!window)
@@ -104,7 +104,7 @@ using var window = new GlfwWindow(
     options: (options) =>
     {
         options.ContextVersion = new Version(3, 3);
-        options.OpenGlProfile = GlfwOpenGlProfile.Core;
+        options.OpenGLProfile = GlfwOpenGLProfile.Core;
     }
 );
 
@@ -139,7 +139,7 @@ Note that you don't require to check for any errors in C#. This is because, in t
 All GLFW methods that may error will throw a `GlfwException` to indicate the message and the error code automatically.
 If you wish to grab these errors and do something about it, you need to surround GLFW calls in `try/catch` blocks.
 
-### CanDoUrco.OpenGl.Generator
+### CanDoUrco.OpenGL.Generator
 
 A Roslyn incremental source generator that reads the Khronos `gl.xml` registry (embedded in the generator) and writes safe C# OpenGL bindings for the version, profile and extensions you ask for.
 
@@ -150,7 +150,7 @@ Add it to your project as an analyzer, and enable unsafe code (the generated wra
   <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 </PropertyGroup>
 <ItemGroup>
-  <ProjectReference Include="..\CanDoUrco.OpenGl.Generator\CanDoUrco.OpenGl.Generator.csproj"
+  <ProjectReference Include="..\CanDoUrco.OpenGL.Generator\CanDoUrco.OpenGL.Generator.csproj"
                     OutputItemType="Analyzer"
                     ReferenceOutputAssembly="false" />
 </ItemGroup>
@@ -159,11 +159,11 @@ Add it to your project as an analyzer, and enable unsafe code (the generated wra
 Then declare a `static partial class` and mark it with the attributes:
 
 ```csharp
-using CanDoUrco.OpenGl.Generator;
+using CanDoUrco.OpenGL.Generator;
 
-[OpenGl("3.3", Profile = OpenGlProfile.Core)]
-[OpenGl("ARB_debug_output")]
-public static partial class Gl;
+[OpenGL("3.3", Profile = OpenGLProfile.Core)]
+[OpenGL("ARB_debug_output")]
+public static partial class GL;
 ```
 
 - A value like `"3.3"` is an OpenGL version, and `Profile` is `Core`, `Compatibility` or `ES`. Anything else is an extension name (with or without the `GL_` prefix).
@@ -173,7 +173,7 @@ public static partial class Gl;
 
 #### What gets generated
 
-- **Methods** drop the `gl` prefix (`glGenBuffers` becomes `Gl.GenBuffers`). Each one has a private delegate and a private pointer that is loaded lazily with `OpenGlLibraryLoader.LoadMethod<T>` on the first call.
+- **Methods** drop the `gl` prefix (`glGenBuffers` becomes `GL.GenBuffers`). Each one has a private delegate and a private pointer that is loaded lazily with `OpenGLLibraryLoader.LoadMethod<T>` on the first call.
 - **Enums** are grouped by the registry `group`, end with `Enum` (`ClearBufferMaskEnum`), drop the `GL_` prefix on members, use the right underlying type and are `[Flags]` for bitmasks. Constants without a group go in `UngroupedEnum`.
 - **Types** are the plain C# equivalents (`uint`, `int`, `float`, ...). `GLboolean` is exposed as `bool` and marshalled to a `byte`.
 - **Pointers** never appear publicly: arrays become `Span<T>` (`ReadOnlySpan<T>` if `const`), single values become `ref` (`in` if `const`), and array length parameters are computed for you. `void*` data has a generic `Span<T>` overload and an `nint` overload (for buffer offsets). Pass `[]` for a `NULL` array.
@@ -181,9 +181,9 @@ public static partial class Gl;
 
 ```csharp
 Span<uint> buffers = stackalloc uint[1];
-Gl.GenBuffers(buffers);
-Gl.BindBuffer(Gl.BufferTargetARBEnum.ArrayBuffer, buffers[0]);
-Gl.Clear(Gl.ClearBufferMaskEnum.ColorBufferBit);
+GL.GenBuffers(buffers);
+GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, buffers[0]);
+GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit);
 ```
 
 #### Loading functions
@@ -192,11 +192,11 @@ Functions are first looked up in the exports of the native OpenGL library. If th
 
 ```csharp
 // Per class: a static method `nint (string)`. Use a fully qualified name, since the generated code does not see your usings.
-[OpenGl("3.3", Profile = OpenGlProfile.Core, LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress")]
-internal static partial class Gl;
+[OpenGL("3.3", Profile = OpenGLProfile.Core, LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress")]
+internal static partial class GL;
 
 // Or globally, before the first OpenGL call:
-OpenGlLibraryLoader.ProcAddressLoader = GlfwContextUtilities.GetProcAddress;
+OpenGLLibraryLoader.ProcAddressLoader = GlfwContextUtilities.GetProcAddress;
 ```
 
 Remember that a context must be current (for GLFW, `window.MakeContextCurrent()`) before the first call to an OpenGL function.
@@ -229,7 +229,7 @@ Only managed exceptions can be reported. Native crashes, such as an access viola
 
 ```csharp
 var normalized = Color.CornflowerBlue.ToNormalized();
-Gl.ClearColor(normalized.R, normalized.G, normalized.B, normalized.A);
+GL.ClearColor(normalized.R, normalized.G, normalized.B, normalized.A);
 ```
 
 #### Matrix4x4Extensions
@@ -239,7 +239,7 @@ Gl.ClearColor(normalized.R, normalized.G, normalized.B, normalized.A);
 ```csharp
 Span<float> mvp = stackalloc float[16];
 (model * projection).CopyTo(mvp);
-Gl.UniformMatrix4fv(location, 1, transpose: false, mvp);
+GL.UniformMatrix4fv(location, 1, transpose: false, mvp);
 ```
 
 - `CopyTo(Span<float>)` copies the 16 elements in row-major order without allocating.

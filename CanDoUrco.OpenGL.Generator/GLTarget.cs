@@ -13,9 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 
-namespace CanDoUrco.OpenGl.Generator;
+namespace CanDoUrco.OpenGL.Generator;
 
-internal sealed class GlTarget(
+internal sealed class GLTarget(
     string? ns,
     string name,
     string accessibility,
@@ -25,7 +25,7 @@ internal sealed class GlTarget(
     int profile,
     string[] extensions,
     string? loaderMethod
-) : IEquatable<GlTarget>
+) : IEquatable<GLTarget>
 {
     public string? Namespace { get; } = ns;
     public string Name { get; } = name;
@@ -51,9 +51,9 @@ internal sealed class GlTarget(
             LoaderMethod
         );
 
-    public bool Equals(GlTarget? other) => other is not null && Key == other.Key;
+    public bool Equals(GLTarget? other) => other is not null && Key == other.Key;
 
-    public override bool Equals(object? obj) => Equals(obj as GlTarget);
+    public override bool Equals(object? obj) => Equals(obj as GLTarget);
 
     public override int GetHashCode() => Key.GetHashCode();
 }

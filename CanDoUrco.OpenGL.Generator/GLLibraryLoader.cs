@@ -13,9 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 
-namespace CanDoUrco.OpenGl.Generator;
+namespace CanDoUrco.OpenGL.Generator;
 
-internal static class LibraryLoader
+internal static class GLLibraryLoader
 {
     public static string Generate() =>
         $$"""
@@ -25,9 +25,9 @@ internal static class LibraryLoader
             using System.Collections.Generic;
             using System.Runtime.InteropServices;
 
-            namespace CanDoUrco.OpenGl.Generator
+            namespace CanDoUrco.OpenGL.Generator
             {
-                internal static class OpenGlLibraryLoader
+                internal static class OpenGLLibraryLoader
                 {
                     {{GenerateLibraryLoader()}}
 
@@ -86,7 +86,7 @@ internal static class LibraryLoader
                     {
                         if (OperatingSystem.IsWindows())
                         {
-                            yield return "opengl32.dll";
+                            yield return "OpenGL32.dll";
                         }
                         else if (OperatingSystem.IsMacOS())
                         {

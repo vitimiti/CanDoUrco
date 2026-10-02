@@ -29,7 +29,7 @@ namespace CanDoUrco.Glfw;
 /// </summary>
 public sealed class GlfwNativeContext : IDisposable
 {
-    private static Native.Glfw.Allocator s_customAllocatorStruct;
+    private static Native.Glfw.Allocator _customAllocatorStruct;
 
     private bool _disposedValue;
 
@@ -173,7 +173,7 @@ public sealed class GlfwNativeContext : IDisposable
         ArgumentNullException.ThrowIfNull(options);
         if (options.UseDotnetAsCustomAllocator)
         {
-            s_customAllocatorStruct = new()
+            _customAllocatorStruct = new()
             {
                 Allocate = &HandleAllocate,
                 Reallocate = &HandleReallocate,
@@ -181,7 +181,7 @@ public sealed class GlfwNativeContext : IDisposable
                 User = null,
             };
 
-            Native.Glfw.InitAllocator(in s_customAllocatorStruct);
+            Native.Glfw.InitAllocator(in _customAllocatorStruct);
             GlfwErrorUtilities.CheckErrorCodeAndMaybeThrowError();
         }
 

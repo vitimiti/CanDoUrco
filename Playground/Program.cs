@@ -17,7 +17,6 @@
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Text;
 using CanDoUrco.Glfw;
 using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
@@ -25,189 +24,124 @@ using CanDoUrco.Glfw.Utilities;
 using CanDoUrco.Glfw.Video;
 using CanDoUrco.Utilities;
 using CanDoUrco.Utilities.Drawing;
-using CanDoUrco.Utilities.Mathematics;
 using Playground;
 
-static void CheckShaderCompilation(uint shader)
+// Following LearnOpenGL (https://learnOpenGL.com/book/book_pdf.pdf)
+
+static void ProcessInput(GlfwWindow window)
 {
-    Span<int> statusSpan = stackalloc int[1];
-    Gl.GetShaderiv(shader, Gl.ShaderParameterNameEnum.CompileStatus, statusSpan);
-    if (statusSpan[0] == 0)
+    if (window.GetKeyState(GlfwKey.Escape) is GlfwKeyState.Pressed)
     {
-        Span<byte> infoLog = stackalloc byte[512];
-        var len = infoLog.Length;
-        Gl.GetShaderInfoLog(shader, ref len, infoLog);
-        throw new InvalidOperationException(
-            $"Shader compilation failed: {Encoding.UTF8.GetString(infoLog)}"
-        );
+        window.SetShouldClose(true);
     }
 }
 
-static void CheckProgramLinking(uint program)
+const int windowWidth = 800;
+const int windowHeight = 600;
+
+var vertices = new Vertex[]
 {
-    Span<int> statusSpan = stackalloc int[1];
-    Gl.GetProgramiv(program, Gl.ProgramPropertyARBEnum.LinkStatus, statusSpan);
-    if (statusSpan[0] == 0)
-    {
-        Span<byte> infoLog = stackalloc byte[512];
-        var len = infoLog.Length;
-        Gl.GetProgramInfoLog(program, ref len, infoLog);
-        throw new InvalidOperationException(
-            $"Program linking failed: {Encoding.UTF8.GetString(infoLog)}"
-        );
-    }
-}
+    new() { Position = new Vector3(.5F, -.5F, 0F), Color = Color.Red.ToNormalizedRgb() },
+    new() { Position = new Vector3(-.5F, -.5F, 0F), Color = Color.Green.ToNormalizedRgb() },
+    new() { Position = new Vector3(0F, .5F, 0F), Color = Color.Blue.ToNormalizedRgb() },
+};
 
 return CrashReporter.Run(() =>
 {
-    var vertices = new Vertex[]
-    {
-        new(new Vector2(-.6F, -.4F), new Vector3(1F, 0F, 0F)),
-        new(new Vector2(.6F, -.4F), new Vector3(0F, 1F, 0F)),
-        new(new Vector2(0F, .6F), new Vector3(0F, 0F, 1F)),
-    };
-
-    const string vertexShaderText = """
-        #version 330
-
-        uniform mat4 MVP;
-
-        in vec3 vCol;
-        in vec2 vPos;
-
-        out vec3 color;
-
-        void main()
-        {
-            gl_Position = MVP * vec4(vPos, 0.0, 1.0);
-            color = vCol;
-        }
-        """;
-
-    const string fragmentShaderText = """
-        #version 330
-
-        in vec3 color;
-        out vec4 fragment;
-
-        void main()
-        {
-            fragment = vec4(color, 1.0);
-        }
-        """;
-
-    using var context = new GlfwNativeContext();
+    using var _ = new GlfwNativeContext();
     using var window = new GlfwWindow(
-        new Size(640, 480),
-        "OpenGL Triangle",
+        new Size(windowWidth, windowHeight),
+        "LearnOpenGL",
         options: (options) =>
         {
             options.ContextVersion = new Version(3, 3);
-            options.OpenGlProfile = GlfwOpenGlProfile.Core;
+            options.OpenGLProfile = GlfwOpenGLProfile.Core;
+            if (OperatingSystem.IsMacOS())
+            {
+                options.OpenGLForwardCompat = true;
+            }
         }
     );
-
-    window.KeyAction += (_, args) =>
-    {
-        if (args.Key is GlfwKey.Escape && args.Action is GlfwKeyAction.Press)
-        {
-            window.SetShouldClose(true);
-        }
-    };
 
     window.MakeContextCurrent();
-    GlfwContextUtilities.SetSwapInterval(1);
-    var bgColor = Color.CornflowerBlue.ToNormalized();
 
-    Span<uint> vertexBuffers = stackalloc uint[1];
-    Gl.GenBuffers(vertexBuffers);
-    Gl.BindBuffer(Gl.BufferTargetARBEnum.ArrayBuffer, vertexBuffers[0]);
-    Gl.BufferData(
-        Gl.BufferTargetARBEnum.ArrayBuffer,
-        Marshal.SizeOf<Vertex>() * vertices.Length,
-        vertices,
-        Gl.BufferUsageARBEnum.StaticDraw
+    using var vertexShaderStream =
+        typeof(Program).Assembly.GetManifestResourceStream(
+            "Playground.Resources.Shaders.Core.Vertex.glsl"
+        ) ?? throw new InvalidOperationException("Vertex shader resource not found.");
+
+    using var fragmentShaderStream =
+        typeof(Program).Assembly.GetManifestResourceStream(
+            "Playground.Resources.Shaders.Core.Fragment.glsl"
+        ) ?? throw new InvalidOperationException("Fragment shader resource not found.");
+
+    using var shader = new Shader(vertexShaderStream, fragmentShaderStream);
+    window.FramebufferSizeUpdate += (_, args) =>
+        GL.Viewport(0, 0, args.Size.Width, args.Size.Height);
+
+    Span<uint> vbo = stackalloc uint[1];
+    Span<uint> vao = stackalloc uint[1];
+    GL.GenVertexArrays(vao);
+    GL.GenBuffers(vbo);
+    GL.BindVertexArray(vao[0]);
+
+    GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, vbo[0]);
+    GL.BufferData(
+        GL.BufferTargetARBEnum.ArrayBuffer,
+        vertices.Length * Marshal.SizeOf<Vertex>(),
+        MemoryMarshal.Cast<Vertex, float>(vertices),
+        GL.BufferUsageARBEnum.StaticDraw
     );
 
-    var vertexShader = Gl.CreateShader(Gl.ShaderTypeEnum.VertexShader);
-    Gl.ShaderSource(vertexShader, [vertexShaderText], []);
-    Gl.CompileShader(vertexShader);
-    CheckShaderCompilation(vertexShader);
-
-    var fragmentShader = Gl.CreateShader(Gl.ShaderTypeEnum.FragmentShader);
-    Gl.ShaderSource(fragmentShader, [fragmentShaderText], []);
-    Gl.CompileShader(fragmentShader);
-    CheckShaderCompilation(fragmentShader);
-
-    var program = Gl.CreateProgram();
-    Gl.AttachShader(program, vertexShader);
-    Gl.AttachShader(program, fragmentShader);
-    Gl.LinkProgram(program);
-    CheckProgramLinking(program);
-
-    var mvpLocation = Gl.GetUniformLocation(program, "MVP");
-    Span<float> mvpFloats = stackalloc float[16];
-    var vPosLocation = Gl.GetAttribLocation(program, "vPos");
-    var vColLocation = Gl.GetAttribLocation(program, "vCol");
-
-    Span<uint> vertexArrays = stackalloc uint[1];
-    Gl.GenVertexArrays(vertexArrays);
-    Gl.BindVertexArray(vertexArrays[0]);
-    Gl.EnableVertexAttribArray((uint)vPosLocation);
-    Gl.VertexAttribPointer(
-        (uint)vPosLocation,
-        size: 2,
-        Gl.VertexAttribPointerTypeEnum.Float,
+    GL.VertexAttribPointer(
+        index: 0,
+        size: 3,
+        GL.VertexAttribPointerTypeEnum.Float,
         normalized: false,
-        stride: Marshal.SizeOf<Vertex>(),
+        stride: 6 * sizeof(float),
         pointer: 0
     );
+    GL.EnableVertexAttribArray(0);
 
-    Gl.EnableVertexAttribArray((uint)vColLocation);
-    Gl.VertexAttribPointer(
-        (uint)vColLocation,
-        3,
-        Gl.VertexAttribPointerTypeEnum.Float,
+    GL.VertexAttribPointer(
+        index: 1,
+        size: 3,
+        GL.VertexAttribPointerTypeEnum.Float,
         normalized: false,
-        Marshal.SizeOf<Vertex>(),
-        Marshal.OffsetOf<Vertex>(nameof(Vertex.Color))
+        stride: 6 * sizeof(float),
+        pointer: 3 * sizeof(float)
     );
+    GL.EnableVertexAttribArray(1);
+
+    GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, 0);
+    GL.BindVertexArray(0);
 
     while (!window.ShouldClose())
     {
-        var framebufferSize = window.GetFramebufferSize();
-        var ratio = framebufferSize.Width / (float)framebufferSize.Height;
+        ProcessInput(window);
 
-        Gl.Viewport(0, 0, framebufferSize.Width, framebufferSize.Height);
-        Gl.ClearColor(bgColor.R, bgColor.G, bgColor.B, bgColor.A);
-        Gl.Clear(Gl.ClearBufferMaskEnum.ColorBufferBit);
+        GL.ClearColor(.2F, .3F, .3F, 1F);
+        GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit);
 
-        var m = Matrix4x4.Identity;
-        m = Matrix4x4.CreateRotationZ((float)GlfwTimeUtilities.GetTime().TotalSeconds);
-        var p = Matrix4x4.CreateOrthographicOffCenter(
-            left: -ratio,
-            right: ratio,
-            bottom: -1F,
-            top: 1F,
-            zNearPlane: 1F,
-            zFarPlane: -1F
-        );
+        shader.Use();
+        var timeValue = (float)GlfwTimeUtilities.GetTime().TotalSeconds;
+        var greenValue = float.Sin(timeValue) / 2F + .5F;
+        shader.Set("ourColor", greenValue);
 
-        (m * p).CopyTo(mvpFloats);
-
-        Gl.UseProgram(program);
-        Gl.UniformMatrix4fv(mvpLocation, 1, transpose: false, mvpFloats);
-        Gl.BindVertexArray(vertexArrays[0]);
-        Gl.DrawArrays(Gl.PrimitiveTypeEnum.Triangles, 0, vertices.Length);
+        GL.BindVertexArray(vao[0]);
+        GL.DrawArrays(GL.PrimitiveTypeEnum.Triangles, first: 0, count: vertices.Length);
 
         window.SwapBuffers();
         GlfwEvents.Poll();
     }
+
+    GL.DeleteVertexArrays(vao);
+    GL.DeleteBuffers(vbo);
 });
 
 [StructLayout(LayoutKind.Sequential)]
-struct Vertex(Vector2 position, Vector3 color)
+struct Vertex
 {
-    public Vector2 Position = position;
-    public Vector3 Color = color;
+    public Vector3 Position;
+    public Vector3 Color;
 }

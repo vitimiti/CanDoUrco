@@ -18,20 +18,20 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace CanDoUrco.OpenGl.Generator;
+namespace CanDoUrco.OpenGL.Generator;
 
 [Generator]
-public sealed class GlGenerator : IIncrementalGenerator
+public sealed class GLGenerator : IIncrementalGenerator
 {
-    private static readonly DiagnosticDescriptor s_versionProblem = Descriptor(
+    private static readonly DiagnosticDescriptor VersionProblem = Descriptor(
         "OGL001",
         "Invalid OpenGL version"
     );
-    private static readonly DiagnosticDescriptor s_unknownExtension = Descriptor(
+    private static readonly DiagnosticDescriptor UnknownExtension = Descriptor(
         "OGL002",
         "Unknown OpenGL extension"
     );
-    private static readonly DiagnosticDescriptor s_unsupportedExtension = Descriptor(
+    private static readonly DiagnosticDescriptor UnsupportedExtension = Descriptor(
         "OGL003",
         "Unsupported OpenGL extension"
     );
@@ -40,12 +40,19 @@ public sealed class GlGenerator : IIncrementalGenerator
     {
         context.RegisterPostInitializationOutput(ctx =>
         {
-            ctx.AddSource("OpenGlAttribute.g.cs", SourceText.From(Attributes.Generate(), Encoding.UTF8));
-            ctx.AddSource("OpenGlLibraryLoader.g.cs", SourceText.From(LibraryLoader.Generate(), Encoding.UTF8));
+            ctx.AddSource(
+                "OpenGLAttribute.g.cs",
+                SourceText.From(GLAttributes.Generate(), Encoding.UTF8)
+            );
+
+            ctx.AddSource(
+                "OpenGLLibraryLoader.g.cs",
+                SourceText.From(GLLibraryLoader.Generate(), Encoding.UTF8)
+            );
         });
 
         var targets = context.SyntaxProvider.ForAttributeWithMetadataName(
-            Attributes.AttributeMetadataName,
+            GLAttributes.AttributeMetadataName,
             static (node, _) => node is ClassDeclarationSyntax,
             static (ctx, _) => CreateTarget(ctx)
         );
@@ -54,9 +61,9 @@ public sealed class GlGenerator : IIncrementalGenerator
     }
 
     private static DiagnosticDescriptor Descriptor(string id, string title) =>
-        new(id, title, "{0}", "CanDoUrco.OpenGl", DiagnosticSeverity.Warning, true);
+        new(id, title, "{0}", "CanDoUrco.OpenGL", DiagnosticSeverity.Warning, true);
 
-    private static GlTarget? CreateTarget(GeneratorAttributeSyntaxContext ctx)
+    private static GLTarget? CreateTarget(GeneratorAttributeSyntaxContext ctx)
     {
         if (ctx.TargetSymbol is not INamedTypeSymbol symbol)
         {
@@ -70,7 +77,10 @@ public sealed class GlGenerator : IIncrementalGenerator
         string? loaderMethod = null;
         foreach (var attribute in ctx.Attributes)
         {
-            if (attribute.ConstructorArguments.Length != 1 || attribute.ConstructorArguments[0].Value is not string text)
+            if (
+                attribute.ConstructorArguments.Length != 1
+                || attribute.ConstructorArguments[0].Value is not string text
+            )
             {
                 continue;
             }
@@ -93,7 +103,7 @@ public sealed class GlGenerator : IIncrementalGenerator
                 }
             }
 
-            if (GlSelection.IsVersion(text))
+            if (GLSelection.IsVersion(text))
             {
                 version = text;
                 profile = attributeProfile;
@@ -114,31 +124,39 @@ public sealed class GlGenerator : IIncrementalGenerator
             var glfw = ctx.SemanticModel.Compilation.GetTypeByMetadataName(
                 "CanDoUrco.Glfw.Utilities.GlfwContextUtilities"
             );
+
             if (
                 glfw is { DeclaredAccessibility: Accessibility.Public }
                 && glfw.GetMembers("GetProcAddress").OfType<IMethodSymbol>().Any(m => m.IsStatic)
             )
             {
-                loaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress";
+                loaderMethod =
+                    "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress";
             }
         }
 
         var containers = new List<string>();
         for (var parent = symbol.ContainingType; parent is not null; parent = parent.ContainingType)
         {
-            containers.Insert(0, (parent.IsStatic ? "static " : "") + "partial class " + parent.Name);
+            containers.Insert(
+                0,
+                (parent.IsStatic ? "static " : "") + "partial class " + parent.Name
+            );
         }
 
-        var ns = symbol.ContainingNamespace is { IsGlobalNamespace: false } n ? n.ToDisplayString() : null;
-        return new GlTarget(
+        var ns = symbol.ContainingNamespace is { IsGlobalNamespace: false } n
+            ? n.ToDisplayString()
+            : null;
+
+        return new GLTarget(
             ns,
             symbol.Name,
             AccessibilityText(symbol.DeclaredAccessibility),
             symbol.IsStatic,
-            containers.ToArray(),
+            [.. containers],
             version,
             profile,
-            extensions.ToArray(),
+            [.. extensions],
             loaderMethod
         );
     }
@@ -154,28 +172,43 @@ public sealed class GlGenerator : IIncrementalGenerator
             _ => "internal",
         };
 
-    private static void Generate(SourceProductionContext ctx, GlTarget? target)
+    private static void Generate(SourceProductionContext ctx, GLTarget? target)
     {
         if (target is null)
         {
             return;
         }
 
-        var registry = GlRegistry.Instance;
-        var selection = GlSelection.Create(registry, target.Version, target.Profile, target.Extensions);
+        var registry = GLRegistry.Instance;
+        var selection = GLSelection.Create(
+            registry,
+            target.Version,
+            target.Profile,
+            target.Extensions
+        );
+
         foreach (var (id, message) in selection.Problems)
         {
             var descriptor = id switch
             {
-                "OGL001" => s_versionProblem,
-                "OGL002" => s_unknownExtension,
-                _ => s_unsupportedExtension,
+                "OGL001" => VersionProblem,
+                "OGL002" => UnknownExtension,
+                _ => UnsupportedExtension,
             };
+
             ctx.ReportDiagnostic(Diagnostic.Create(descriptor, Location.None, message));
         }
 
-        var source = GlEmitter.Emit(target, registry, selection);
-        var hint = string.Join(".", new[] { target.Namespace }.Concat(target.Containers.Select(c => c.Split(' ').Last())).Concat(new[] { target.Name }).Where(x => !string.IsNullOrEmpty(x))) + ".g.cs";
+        var source = GLEmitter.Emit(target, registry, selection);
+        var hint =
+            string.Join(
+                ".",
+                new[] { target.Namespace }
+                    .Concat(target.Containers.Select(c => c.Split(' ').Last()))
+                    .Concat([target.Name])
+                    .Where(x => !string.IsNullOrEmpty(x))
+            ) + ".g.cs";
+
         ctx.AddSource(hint, SourceText.From(source, Encoding.UTF8));
     }
 }

@@ -176,9 +176,9 @@ public sealed record GlfwWindowOptions
     /// <summary>
     /// Gets or sets the window's client API.
     /// </summary>
-    /// <remarks>The default value is <see cref="GlfwClientApi.OpenGl"/>.</remarks>
+    /// <remarks>The default value is <see cref="GlfwClientApi.OpenGL"/>.</remarks>
     /// <seealso cref="GlfwClientApi"/>
-    public GlfwClientApi ClientApi { get; set; } = GlfwClientApi.OpenGl;
+    public GlfwClientApi ClientApi { get; set; } = GlfwClientApi.OpenGL;
 
     /// <summary>
     /// Gets or sets the window context creation API.
@@ -215,7 +215,7 @@ public sealed record GlfwWindowOptions
     /// Gets or sets whether the OpenGL context is forward compatible.
     /// </summary>
     /// <remarks>The default value is <see langword="false"/>.</remarks>
-    public bool OpenGlForwardCompat { get; set; }
+    public bool OpenGLForwardCompat { get; set; }
 
     /// <summary>
     /// Gets or sets whether the window context is in debugging mode.
@@ -226,9 +226,9 @@ public sealed record GlfwWindowOptions
     /// <summary>
     /// Gets or sets the OpenGL profile.
     /// </summary>
-    /// <remarks>The default value is <see cref="GlfwOpenGlProfile.Any"/>.</remarks>
-    /// <seealso cref="GlfwOpenGlProfile"/>
-    public GlfwOpenGlProfile OpenGlProfile { get; set; } = GlfwOpenGlProfile.Any;
+    /// <remarks>The default value is <see cref="GlfwOpenGLProfile.Any"/>.</remarks>
+    /// <seealso cref="GlfwOpenGLProfile"/>
+    public GlfwOpenGLProfile OpenGLProfile { get; set; } = GlfwOpenGLProfile.Any;
 
     /// <summary>
     /// Gets or sets whether the Win32 keyboard menu is in use.

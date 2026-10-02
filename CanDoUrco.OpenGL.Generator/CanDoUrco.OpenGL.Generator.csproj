@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\gl.xml">
-      <LogicalName>OpenGlGenerator.Resources.Gl.xml</LogicalName>
+      <LogicalName>OpenGLGenerator.Resources.GL.xml</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 

@@ -1,3 +1,5 @@
+#version 330 core
+
 // This is a small testing ground for CanDoUrco.
 // Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
@@ -14,25 +16,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace CanDoUrco.Glfw.Options;
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aColor;
 
-/// <summary>
-/// The possible OpenGL profiles.
-/// </summary>
-public enum GlfwOpenGLProfile
-{
-    /// <summary>
-    /// Use any available profile.
-    /// </summary>
-    Any = Native.Glfw.OpenGLAnyProfileDefine,
+out vec3 ourColor;
 
-    /// <summary>
-    /// Use the compatibility profile.
-    /// </summary>
-    Compat = Native.Glfw.OpenGLCompatProfileDefine,
-
-    /// <summary>
-    /// Use the core profile.
-    /// </summary>
-    Core = Native.Glfw.OpenGLCoreProfileDefine,
+void main() {
+  gl_Position = vec4(aPos, 1.0);
+  ourColor = aColor;
 }
