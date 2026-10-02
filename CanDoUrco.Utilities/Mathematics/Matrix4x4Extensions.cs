@@ -21,21 +21,23 @@ namespace CanDoUrco.Utilities.Mathematics;
 /// <summary>Conversions of <see cref="Matrix4x4"/> for graphics APIs such as OpenGL.</summary>
 public static class Matrix4x4Extensions
 {
-    /// <summary>Copies the 16 elements in row-major order (M11, M12, ..., M44).</summary>
-    /// <param name="matrix">The matrix to copy.</param>
-    /// <param name="destination">A span of at least 16 floats.</param>
-    public static void CopyTo(this in Matrix4x4 matrix, Span<float> destination) =>
-        MemoryMarshal
-            .Cast<Matrix4x4, float>(new ReadOnlySpan<Matrix4x4>(in matrix))
-            .CopyTo(destination);
-
-    /// <summary>Returns the 16 elements in row-major order as a new array.</summary>
-    /// <param name="matrix">The matrix to convert.</param>
-    /// <returns>A new array of 16 floats.</returns>
-    public static float[] ToArray(this in Matrix4x4 matrix)
+    /// <summary>Extension methods for <see cref="Matrix4x4"/>.</summary>
+    extension(Matrix4x4 matrix)
     {
-        var result = new float[16];
-        matrix.CopyTo(result);
-        return result;
+        /// <summary>Copies the 16 elements in row-major order (M11, M12, ..., M44).</summary>
+        /// <param name="destination">A span of at least 16 floats.</param>
+        public void CopyTo(Span<float> destination) =>
+            MemoryMarshal
+                .Cast<Matrix4x4, float>(new ReadOnlySpan<Matrix4x4>(in matrix))
+                .CopyTo(destination);
+
+        /// <summary>Returns the 16 elements in row-major order as a new array.</summary>
+        /// <returns>A new array of 16 floats.</returns>
+        public float[] ToArray()
+        {
+            var result = new float[16];
+            matrix.CopyTo(result);
+            return result;
+        }
     }
 }
