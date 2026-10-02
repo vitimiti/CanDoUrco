@@ -186,8 +186,6 @@ Gl.BindBuffer(Gl.BufferTargetARBEnum.ArrayBuffer, buffers[0]);
 Gl.Clear(Gl.ClearBufferMaskEnum.ColorBufferBit);
 ```
 
-See the [Playground](Playground/Program.cs) for a complete triangle example together with `CanDoUrco.Glfw`.
-
 #### Loading functions
 
 Functions are first looked up in the exports of the native OpenGL library. If that fails (on Windows, anything newer than OpenGL 1.1), a "proc address" loader is used as the fallback. If your project references `CanDoUrco.Glfw` and you set nothing, `GlfwContextUtilities.GetProcAddress` is the default fallback. You can provide the loader in two ways:
