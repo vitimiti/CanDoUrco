@@ -17,6 +17,7 @@
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Text;
 using CanDoUrco.Glfw;
 using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
@@ -25,6 +26,36 @@ using CanDoUrco.Glfw.Video;
 using CanDoUrco.Utilities;
 using CanDoUrco.Utilities.Mathematics;
 using Playground;
+
+static void CheckShaderCompilation(uint shader)
+{
+    Span<int> statusSpan = stackalloc int[1];
+    Gl.GetShaderiv(shader, Gl.ShaderParameterNameEnum.CompileStatus, statusSpan);
+    if (statusSpan[0] == 0)
+    {
+        Span<byte> infoLog = stackalloc byte[512];
+        var len = infoLog.Length;
+        Gl.GetShaderInfoLog(shader, ref len, infoLog);
+        throw new InvalidOperationException(
+            $"Shader compilation failed: {Encoding.UTF8.GetString(infoLog)}"
+        );
+    }
+}
+
+static void CheckProgramLinking(uint program)
+{
+    Span<int> statusSpan = stackalloc int[1];
+    Gl.GetProgramiv(program, Gl.ProgramPropertyARBEnum.LinkStatus, statusSpan);
+    if (statusSpan[0] == 0)
+    {
+        Span<byte> infoLog = stackalloc byte[512];
+        var len = infoLog.Length;
+        Gl.GetProgramInfoLog(program, ref len, infoLog);
+        throw new InvalidOperationException(
+            $"Program linking failed: {Encoding.UTF8.GetString(infoLog)}"
+        );
+    }
+}
 
 return CrashReporter.Run(() =>
 {
@@ -99,15 +130,18 @@ return CrashReporter.Run(() =>
     var vertexShader = Gl.CreateShader(Gl.ShaderTypeEnum.VertexShader);
     Gl.ShaderSource(vertexShader, [vertexShaderText], []);
     Gl.CompileShader(vertexShader);
+    CheckShaderCompilation(vertexShader);
 
     var fragmentShader = Gl.CreateShader(Gl.ShaderTypeEnum.FragmentShader);
     Gl.ShaderSource(fragmentShader, [fragmentShaderText], []);
     Gl.CompileShader(fragmentShader);
+    CheckShaderCompilation(fragmentShader);
 
     var program = Gl.CreateProgram();
     Gl.AttachShader(program, vertexShader);
     Gl.AttachShader(program, fragmentShader);
     Gl.LinkProgram(program);
+    CheckProgramLinking(program);
 
     var mvpLocation = Gl.GetUniformLocation(program, "MVP");
     Span<float> mvpFloats = stackalloc float[16];
