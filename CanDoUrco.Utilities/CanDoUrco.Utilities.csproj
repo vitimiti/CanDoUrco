@@ -7,4 +7,18 @@
     <IsAotCompatible>true</IsAotCompatible>
     <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
 </Project>

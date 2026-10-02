@@ -22,6 +22,7 @@ using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Utilities;
 using CanDoUrco.Glfw.Video;
+using CanDoUrco.IO.Images;
 using CanDoUrco.Utilities;
 using CanDoUrco.Utilities.Drawing;
 using Playground;
@@ -39,11 +40,20 @@ static void ProcessInput(GlfwWindow window)
 const int windowWidth = 800;
 const int windowHeight = 600;
 
+// csharpier-ignore
 var vertices = new Vertex[]
 {
-    new() { Position = new Vector3(.5F, -.5F, 0F), Color = Color.Red.ToNormalizedRgb() },
-    new() { Position = new Vector3(-.5F, -.5F, 0F), Color = Color.Green.ToNormalizedRgb() },
-    new() { Position = new Vector3(0F, .5F, 0F), Color = Color.Blue.ToNormalizedRgb() },
+    new() { Position = new Vector3(.5F, .5F, 0F), Color = Color.White.ToNormalizedRgb(), TextureCoordinates = new Vector2(1F, 1F), },   // top right
+    new() { Position = new Vector3(.5F, -.5F, 0F), Color = Color.White.ToNormalizedRgb(), TextureCoordinates = new Vector2(1F, 0F), },  // bottom right
+    new() { Position = new Vector3(-.5F, -.5F, 0F), Color = Color.White.ToNormalizedRgb(), TextureCoordinates = new Vector2(0F, 0F), }, // bottom left
+    new() { Position = new Vector3(-.5F, .5F, 0F), Color = Color.White.ToNormalizedRgb(), TextureCoordinates = new Vector2(0F, 1F), },  // top left
+};
+
+// csharpier-ignore
+var indices = new uint[]
+{
+    0, 1, 3, // first triangle
+    1, 2, 3  // second triangle
 };
 
 return CrashReporter.Run(() =>
@@ -81,8 +91,11 @@ return CrashReporter.Run(() =>
 
     Span<uint> vbo = stackalloc uint[1];
     Span<uint> vao = stackalloc uint[1];
+    Span<uint> ebo = stackalloc uint[1];
     GL.GenVertexArrays(vao);
     GL.GenBuffers(vbo);
+    GL.GenBuffers(ebo);
+
     GL.BindVertexArray(vao[0]);
 
     GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, vbo[0]);
@@ -93,12 +106,20 @@ return CrashReporter.Run(() =>
         GL.BufferUsageARBEnum.StaticDraw
     );
 
+    GL.BindBuffer(GL.BufferTargetARBEnum.ElementArrayBuffer, ebo[0]);
+    GL.BufferData(
+        GL.BufferTargetARBEnum.ElementArrayBuffer,
+        indices.Length * sizeof(uint),
+        indices,
+        GL.BufferUsageARBEnum.StaticDraw
+    );
+
     GL.VertexAttribPointer(
         index: 0,
         size: 3,
         GL.VertexAttribPointerTypeEnum.Float,
         normalized: false,
-        stride: 6 * sizeof(float),
+        stride: 8 * sizeof(float),
         pointer: 0
     );
     GL.EnableVertexAttribArray(0);
@@ -108,13 +129,66 @@ return CrashReporter.Run(() =>
         size: 3,
         GL.VertexAttribPointerTypeEnum.Float,
         normalized: false,
-        stride: 6 * sizeof(float),
+        stride: 8 * sizeof(float),
         pointer: 3 * sizeof(float)
     );
     GL.EnableVertexAttribArray(1);
 
-    GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, 0);
-    GL.BindVertexArray(0);
+    GL.VertexAttribPointer(
+        index: 2,
+        size: 2,
+        GL.VertexAttribPointerTypeEnum.Float,
+        normalized: false,
+        stride: 8 * sizeof(float),
+        pointer: 6 * sizeof(float)
+    );
+    GL.EnableVertexAttribArray(2);
+
+    Span<uint> textures = stackalloc uint[1];
+    GL.GenTextures(textures);
+    GL.BindTexture(GL.TextureTargetEnum.Texture2D, textures[0]);
+
+    GL.TexParameteri(
+        GL.TextureTargetEnum.Texture2D,
+        GL.TextureParameterNameEnum.TextureWrapS,
+        (int)GL.TextureWrapModeEnum.Repeat
+    );
+    GL.TexParameteri(
+        GL.TextureTargetEnum.Texture2D,
+        GL.TextureParameterNameEnum.TextureWrapT,
+        (int)GL.TextureWrapModeEnum.Repeat
+    );
+
+    GL.TexParameteri(
+        GL.TextureTargetEnum.Texture2D,
+        GL.TextureParameterNameEnum.TextureMinFilter,
+        (int)GL.TextureMinFilterEnum.LinearMipmapLinear
+    );
+    GL.TexParameteri(
+        GL.TextureTargetEnum.Texture2D,
+        GL.TextureParameterNameEnum.TextureMagFilter,
+        (int)GL.TextureMagFilterEnum.Linear
+    );
+
+    using var textureStream =
+        typeof(Program).Assembly.GetManifestResourceStream("Playground.Resources.Textures.Wall.jpg")
+        ?? throw new InvalidOperationException("Texture not found.");
+
+    {
+        var imageData = ImageLoader.Load(textureStream);
+        GL.TexImage2D(
+            GL.TextureTargetEnum.Texture2D,
+            level: 0,
+            (int)GL.PixelFormatEnum.Rgb,
+            imageData.Size.Width,
+            imageData.Size.Height,
+            border: 0,
+            GL.PixelFormatEnum.Rgb,
+            GL.PixelTypeEnum.UnsignedByte,
+            imageData.Data
+        );
+        GL.GenerateMipmap(GL.TextureTargetEnum.Texture2D);
+    }
 
     while (!window.ShouldClose())
     {
@@ -123,13 +197,17 @@ return CrashReporter.Run(() =>
         GL.ClearColor(.2F, .3F, .3F, 1F);
         GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit);
 
+        GL.BindTexture(GL.TextureTargetEnum.Texture2D, textures[0]);
+
         shader.Use();
-        var timeValue = (float)GlfwTimeUtilities.GetTime().TotalSeconds;
-        var greenValue = float.Sin(timeValue) / 2F + .5F;
-        shader.Set("ourColor", greenValue);
 
         GL.BindVertexArray(vao[0]);
-        GL.DrawArrays(GL.PrimitiveTypeEnum.Triangles, first: 0, count: vertices.Length);
+        GL.DrawElements(
+            GL.PrimitiveTypeEnum.Triangles,
+            count: 6,
+            GL.DrawElementsTypeEnum.UnsignedInt,
+            indices: 0
+        );
 
         window.SwapBuffers();
         GlfwEvents.Poll();
@@ -137,6 +215,8 @@ return CrashReporter.Run(() =>
 
     GL.DeleteVertexArrays(vao);
     GL.DeleteBuffers(vbo);
+    GL.DeleteBuffers(ebo);
+    GL.DeleteTextures(textures);
 });
 
 [StructLayout(LayoutKind.Sequential)]
@@ -144,4 +224,5 @@ struct Vertex
 {
     public Vector3 Position;
     public Vector3 Color;
+    public Vector2 TextureCoordinates;
 }

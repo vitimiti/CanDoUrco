@@ -8,8 +8,23 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="../CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
+    <ProjectReference Include="../CanDoUrco.IO/CanDoUrco.IO.csproj" />
     <ProjectReference Include="../CanDoUrco.Utilities/CanDoUrco.Utilities.csproj" />
     <ProjectReference
       Include="../CanDoUrco.OpenGL.Generator/CanDoUrco.OpenGL.Generator.csproj"
