@@ -408,6 +408,7 @@ internal sealed class JpegImageDecoder : IImageDecoder
                 Component c =
                     _components.FirstOrDefault(x => x.Id == id)
                     ?? throw new InvalidDataException("Scan references an unknown component.");
+
                 c.DcTable = (tables >> 4) & 3;
                 c.AcTable = tables & 3;
                 scan[i] = c;
@@ -609,6 +610,6 @@ internal sealed class JpegImageDecoder : IImageDecoder
         private byte Sample(Component c, int x, int y) =>
             c.Plane[(y * c.V / _vMax * c.Stride) + (x * c.H / _hMax)];
 
-        private static byte ClampByte(float v) => (byte)Math.Clamp((int)MathF.Round(v), 0, 255);
+        private static byte ClampByte(float v) => (byte)int.Clamp((int)float.Round(v), 0, 255);
     }
 }
