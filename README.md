@@ -186,4 +186,17 @@ Gl.Clear(Gl.ClearBufferMaskEnum.ColorBufferBit);
 
 See the [Playground](Playground/Program.cs) for a complete triangle example together with `CanDoUrco.Glfw`.
 
-> **Note:** the loader resolves functions through the native OpenGL library exports. On Windows, functions newer than OpenGL 1.1 additionally need `wglGetProcAddress`.
+#### Loading functions
+
+Functions are first looked up in the exports of the native OpenGL library. If that fails (on Windows, anything newer than OpenGL 1.1), a "proc address" loader is used as the fallback. If your project references `CanDoUrco.Glfw` and you set nothing, `GlfwContextUtilities.GetProcAddress` is the default fallback. You can provide the loader in two ways:
+
+```csharp
+// Per class: a static method `nint (string)`. Use a fully qualified name, since the generated code does not see your usings.
+[OpenGl("3.3", Profile = OpenGlProfile.Core, LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress")]
+internal static partial class Gl;
+
+// Or globally, before the first OpenGL call:
+OpenGlLibraryLoader.ProcAddressLoader = GlfwContextUtilities.GetProcAddress;
+```
+
+Remember that a context must be current (for GLFW, `window.MakeContextCurrent()`) before the first call to an OpenGL function.

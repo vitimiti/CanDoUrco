@@ -23,7 +23,8 @@ internal sealed class GlTarget(
     string[] containers,
     string? version,
     int profile,
-    string[] extensions
+    string[] extensions,
+    string? loaderMethod
 ) : IEquatable<GlTarget>
 {
     public string? Namespace { get; } = ns;
@@ -34,6 +35,7 @@ internal sealed class GlTarget(
     public string? Version { get; } = version;
     public int Profile { get; } = profile;
     public string[] Extensions { get; } = extensions;
+    public string? LoaderMethod { get; } = loaderMethod;
 
     private string Key =>
         string.Join(
@@ -45,7 +47,8 @@ internal sealed class GlTarget(
             string.Join(",", Containers),
             Version,
             Profile,
-            string.Join(",", Extensions)
+            string.Join(",", Extensions),
+            LoaderMethod
         );
 
     public bool Equals(GlTarget? other) => other is not null && Key == other.Key;

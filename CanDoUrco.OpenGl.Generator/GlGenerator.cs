@@ -67,6 +67,7 @@ public sealed class GlGenerator : IIncrementalGenerator
         var profile = 0;
         var profileSet = false;
         var extensions = new List<string>();
+        string? loaderMethod = null;
         foreach (var attribute in ctx.Attributes)
         {
             if (attribute.ConstructorArguments.Length != 1 || attribute.ConstructorArguments[0].Value is not string text)
@@ -80,6 +81,15 @@ public sealed class GlGenerator : IIncrementalGenerator
                 if (named.Key == "Profile" && named.Value.Value is int value)
                 {
                     attributeProfile = value;
+                }
+                else if (
+                    named.Key == "LoaderMethod"
+                    && named.Value.Value is string method
+                    && method.Length > 0
+                    && method.All(c => char.IsLetterOrDigit(c) || c is '_' or '.' or ':')
+                )
+                {
+                    loaderMethod = method;
                 }
             }
 
@@ -99,6 +109,20 @@ public sealed class GlGenerator : IIncrementalGenerator
             }
         }
 
+        if (loaderMethod is null)
+        {
+            var glfw = ctx.SemanticModel.Compilation.GetTypeByMetadataName(
+                "CanDoUrco.Glfw.Utilities.GlfwContextUtilities"
+            );
+            if (
+                glfw is { DeclaredAccessibility: Accessibility.Public }
+                && glfw.GetMembers("GetProcAddress").OfType<IMethodSymbol>().Any(m => m.IsStatic)
+            )
+            {
+                loaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress";
+            }
+        }
+
         var containers = new List<string>();
         for (var parent = symbol.ContainingType; parent is not null; parent = parent.ContainingType)
         {
@@ -114,7 +138,8 @@ public sealed class GlGenerator : IIncrementalGenerator
             containers.ToArray(),
             version,
             profile,
-            extensions.ToArray()
+            extensions.ToArray(),
+            loaderMethod
         );
     }
 

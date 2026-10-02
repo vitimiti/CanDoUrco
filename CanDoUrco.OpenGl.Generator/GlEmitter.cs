@@ -137,7 +137,7 @@ internal static class GlEmitter
         {
             if (registry.Commands.TryGetValue(name, out var command))
             {
-                EmitCommand(sb, indent, command, enumTypes, emittedNames);
+                EmitCommand(sb, indent, command, enumTypes, emittedNames, target.LoaderMethod);
             }
         }
 
@@ -293,7 +293,8 @@ internal static class GlEmitter
         int indent,
         CommandDef command,
         Dictionary<string, string> enumTypes,
-        HashSet<string> emittedNames
+        HashSet<string> emittedNames,
+        string? loaderMethod
     )
     {
         var methodName = command.Name.StartsWith("gl", StringComparison.Ordinal)
@@ -354,7 +355,7 @@ internal static class GlEmitter
         Line(sb, indent, $"private static {delegateName}? {fieldName};");
 
         var hasGeneric = parameters.Any(p => p.Kind is Kind.GenericSpan or Kind.GenericReadOnlySpan);
-        EmitMethod(sb, indent, methodName, delegateName, fieldName, command.Name, parameters, publicReturn, returnIsString, returnIsBool, returnEnum, rawReturn);
+        EmitMethod(sb, indent, methodName, delegateName, fieldName, command.Name, parameters, publicReturn, returnIsString, returnIsBool, returnEnum, rawReturn, loaderMethod);
         if (hasGeneric)
         {
             foreach (var p in parameters.Where(p => p.Kind is Kind.GenericSpan or Kind.GenericReadOnlySpan))
@@ -364,7 +365,7 @@ internal static class GlEmitter
                 p.GenericName = null;
             }
 
-            EmitMethod(sb, indent, methodName, delegateName, fieldName, command.Name, parameters, publicReturn, returnIsString, returnIsBool, returnEnum, rawReturn);
+            EmitMethod(sb, indent, methodName, delegateName, fieldName, command.Name, parameters, publicReturn, returnIsString, returnIsBool, returnEnum, rawReturn, loaderMethod);
         }
     }
 
@@ -469,9 +470,11 @@ internal static class GlEmitter
         bool returnIsString,
         bool returnIsBool,
         string? returnEnum,
-        string rawReturn
+        string rawReturn,
+        string? loaderMethod
     )
     {
+        var loaderArgument = loaderMethod is null ? "" : ", " + loaderMethod;
         var visible = parameters.Where(p => p.Kind != Kind.Hidden).ToList();
         var generics = visible.Where(p => p.GenericName is not null).Select(p => p.GenericName!).ToList();
         var needsUnsafe = parameters.Any(
@@ -503,7 +506,7 @@ internal static class GlEmitter
 
         Line(sb, indent, "{");
         var body = indent + 1;
-        Line(sb, body, $"{fieldName} ??= {Loader}.LoadMethod<{delegateName}>(\"{nativeName}\");");
+        Line(sb, body, $"{fieldName} ??= {Loader}.LoadMethod<{delegateName}>(\"{nativeName}\"{loaderArgument});");
 
         var strings = parameters.Where(p => p.Kind is Kind.String).ToList();
         var stringArrays = parameters.Where(p => p.Kind is Kind.StringArray).ToList();
