@@ -24,6 +24,7 @@ using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Utilities;
 using CanDoUrco.Glfw.Video;
 using CanDoUrco.Utilities;
+using CanDoUrco.Utilities.Drawing;
 using CanDoUrco.Utilities.Mathematics;
 using Playground;
 
@@ -116,6 +117,7 @@ return CrashReporter.Run(() =>
 
     window.MakeContextCurrent();
     GlfwContextUtilities.SetSwapInterval(1);
+    var bgColor = Color.CornflowerBlue.ToNormalized();
 
     Span<uint> vertexBuffers = stackalloc uint[1];
     Gl.GenBuffers(vertexBuffers);
@@ -177,6 +179,7 @@ return CrashReporter.Run(() =>
         var ratio = framebufferSize.Width / (float)framebufferSize.Height;
 
         Gl.Viewport(0, 0, framebufferSize.Width, framebufferSize.Height);
+        Gl.ClearColor(bgColor.R, bgColor.G, bgColor.B, bgColor.A);
         Gl.Clear(Gl.ClearBufferMaskEnum.ColorBufferBit);
 
         var m = Matrix4x4.Identity;

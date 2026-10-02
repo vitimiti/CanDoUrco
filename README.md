@@ -14,8 +14,8 @@ This readme is to be completed.
 ## Libraries
 
 - [CanDourco.Glfw](#candourcoglfw): A safe import library for GLFW v3.5.1
-- [CanDoUrco.Utilities](#candourcoutilities): Shared utilities, such as crash reporting
 - [CanDoUrco.OpenGl.Generator](#candourcoopenglgenerator): A source generator that creates safe OpenGL bindings from the Khronos `gl.xml`
+- [CanDoUrco.Utilities](#candourcoutilities): Shared utilities, such as crash reporting
 
 ### CanDoUrco.Glfw
 
@@ -224,6 +224,15 @@ return CrashReporter.Run(() =>
 - **Fallback:** if no dialog is possible (for example no display), the error is written to stderr.
 
 Only managed exceptions can be reported. Native crashes, such as an access violation in a driver, cannot be caught.
+
+#### ColorExtensions
+
+`CanDoUrco.Utilities.Drawing` has helpers to normalize the `System.Drawing.Color` values in the range `[0, 1]`.
+
+```csharp
+var normalized = Color.CornflowerBlue.ToNormalized();
+Gl.ClearColor(normalized.R, normalized.G, normalized.B, normalized.A);
+```
 
 #### Matrix4x4Extensions
 
