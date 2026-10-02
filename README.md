@@ -8,10 +8,12 @@ This readme is to be completed.
 
 - [Libraries](#libraries)
   - [CanDoUrco.Glfw](#candourcoglfw)
+  - [CanDoUrco.OpenGl.Generator](#candourcoopenglgenerator)
 
 ## Libraries
 
 - [CanDourco.Glfw](#candourcoglfw): A safe import library for GLFW v3.5.1
+- [CanDoUrco.OpenGl.Generator](#candourcoopenglgenerator): A source generator that creates safe OpenGL bindings from the Khronos `gl.xml`
 
 ### CanDoUrco.Glfw
 
@@ -134,3 +136,54 @@ while (!window.ShouldClose())
 Note that you don't require to check for any errors in C#. This is because, in this case, we aren't actually acting on the errors.
 All GLFW methods that may error will throw a `GlfwException` to indicate the message and the error code automatically.
 If you wish to grab these errors and do something about it, you need to surround GLFW calls in `try/catch` blocks.
+
+### CanDoUrco.OpenGl.Generator
+
+A Roslyn incremental source generator that reads the Khronos `gl.xml` registry (embedded in the generator) and writes safe C# OpenGL bindings for the version, profile and extensions you ask for.
+
+Add it to your project as an analyzer, and enable unsafe code (the generated wrappers pin spans):
+
+```xml
+<PropertyGroup>
+  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+</PropertyGroup>
+<ItemGroup>
+  <ProjectReference Include="..\CanDoUrco.OpenGl.Generator\CanDoUrco.OpenGl.Generator.csproj"
+                    OutputItemType="Analyzer"
+                    ReferenceOutputAssembly="false" />
+</ItemGroup>
+```
+
+Then declare a `static partial class` and mark it with the attributes:
+
+```csharp
+using CanDoUrco.OpenGl.Generator;
+
+[OpenGl("3.3", Profile = OpenGlProfile.Core)]
+[OpenGl("ARB_debug_output")]
+public static partial class Gl;
+```
+
+- A value like `"3.3"` is an OpenGL version, and `Profile` is `Core`, `Compatibility` or `ES`. Anything else is an extension name (with or without the `GL_` prefix).
+- The generated class has the same accessibility as your declaration.
+- Only the functions and enums that belong to the selected version, profile and extensions are generated.
+- Invalid versions and unknown or unsupported extensions are reported as warnings `OGL001`, `OGL002` and `OGL003`.
+
+#### What gets generated
+
+- **Methods** drop the `gl` prefix (`glGenBuffers` becomes `Gl.GenBuffers`). Each one has a private delegate and a private pointer that is loaded lazily with `OpenGlLibraryLoader.LoadMethod<T>` on the first call.
+- **Enums** are grouped by the registry `group`, end with `Enum` (`ClearBufferMaskEnum`), drop the `GL_` prefix on members, use the right underlying type and are `[Flags]` for bitmasks. Constants without a group go in `UngroupedEnum`.
+- **Types** are the plain C# equivalents (`uint`, `int`, `float`, ...). `GLboolean` is exposed as `bool` and marshalled to a `byte`.
+- **Pointers** never appear publicly: arrays become `Span<T>` (`ReadOnlySpan<T>` if `const`), single values become `ref` (`in` if `const`), and array length parameters are computed for you. `void*` data has a generic `Span<T>` overload and an `nint` overload (for buffer offsets). Pass `[]` for a `NULL` array.
+- **Strings** you pass in are converted to UTF-8 and freed after the call. Strings OpenGL returns (such as `GetString`) are static, so they are converted but never freed.
+
+```csharp
+Span<uint> buffers = stackalloc uint[1];
+Gl.GenBuffers(buffers);
+Gl.BindBuffer(Gl.BufferTargetARBEnum.ArrayBuffer, buffers[0]);
+Gl.Clear(Gl.ClearBufferMaskEnum.ColorBufferBit);
+```
+
+See the [Playground](Playground/Program.cs) for a complete triangle example together with `CanDoUrco.Glfw`.
+
+> **Note:** the loader resolves functions through the native OpenGL library exports. On Windows, functions newer than OpenGL 1.1 additionally need `wglGetProcAddress`.
