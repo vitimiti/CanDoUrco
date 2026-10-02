@@ -60,7 +60,7 @@ public static class ImageLoader
 
         long start = stream.Position;
         Span<byte> header = stackalloc byte[HeaderLength];
-        int read = stream.ReadAtLeast(header, HeaderLength, throwOnEndOfStream: false);
+        var read = stream.ReadAtLeast(header, HeaderLength, throwOnEndOfStream: false);
         stream.Position = start;
 
         foreach (IImageDecoder decoder in Decoders)

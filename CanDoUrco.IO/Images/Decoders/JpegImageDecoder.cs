@@ -61,9 +61,9 @@ internal sealed class JpegImageDecoder : IImageDecoder
         {
             for (int u = 0; u < 8; u++)
             {
-                double c = u == 0 ? Math.Sqrt(0.5) : 1.0;
+                var c = u == 0D ? double.Sqrt(.5D) : 1D;
                 table[(x * 8) + u] = (float)(
-                    c * 0.5 * Math.Cos(((2 * x) + 1) * u * Math.PI / 16.0)
+                    c * .5F * float.Cos((float)(((2F * x) + 1F) * u * Math.PI / 16F))
                 );
             }
         }
@@ -81,9 +81,9 @@ internal sealed class JpegImageDecoder : IImageDecoder
         public HuffmanTable(byte[] counts, byte[] values)
         {
             _values = values;
-            int code = 0;
-            int k = 0;
-            for (int len = 1; len <= 16; len++)
+            var code = 0;
+            var k = 0;
+            for (var len = 1; len <= 16; len++)
             {
                 _valPtr[len] = k;
                 _minCode[len] = code;
@@ -96,7 +96,7 @@ internal sealed class JpegImageDecoder : IImageDecoder
 
         public int Decode(BitReader reader)
         {
-            int code = 0;
+            var code = 0;
             for (int len = 1; len <= 16; len++)
             {
                 code = (code << 1) | reader.ReadBit();
@@ -131,8 +131,8 @@ internal sealed class JpegImageDecoder : IImageDecoder
 
         public int Receive(int n)
         {
-            int v = 0;
-            for (int i = 0; i < n; i++)
+            var v = 0;
+            for (var i = 0; i < n; i++)
             {
                 v = (v << 1) | ReadBit();
             }
@@ -164,7 +164,7 @@ internal sealed class JpegImageDecoder : IImageDecoder
                 return 0;
             }
 
-            byte b = data[Position];
+            var b = data[Position];
             if (b != 0xFF)
             {
                 Position++;
@@ -216,10 +216,10 @@ internal sealed class JpegImageDecoder : IImageDecoder
             }
 
             _pos = 2;
-            bool scanned = false;
+            var scanned = false;
             while (true)
             {
-                int marker = NextMarker();
+                var marker = NextMarker();
                 if (marker == 0xD9)
                 {
                     break;
@@ -230,9 +230,9 @@ internal sealed class JpegImageDecoder : IImageDecoder
                     continue;
                 }
 
-                int length = (data[_pos] << 8) | data[_pos + 1];
-                int end = _pos + length;
-                int p = _pos + 2;
+                var length = (data[_pos] << 8) | data[_pos + 1];
+                var end = _pos + length;
+                var p = _pos + 2;
                 switch (marker)
                 {
                     case 0xDB:
@@ -297,11 +297,11 @@ internal sealed class JpegImageDecoder : IImageDecoder
         {
             while (p < end)
             {
-                int pq = data[p] >> 4;
-                int tq = data[p] & 15;
+                var pq = data[p] >> 4;
+                var tq = data[p] & 15;
                 p++;
                 var table = new int[64];
-                for (int i = 0; i < 64; i++)
+                for (var i = 0; i < 64; i++)
                 {
                     if (pq == 0)
                     {
@@ -322,13 +322,13 @@ internal sealed class JpegImageDecoder : IImageDecoder
         {
             while (p < end)
             {
-                int tc = data[p] >> 4;
-                int th = data[p] & 3;
+                var tc = data[p] >> 4;
+                var th = data[p] & 3;
                 p++;
-                byte[] counts = data[p..(p + 16)];
+                var counts = data[p..(p + 16)];
                 p += 16;
-                int total = counts.Sum(c => c);
-                byte[] values = data[p..(p + total)];
+                var total = counts.Sum(c => c);
+                var values = data[p..(p + total)];
                 p += total;
                 var table = new HuffmanTable(counts, values);
                 if (tc == 0)
@@ -351,7 +351,7 @@ internal sealed class JpegImageDecoder : IImageDecoder
 
             _height = (data[p + 1] << 8) | data[p + 2];
             _width = (data[p + 3] << 8) | data[p + 4];
-            int n = data[p + 5];
+            var n = data[p + 5];
             if (_width == 0 || _height == 0)
             {
                 throw new InvalidDataException("Invalid JPEG dimensions.");
@@ -365,9 +365,9 @@ internal sealed class JpegImageDecoder : IImageDecoder
             }
 
             _components = new Component[n];
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
-                int q = p + 6 + (i * 3);
+                var q = p + 6 + (i * 3);
                 _components[i] = new Component
                 {
                     Id = data[q],
@@ -375,6 +375,7 @@ internal sealed class JpegImageDecoder : IImageDecoder
                     V = data[q + 1] & 15,
                     QuantIndex = data[q + 2] & 3,
                 };
+
                 if (_components[i].H is < 1 or > 4 || _components[i].V is < 1 or > 4)
                 {
                     throw new InvalidDataException("Invalid JPEG sampling factors.");
@@ -383,8 +384,8 @@ internal sealed class JpegImageDecoder : IImageDecoder
 
             _hMax = _components.Max(c => c.H);
             _vMax = _components.Max(c => c.V);
-            int mcusX = (_width + (8 * _hMax) - 1) / (8 * _hMax);
-            int mcusY = (_height + (8 * _vMax) - 1) / (8 * _vMax);
+            var mcusX = (_width + (8 * _hMax) - 1) / (8 * _hMax);
+            var mcusY = (_height + (8 * _vMax) - 1) / (8 * _vMax);
             foreach (Component c in _components)
             {
                 c.Stride = mcusX * c.H * 8;
@@ -399,12 +400,12 @@ internal sealed class JpegImageDecoder : IImageDecoder
                 throw new InvalidDataException("JPEG scan found before frame header.");
             }
 
-            int ns = data[p++];
+            var ns = data[p++];
             var scan = new Component[ns];
-            for (int i = 0; i < ns; i++)
+            for (var i = 0; i < ns; i++)
             {
-                int id = data[p++];
-                int tables = data[p++];
+                var id = data[p++];
+                var tables = data[p++];
                 Component c =
                     _components.FirstOrDefault(x => x.Id == id)
                     ?? throw new InvalidDataException("Scan references an unknown component.");
@@ -421,24 +422,24 @@ internal sealed class JpegImageDecoder : IImageDecoder
             }
 
             int mcuCount;
-            int mcusX = 0;
+            var mcusX = 0;
             if (ns == 1)
             {
                 Component c = scan[0];
-                int bw = (((_width * c.H) + _hMax - 1) / _hMax + 7) / 8;
-                int bh = (((_height * c.V) + _vMax - 1) / _vMax + 7) / 8;
+                var bw = (((_width * c.H) + _hMax - 1) / _hMax + 7) / 8;
+                var bh = (((_height * c.V) + _vMax - 1) / _vMax + 7) / 8;
                 mcusX = bw;
                 mcuCount = bw * bh;
             }
             else
             {
                 mcusX = (_width + (8 * _hMax) - 1) / (8 * _hMax);
-                int mcusY = (_height + (8 * _vMax) - 1) / (8 * _vMax);
+                var mcusY = (_height + (8 * _vMax) - 1) / (8 * _vMax);
                 mcuCount = mcusX * mcusY;
             }
 
             var block = new int[64];
-            for (int mcu = 0; mcu < mcuCount; mcu++)
+            for (var mcu = 0; mcu < mcuCount; mcu++)
             {
                 if (_restartInterval > 0 && mcu > 0 && mcu % _restartInterval == 0)
                 {
@@ -449,8 +450,8 @@ internal sealed class JpegImageDecoder : IImageDecoder
                     }
                 }
 
-                int mx = mcu % mcusX;
-                int my = mcu / mcusX;
+                var mx = mcu % mcusX;
+                var my = mcu / mcusX;
                 if (ns == 1)
                 {
                     DecodeBlock(reader, scan[0], block, mx, my);
@@ -459,9 +460,9 @@ internal sealed class JpegImageDecoder : IImageDecoder
                 {
                     foreach (Component c in scan)
                     {
-                        for (int v = 0; v < c.V; v++)
+                        for (var v = 0; v < c.V; v++)
                         {
-                            for (int h = 0; h < c.H; h++)
+                            for (var h = 0; h < c.H; h++)
                             {
                                 DecodeBlock(reader, c, block, (mx * c.H) + h, (my * c.V) + v);
                             }
@@ -482,21 +483,21 @@ internal sealed class JpegImageDecoder : IImageDecoder
             HuffmanTable ac =
                 _ac[c.AcTable] ?? throw new InvalidDataException("Missing AC Huffman table.");
 
-            int[] q =
+            var q =
                 _quant[c.QuantIndex]
                 ?? throw new InvalidDataException("Missing quantization table.");
 
             Array.Clear(block);
-            int t = dc.Decode(reader);
+            var t = dc.Decode(reader);
             c.Pred += t == 0 ? 0 : Extend(reader.Receive(t), t);
             block[0] = c.Pred * q[0];
 
-            int k = 1;
+            var k = 1;
             while (k < 64)
             {
-                int rs = ac.Decode(reader);
-                int r = rs >> 4;
-                int s = rs & 15;
+                var rs = ac.Decode(reader);
+                var r = rs >> 4;
+                var s = rs & 15;
                 if (s == 0)
                 {
                     if (r == 15)
@@ -527,12 +528,12 @@ internal sealed class JpegImageDecoder : IImageDecoder
         {
             Span<float> tmp = stackalloc float[64];
             // Rows: tmp[y*8+x] = sum_u cos[x,u] * block[y*8+u]
-            for (int y = 0; y < 8; y++)
+            for (var y = 0; y < 8; y++)
             {
-                for (int x = 0; x < 8; x++)
+                for (var x = 0; x < 8; x++)
                 {
-                    float sum = 0;
-                    for (int u = 0; u < 8; u++)
+                    var sum = 0F;
+                    for (var u = 0; u < 8; u++)
                     {
                         sum += CosTable[(x * 8) + u] * block[(y * 8) + u];
                     }
@@ -541,12 +542,12 @@ internal sealed class JpegImageDecoder : IImageDecoder
                 }
             }
 
-            for (int x = 0; x < 8; x++)
+            for (var x = 0; x < 8; x++)
             {
-                for (int y = 0; y < 8; y++)
+                for (var y = 0; y < 8; y++)
                 {
-                    float sum = 0;
-                    for (int v = 0; v < 8; v++)
+                    var sum = 0F;
+                    for (var v = 0; v < 8; v++)
                     {
                         sum += CosTable[(y * 8) + v] * tmp[(v * 8) + x];
                     }
@@ -559,7 +560,7 @@ internal sealed class JpegImageDecoder : IImageDecoder
 
         private ImageData BuildImage()
         {
-            int n = _components.Length;
+            var n = _components.Length;
             var output = new byte[_width * _height * n];
             bool rgb =
                 n == 3
@@ -572,20 +573,20 @@ internal sealed class JpegImageDecoder : IImageDecoder
                     )
                 );
 
-            for (int y = 0; y < _height; y++)
+            for (var y = 0; y < _height; y++)
             {
-                for (int x = 0; x < _width; x++)
+                for (var x = 0; x < _width; x++)
                 {
-                    int o = ((y * _width) + x) * n;
+                    var o = ((y * _width) + x) * n;
                     if (n == 1)
                     {
                         output[o] = Sample(_components[0], x, y);
                         continue;
                     }
 
-                    byte c0 = Sample(_components[0], x, y);
-                    byte c1 = Sample(_components[1], x, y);
-                    byte c2 = Sample(_components[2], x, y);
+                    var c0 = Sample(_components[0], x, y);
+                    var c1 = Sample(_components[1], x, y);
+                    var c2 = Sample(_components[2], x, y);
                     if (rgb)
                     {
                         output[o] = c0;
@@ -594,9 +595,9 @@ internal sealed class JpegImageDecoder : IImageDecoder
                     }
                     else
                     {
-                        float yy = c0;
-                        float cb = c1 - 128f;
-                        float cr = c2 - 128f;
+                        var yy = c0;
+                        var cb = c1 - 128f;
+                        var cr = c2 - 128f;
                         output[o] = ClampByte(yy + (1.402f * cr));
                         output[o + 1] = ClampByte(yy - (0.344136f * cb) - (0.714136f * cr));
                         output[o + 2] = ClampByte(yy + (1.772f * cb));
