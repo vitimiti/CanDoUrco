@@ -14,8 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using System.Runtime.InteropServices;
 
-namespace CanDoUrco.IO.Images;
+namespace CanDoUrco.IO.Images.Internals;
 
-public readonly record struct ImageData(byte[] Data, Size Size, ImageChannelCount ChannelCount);
+[StructLayout(LayoutKind.Sequential)]
+internal struct Context
+{
+    public uint ImgX;
+    public uint ImgY;
+    public int ImgN;
+    public int ImgOutN;
+    public IOCallbacks IO;
+    public unsafe void* IOUserData;
+    public int ReadFromCallbacks;
+    public int BufLen;
+    public unsafe fixed byte BufferStart[Constants.BufferStartLength];
+    public int CallbackAlreadyRead;
+    public unsafe byte* ImgBuffer;
+    public unsafe byte* ImgBufferEnd;
+    public unsafe byte* ImgBufferOriginal;
+    public unsafe byte* ImgBufferOriginalEnd;
+}

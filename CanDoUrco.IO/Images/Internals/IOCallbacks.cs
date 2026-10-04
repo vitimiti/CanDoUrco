@@ -14,8 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using System.Runtime.InteropServices;
 
-namespace CanDoUrco.IO.Images;
+namespace CanDoUrco.IO.Images.Internals;
 
-public readonly record struct ImageData(byte[] Data, Size Size, ImageChannelCount ChannelCount);
+[StructLayout(LayoutKind.Sequential)]
+internal struct IOCallbacks
+{
+    public unsafe delegate* managed<void*, byte*, int, int> Read { get; set; }
+    public unsafe delegate* managed<void*, int, void> Skip { get; set; }
+    public unsafe delegate* managed<void*, bool> Eof { get; set; }
+}

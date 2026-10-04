@@ -14,8 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
+using System.Runtime.InteropServices;
 
-namespace CanDoUrco.IO.Images;
+namespace CanDoUrco.IO.Images.Internals;
 
-public readonly record struct ImageData(byte[] Data, Size Size, ImageChannelCount ChannelCount);
+[StructLayout(LayoutKind.Sequential)]
+internal struct Huffman
+{
+    public unsafe fixed byte Fast[1 << Constants.FastBits];
+    public unsafe fixed ushort Code[Constants.HuffmanCodeLength];
+    public unsafe fixed byte Values[Constants.HuffmanValuesLength];
+    public unsafe fixed byte Size[Constants.HuffmanSizeLength];
+    public unsafe fixed uint MaxCode[Constants.HuffmanMaxCodeLength];
+    public unsafe fixed int Delta[Constants.HuffmanDeltaLength];
+}

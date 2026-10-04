@@ -14,8 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
-
 namespace CanDoUrco.IO.Images;
 
-public readonly record struct ImageData(byte[] Data, Size Size, ImageChannelCount ChannelCount);
+public enum ImageChannelOrder
+{
+    Rgb,
+    Bgr,
+}

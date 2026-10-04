@@ -175,7 +175,7 @@ return CrashReporter.Run(() =>
         ?? throw new InvalidOperationException("Texture not found.");
 
     {
-        var imageData = ImageLoader.Load(textureStream);
+        var imageData = Image.Load(textureStream);
         GL.TexImage2D(
             GL.TextureTargetEnum.Texture2D,
             level: 0,
