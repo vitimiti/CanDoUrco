@@ -114,33 +114,37 @@ internal static class Methods
         s->ImgBufferEnd = s->ImgBufferOriginalEnd;
     }
 
-    public static unsafe void StartCallbacks(Context* s, ref IOCallbacks c, void* userData)
+    public static unsafe void StartCallbacks(
+        ref Context context,
+        IOCallbacks callbacks,
+        object userData
+    )
     {
-        s->IO = c;
-        s->IOUserData = userData;
-        s->BufLen = Constants.BufferStartLength * sizeof(byte);
-        s->ReadFromCallbacks = 1;
-        s->CallbackAlreadyRead = 0;
-        s->ImgBufferOriginal = s->BufferStart;
-        s->ImgBuffer = s->ImgBufferOriginal;
-        RefillBuffer(s);
-        s->ImgBufferOriginalEnd = s->ImgBufferEnd;
+        FileStreamHandle = GCHandle.Alloc(userData);
+        context.IO = callbacks;
+        context.IOUserData = (void*)GCHandle.ToIntPtr(FileStreamHandle);
+        context.BufLen = Constants.BufferStartLength * sizeof(byte);
+        context.ReadFromCallbacks = 1;
+        context.CallbackAlreadyRead = 0;
+        fixed (Context* pContext = &context)
+        {
+            context.ImgBufferOriginal = pContext->BufferStart;
+            context.ImgBuffer = context.ImgBufferOriginal;
+            RefillBuffer(pContext);
+        }
+
+        context.ImgBufferOriginalEnd = context.ImgBufferEnd;
+        GC.KeepAlive(FileStreamHandle);
     }
 
     public static unsafe void StartFile(Stream stream, out Context context)
     {
         ArgumentNullException.ThrowIfNull(stream);
         context = default;
-        FileStreamHandle = GCHandle.Alloc(stream);
-        context.IOUserData = (void*)GCHandle.ToIntPtr(FileStreamHandle);
         context.IO.Read = &Read;
         context.IO.Skip = &Skip;
         context.IO.Eof = &Eof;
-        fixed (Context* pContext = &context)
-        {
-            StartCallbacks(pContext, ref context.IO, context.IOUserData);
-        }
-
+        StartCallbacks(ref context, context.IO, stream);
         GC.KeepAlive(FileStreamHandle);
     }
 
