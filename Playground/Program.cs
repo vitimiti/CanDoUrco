@@ -20,7 +20,6 @@ using System.Runtime.InteropServices;
 using CanDoUrco.Glfw;
 using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
-using CanDoUrco.Glfw.Utilities;
 using CanDoUrco.Glfw.Video;
 using CanDoUrco.IO.Images;
 using CanDoUrco.Utilities;
@@ -40,13 +39,12 @@ static void ProcessInput(GlfwWindow window)
 const int windowWidth = 800;
 const int windowHeight = 600;
 
-// csharpier-ignore
 var vertices = new Vertex[]
 {
-    new() { Position = new Vector3(.5F, .5F, 0F), Color = Color.White.ToNormalizedRgb(), TextureCoordinates = new Vector2(1F, 1F), },   // top right
-    new() { Position = new Vector3(.5F, -.5F, 0F), Color = Color.White.ToNormalizedRgb(), TextureCoordinates = new Vector2(1F, 0F), },  // bottom right
-    new() { Position = new Vector3(-.5F, -.5F, 0F), Color = Color.White.ToNormalizedRgb(), TextureCoordinates = new Vector2(0F, 0F), }, // bottom left
-    new() { Position = new Vector3(-.5F, .5F, 0F), Color = Color.White.ToNormalizedRgb(), TextureCoordinates = new Vector2(0F, 1F), },  // top left
+    new(new Vector3(.5F, .5F, 0F), Color.White.ToNormalizedRgb(), new Vector2(1F, 1F)), // top right
+    new(new Vector3(.5F, -.5F, 0F), Color.White.ToNormalizedRgb(), new Vector2(1F, 0F)), // bottom right
+    new(new Vector3(-.5F, -.5F, 0F), Color.White.ToNormalizedRgb(), new Vector2(0F, 0F)), // bottom left
+    new(new Vector3(-.5F, .5F, 0F), Color.White.ToNormalizedRgb(), new Vector2(0F, 1F)), // top left
 };
 
 // csharpier-ignore
@@ -218,11 +216,3 @@ return CrashReporter.Run(() =>
     GL.DeleteBuffers(ebo);
     GL.DeleteTextures(textures);
 });
-
-[StructLayout(LayoutKind.Sequential)]
-struct Vertex
-{
-    public Vector3 Position;
-    public Vector3 Color;
-    public Vector2 TextureCoordinates;
-}
