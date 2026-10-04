@@ -16,18 +16,8 @@
 
 namespace CanDoUrco.IO.Images.Internals;
 
-internal sealed class Huffman
+public enum ImageChannelOrder
 {
-    public byte[] Fast { get; } = new byte[1 << Constants.FastBits];
-    public int FastPosition { get; set; }
-    public ushort[] Code { get; } = new ushort[Constants.HuffmanCodeLength];
-    public int CodePosition { get; set; }
-    public byte[] Values { get; } = new byte[Constants.HuffmanValuesLength];
-    public int ValuesPosition { get; set; }
-    public byte[] Size { get; } = new byte[Constants.HuffmanSizeLength];
-    public int SizePosition { get; set; }
-    public uint[] MaxCode { get; } = new uint[Constants.HuffmanMaxCodeLength];
-    public int MaxCodePosition { get; set; }
-    public int[] Delta { get; } = new int[Constants.HuffmanDeltaLength];
-    public int DeltaPosition { get; set; }
+    Rgb,
+    Bgr,
 }

@@ -14,66 +14,88 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices;
-
 namespace CanDoUrco.IO.Images.Internals;
 
-[StructLayout(LayoutKind.Sequential)]
-internal struct Jpeg
-{
-    public unsafe Context* S;
-    public unsafe Huffman* HuffDC;
-    public unsafe Huffman* HuffAC;
-    public unsafe ushort** Dequant;
-    public unsafe short** FastAC;
-    public int ImgHMax;
-    public int ImgVMax;
-    public int ImgMcuX;
-    public int ImgMcuY;
-    public int ImgMcuW;
-    public int ImgMcuH;
-    public unsafe CompStruct* ImgComp;
-    public uint CodeBuffer;
-    public int CodeBits;
-    public byte Marker;
-    public int NoMore;
-    public bool Progressive;
-    public int SpecStart;
-    public int SpecEnd;
-    public int SuccHigh;
-    public int SuccLow;
-    public int EobRun;
-    public int JFif;
-    public int App14ColorTransform;
-    public int Rgb;
-    public int ScanN;
-    public unsafe fixed int Order[4];
-    public int RestartInterval;
-    public int Todo;
-    public unsafe delegate* managed<byte*, int, short*, void> IdctBlockKernel;
-    public unsafe delegate* managed<byte*, byte*, byte*, byte*, int, int, void> YCbCrToRgbKernel;
-    public unsafe delegate* managed<byte*, byte*, byte*, int, int, byte*> ResampleRowHV2Kernel;
+internal delegate void IdctKernel(Span<byte> output, int outStride, ReadOnlySpan<short> data);
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct CompStruct
+internal delegate void YCbCrToRgbKernelFunc(
+    Span<byte> output,
+    ReadOnlySpan<byte> y,
+    ReadOnlySpan<byte> cb,
+    ReadOnlySpan<byte> cr,
+    int count,
+    int step
+);
+
+internal delegate (byte[] Data, int Offset) ResampleFunc(
+    byte[] output,
+    byte[] inNear,
+    int inNearPos,
+    byte[] inFar,
+    int inFarPos,
+    int w,
+    int hs
+);
+
+internal sealed class Jpeg
+{
+    public Context S { get; set; } = null!;
+    public Huffman[] HuffDC { get; set; } = null!;
+    public Huffman[] HuffAC { get; set; } = null!;
+    public ushort[][] Dequant { get; set; } = null!;
+    public int DequantPosition1 { get; set; }
+    public int DequantPosition2 { get; set; }
+    public short[][] FastAC { get; set; } = null!;
+    public int FastACPosition1 { get; set; }
+    public int FastACPosition2 { get; set; }
+    public int ImgHMax { get; set; }
+    public int ImgVMax { get; set; }
+    public int ImgMcuX { get; set; }
+    public int ImgMcuY { get; set; }
+    public int ImgMcuW { get; set; }
+    public int ImgMcuH { get; set; }
+    public CompStruct[] ImgComp { get; set; } = null!;
+    public uint CodeBuffer { get; set; }
+    public int CodeBits { get; set; }
+    public byte Marker { get; set; }
+    public int NoMore { get; set; }
+    public bool Progressive { get; set; }
+    public int SpecStart { get; set; }
+    public int SpecEnd { get; set; }
+    public int SuccHigh { get; set; }
+    public int SuccLow { get; set; }
+    public int EobRun { get; set; }
+    public int JFif { get; set; }
+    public int App14ColorTransform { get; set; }
+    public int Rgb { get; set; }
+    public int ScanN { get; set; }
+    public int[] Order { get; } = new int[4];
+    public int OrderPosition { get; set; }
+    public int RestartInterval { get; set; }
+    public int Todo { get; set; }
+    public IdctKernel IdctBlockKernel { get; set; } = null!;
+    public YCbCrToRgbKernelFunc YCbCrToRgbKernel { get; set; } = null!;
+    public ResampleFunc ResampleRowHV2Kernel { get; set; } = null!;
+
+    public sealed class CompStruct
     {
-        public int ID;
-        public int H;
-        public int V;
-        public int TQ;
-        public int HD;
-        public int HA;
-        public int DCPred;
-        public int X;
-        public int Y;
-        public int W2;
-        public int H2;
-        public unsafe byte* Data;
-        public unsafe void* RawData;
-        public unsafe void* RawCoeff;
-        public unsafe byte* LineBuf;
-        public unsafe short* Coeff;
-        public int CoeffW;
-        public int CoeffH;
+        public int ID { get; set; }
+        public int H { get; set; }
+        public int V { get; set; }
+        public int TQ { get; set; }
+        public int HD { get; set; }
+        public int HA { get; set; }
+        public int DCPred { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int W2 { get; set; }
+        public int H2 { get; set; }
+        public byte[]? Data { get; set; }
+        public byte[]? RawData { get; set; }
+        public object? RawCoeff { get; set; }
+        public byte[]? LineBuf { get; set; }
+        public short[]? Coeff { get; set; }
+        public int CoeffW { get; set; }
+        public int CoeffH { get; set; }
     }
 }

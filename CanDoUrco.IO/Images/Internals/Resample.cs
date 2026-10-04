@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices;
-
 namespace CanDoUrco.IO.Images.Internals;
 
-[StructLayout(LayoutKind.Sequential)]
-internal struct Resample
+internal sealed class Resample
 {
-    public unsafe delegate* managed<byte*, byte*, byte*, int, int, byte*> ResampleFunc { get; set; }
-    public unsafe byte* Line0 { get; set; }
-    public unsafe byte* Line1 { get; set; }
+    public ResampleFunc ResampleAction { get; set; } = null!;
+
+    public byte[]? Line0 { get; set; }
+    public int Line0Position { get; set; }
+    public byte[]? Line1 { get; set; }
+    public int Line1Position { get; set; }
     public int HS { get; set; }
     public int VS { get; set; }
     public int WLores { get; set; }

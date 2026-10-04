@@ -14,25 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices;
-
 namespace CanDoUrco.IO.Images.Internals;
 
-[StructLayout(LayoutKind.Sequential)]
-internal struct Context
+internal sealed class Context
 {
-    public uint ImgX;
-    public uint ImgY;
-    public int ImgN;
-    public int ImgOutN;
-    public IOCallbacks IO;
-    public unsafe void* IOUserData;
-    public int ReadFromCallbacks;
-    public int BufLen;
-    public unsafe fixed byte BufferStart[Constants.BufferStartLength];
-    public int CallbackAlreadyRead;
-    public unsafe byte* ImgBuffer;
-    public unsafe byte* ImgBufferEnd;
-    public unsafe byte* ImgBufferOriginal;
-    public unsafe byte* ImgBufferOriginalEnd;
+    public uint ImgX { get; set; }
+    public uint ImgY { get; set; }
+    public int ImgN { get; set; }
+    public int ImgOutN { get; set; }
+    public IOCallbacks IO { get; set; } = new();
+    public object? IOUserData { get; set; }
+    public int ReadFromCallbacks { get; set; }
+    public int BufLen { get; set; }
+    public byte[] BufferStart { get; } = new byte[Constants.BufferStartLength];
+    public int BufferStartPosition { get; set; }
+    public int CallbackAlreadyRead { get; set; }
+    public byte[]? ImgBuffer { get; set; }
+    public int ImgBufferPosition { get; set; }
+    public byte[]? ImgBufferEnd { get; set; }
+    public int ImgBufferOriginalPosition { get; set; }
+    public byte[]? ImgBufferOriginal { get; set; }
+    public int ImgBufferOriginalEndPosition { get; set; }
+    public byte[]? ImgBufferOriginalEnd { get; set; }
+    public int ImgBufferEndPosition { get; set; }
 }

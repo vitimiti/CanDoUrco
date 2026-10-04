@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices;
-
 namespace CanDoUrco.IO.Images.Internals;
 
-[StructLayout(LayoutKind.Sequential)]
-internal struct ResultInfo
+internal sealed class ResultInfo
 {
     public int BitsPerChannel { get; set; }
     public int NumChannels { get; set; }
-    public Methods.ImageChannelOrder ChannelOrder { get; set; }
+    public ImageChannelOrder ChannelOrder { get; set; }
 }

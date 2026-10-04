@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using System.Runtime.InteropServices;
 using CanDoUrco.IO.Images.Internals;
 
 namespace CanDoUrco.IO.Images;
@@ -51,39 +50,33 @@ public static class Image
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown if the stream is null.</exception>
     /// <exception cref="InvalidOperationException">Thrown if the image cannot be loaded.</exception>
-    public static unsafe ImageData Load(Stream stream, int requiredChannelCount = 0)
+    public static ImageData Load(Stream stream, int requiredChannelCount = 0)
     {
         ArgumentNullException.ThrowIfNull(stream);
         Methods.ClearFailure();
-        Methods.StartFile(stream, out var context);
-        var x = 0;
-        var y = 0;
-        var comp = 0;
-        var result = Methods.LoadAndPostprocess8Bit(&context, &x, &y, &comp, requiredChannelCount);
-        if (result is null)
-        {
-            throw new InvalidOperationException(
+        var context = Methods.StartFile(stream);
+        var result =
+            Methods.LoadAndPostprocess8Bit(
+                context,
+                out var x,
+                out var y,
+                out var comp,
+                requiredChannelCount
+            )
+            ?? throw new InvalidOperationException(
                 Methods.FailureReason ?? "Unknown image load failure."
             );
-        }
 
-        try
-        {
-            stream.Seek(-(context.ImgBufferEnd - context.ImgBuffer), SeekOrigin.Current);
-            var channels = requiredChannelCount != 0 ? requiredChannelCount : comp;
-            return new ImageData(
-                new Span<byte>(result, x * y * channels).ToArray(),
-                new Size(x, y),
-                (ImageChannelCount)channels
-            );
-        }
-        finally
-        {
-            NativeMemory.Free(result);
-            if (Methods.FileStreamHandle.IsAllocated)
-            {
-                Methods.FileStreamHandle.Free();
-            }
-        }
+        stream.Seek(
+            -(context.ImgBufferEndPosition - context.ImgBufferPosition),
+            SeekOrigin.Current
+        );
+
+        var channels = requiredChannelCount != 0 ? requiredChannelCount : comp;
+        return new ImageData(
+            result.AsSpan(0, x * y * channels).ToArray(),
+            new Size(x, y),
+            (ImageChannelCount)channels
+        );
     }
 }

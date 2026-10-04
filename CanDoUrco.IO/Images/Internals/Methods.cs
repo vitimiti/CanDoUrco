@@ -31,8 +31,6 @@ internal static class Methods
     [field: ThreadStatic]
     public static string? FailureReason { get; private set; }
 
-    public static GCHandle FileStreamHandle { get; private set; }
-
     public static void ClearFailure() => FailureReason = null;
 
     public static bool Error(string reason)
@@ -41,26 +39,18 @@ internal static class Methods
         return false;
     }
 
-    public static unsafe byte* ErrorPtr(string reason)
+    public static byte[]? ErrorPtr(string reason)
     {
         FailureReason = reason;
         return null;
     }
 
-    public static unsafe int Read(void* user, byte* data, int size)
-    {
-        if (GCHandle.FromIntPtr((nint)user).Target is not Stream stream)
-        {
-            return 0;
-        }
+    public static int Read(object? user, Span<byte> data, int size) =>
+        user is not Stream stream ? 0 : stream.Read(data[..size]);
 
-        var buffer = new Span<byte>(data, size);
-        return stream.Read(buffer);
-    }
-
-    public static unsafe void Skip(void* user, int size)
+    public static void Skip(object? user, int size)
     {
-        if (GCHandle.FromIntPtr((nint)user).Target is not Stream stream)
+        if (user is not Stream stream)
         {
             return;
         }
@@ -68,144 +58,145 @@ internal static class Methods
         stream.Seek(size, SeekOrigin.Current);
     }
 
-    public static unsafe void Skip(Context* s, int n)
+    public static void Skip(Context context, int count)
     {
-        if (n == 0)
+        if (count == 0)
         {
             return;
         }
 
-        if (n < 0)
+        if (count < 0)
         {
-            s->ImgBuffer = s->ImgBufferEnd;
+            context.ImgBuffer = context.ImgBufferEnd;
+            context.ImgBufferPosition = context.ImgBufferEndPosition;
             return;
         }
 
-        if (s->IO.Read is not null)
+        if (context.IO.Read is not null)
         {
-            var blen = (int)(s->ImgBufferEnd - s->ImgBuffer);
-            if (blen < n)
+            var blen = context.ImgBufferEndPosition - context.ImgBufferPosition;
+            if (blen < count)
             {
-                s->ImgBuffer = s->ImgBufferEnd;
-                s->IO.Skip(s->IOUserData, n - blen);
+                context.ImgBuffer = context.ImgBufferEnd;
+                context.ImgBufferPosition = context.ImgBufferEndPosition;
+                context.IO.Skip!.Invoke(context.IOUserData, count - blen);
                 return;
             }
         }
 
-        s->ImgBuffer += n;
+        context.ImgBufferPosition += count;
     }
 
-    public static unsafe bool Eof(void* user) =>
-        GCHandle.FromIntPtr((nint)user).Target is not Stream stream
-        || (stream.Position >= stream.Length);
+    public static bool Eof(object? user) =>
+        user is not Stream stream || (stream.Position >= stream.Length);
 
     public static bool Eoi(int x) => x == 0xD9;
 
     public static bool Sos(int x) => x == 0xDA;
 
-    public static unsafe void StartMem(Context* s, byte* buffer, int len)
+    public static void StartMem(Context context, byte[] buffer, int len)
     {
-        s->IO.Read = null;
-        s->ReadFromCallbacks = 0;
-        s->CallbackAlreadyRead = 0;
-        s->ImgBufferOriginal = buffer;
-        s->ImgBuffer = s->ImgBufferOriginal;
-        s->ImgBufferOriginalEnd = buffer + len;
-        s->ImgBufferEnd = s->ImgBufferOriginalEnd;
+        context.IO.Read = null;
+        context.ReadFromCallbacks = 0;
+        context.CallbackAlreadyRead = 0;
+        context.ImgBufferOriginal = buffer;
+        context.ImgBufferOriginalPosition = 0;
+        context.ImgBuffer = buffer;
+        context.ImgBufferPosition = 0;
+        context.ImgBufferOriginalEnd = buffer;
+        context.ImgBufferOriginalEndPosition = len;
+        context.ImgBufferEnd = buffer;
+        context.ImgBufferEndPosition = len;
     }
 
-    public static unsafe void StartCallbacks(
-        ref Context context,
-        IOCallbacks callbacks,
-        object userData
-    )
+    public static void StartCallbacks(Context context, IOCallbacks callbacks, object? userData)
     {
-        FileStreamHandle = GCHandle.Alloc(userData);
         context.IO = callbacks;
-        context.IOUserData = (void*)GCHandle.ToIntPtr(FileStreamHandle);
-        context.BufLen = Constants.BufferStartLength * sizeof(byte);
+        context.IOUserData = userData;
+        context.BufLen = Constants.BufferStartLength;
         context.ReadFromCallbacks = 1;
         context.CallbackAlreadyRead = 0;
-        fixed (Context* pContext = &context)
-        {
-            context.ImgBufferOriginal = pContext->BufferStart;
-            context.ImgBuffer = context.ImgBufferOriginal;
-            RefillBuffer(pContext);
-        }
-
+        context.ImgBufferOriginal = context.BufferStart;
+        context.ImgBufferOriginalPosition = 0;
+        context.ImgBuffer = context.BufferStart;
+        context.ImgBufferPosition = 0;
+        RefillBuffer(context);
         context.ImgBufferOriginalEnd = context.ImgBufferEnd;
-        GC.KeepAlive(FileStreamHandle);
+        context.ImgBufferOriginalEndPosition = context.ImgBufferEndPosition;
     }
 
-    public static unsafe void StartFile(Stream stream, out Context context)
+    public static Context StartFile(Stream stream)
     {
-        ArgumentNullException.ThrowIfNull(stream);
-        context = default;
-        context.IO.Read = &Read;
-        context.IO.Skip = &Skip;
-        context.IO.Eof = &Eof;
-        StartCallbacks(ref context, context.IO, stream);
-        GC.KeepAlive(FileStreamHandle);
+        var context = new Context();
+        context.IO.Read = Read;
+        context.IO.Skip = Skip;
+        context.IO.Eof = Eof;
+        StartCallbacks(context, context.IO, stream);
+        return context;
     }
 
-    public static unsafe void Rewind(Context* s)
+    public static void Rewind(Context context)
     {
-        s->ImgBuffer = s->ImgBufferOriginal;
-        s->ImgBufferEnd = s->ImgBufferOriginalEnd;
+        context.ImgBuffer = context.ImgBufferOriginal;
+        context.ImgBufferPosition = context.ImgBufferOriginalPosition;
+        context.ImgBufferEnd = context.ImgBufferOriginalEnd;
+        context.ImgBufferEndPosition = context.ImgBufferOriginalEndPosition;
     }
 
-    public static unsafe void RefillBuffer(Context* s)
+    public static void RefillBuffer(Context context)
     {
-        var n = s->IO.Read(s->IOUserData, s->BufferStart, s->BufLen);
-        s->CallbackAlreadyRead += (int)(s->ImgBuffer - s->ImgBufferOriginal);
+        var n = context.IO.Read!.Invoke(context.IOUserData, context.BufferStart, context.BufLen);
+        context.CallbackAlreadyRead +=
+            context.ImgBufferPosition - context.ImgBufferOriginalPosition;
+        context.ImgBuffer = context.BufferStart;
+        context.ImgBufferEnd = context.BufferStart;
+        context.ImgBufferPosition = 0;
         if (n == 0)
         {
-            s->ReadFromCallbacks = 0;
-            s->ImgBuffer = s->BufferStart;
-            s->ImgBufferEnd = s->BufferStart + 1;
-            *s->ImgBuffer = 0;
+            context.ReadFromCallbacks = 0;
+            context.ImgBufferEndPosition = 1;
+            context.BufferStart[0] = 0;
         }
         else
         {
-            s->ImgBuffer = s->BufferStart;
-            s->ImgBufferEnd = s->BufferStart + n;
+            context.ImgBufferEndPosition = n;
         }
     }
 
-    public static unsafe byte Get8(Context* s)
+    public static byte Get8(Context context)
     {
-        if (s->ImgBuffer < s->ImgBufferEnd)
+        if (context.ImgBufferPosition < context.ImgBufferEndPosition)
         {
-            return *s->ImgBuffer++;
+            return context.ImgBuffer![context.ImgBufferPosition++];
         }
 
-        if (s->ReadFromCallbacks != 0)
+        if (context.ReadFromCallbacks != 0)
         {
-            RefillBuffer(s);
-            return *s->ImgBuffer++;
+            RefillBuffer(context);
+            return context.ImgBuffer![context.ImgBufferPosition++];
         }
 
         return 0;
     }
 
-    public static unsafe ushort Get16BE(Context* s)
+    public static ushort Get16BE(Context context)
     {
-        var z = (int)Get8(s);
-        return unchecked((ushort)((z << 8) + Get8(s)));
+        var z = (int)Get8(context);
+        return unchecked((ushort)((z << 8) + Get8(context)));
     }
 
-    public static unsafe void BuildFastAC(Huffman* h, short* fastAC)
+    public static void BuildFastAC(Huffman huffman, short[] fastAC)
     {
         for (var i = 0; i < (1 << Constants.FastBits); i++)
         {
-            var fast = h->Fast[i];
+            var fast = huffman.Fast[i];
             fastAC[i] = 0;
             if (fast < 255)
             {
-                var rs = h->Values[fast];
+                var rs = huffman.Values[fast];
                 var run = (rs >> 4) & 15;
                 var magbits = rs & 15;
-                var len = h->Size[fast];
+                var len = huffman.Size[fast];
                 if (magbits != 0 && len + magbits <= Constants.FastBits)
                 {
                     var k =
@@ -227,96 +218,96 @@ internal static class Methods
         }
     }
 
-    public static bool AddIntsValid(int a, int b)
+    public static bool AddIntsValid(int lhs, int rhs)
     {
-        if ((a >= 0) != (b >= 0))
+        if ((lhs >= 0) != (rhs >= 0))
         {
             return true;
         }
 
-        if (a < 0 && b < 0)
+        if (lhs < 0 && rhs < 0)
         {
-            return a >= int.MinValue - b;
+            return lhs >= int.MinValue - rhs;
         }
 
-        return a <= int.MaxValue - b;
+        return lhs <= int.MaxValue - rhs;
     }
 
-    public static bool Mul2ShortsValid(int a, int b)
+    public static bool Mul2ShortsValid(int lhs, int rhs)
     {
-        if (b == 0 || b == -1)
+        if (rhs == 0 || rhs == -1)
         {
             return true;
         }
 
-        if ((a >= 0) == (b >= 0))
+        if ((lhs >= 0) == (rhs >= 0))
         {
-            return a <= short.MaxValue / b;
+            return lhs <= short.MaxValue / rhs;
         }
 
-        if (b < 0)
+        if (rhs < 0)
         {
-            return a <= short.MinValue / b;
+            return lhs <= short.MinValue / rhs;
         }
 
-        return a >= short.MinValue / b;
+        return lhs >= short.MinValue / rhs;
     }
 
-    public static unsafe void GrowBuffer(Jpeg* j)
+    public static void GrowBuffer(Jpeg j)
     {
         do
         {
-            var b = (uint)(j->NoMore != 0 ? 0 : Methods.Get8(j->S));
+            var b = (uint)(j.NoMore != 0 ? 0 : Methods.Get8(j.S));
             if (b == 0xFF)
             {
-                var c = (int)Methods.Get8(j->S);
+                var c = (int)Methods.Get8(j.S);
                 while (c == 0xFF)
                 {
-                    c = Methods.Get8(j->S);
+                    c = Methods.Get8(j.S);
                 }
 
                 if (c != 0)
                 {
-                    j->Marker = (byte)c;
-                    j->NoMore = 1;
+                    j.Marker = (byte)c;
+                    j.NoMore = 1;
                     return;
                 }
             }
 
-            j->CodeBuffer |= b << (24 - j->CodeBits);
-            j->CodeBits += 8;
-        } while (j->CodeBits <= 24);
+            j.CodeBuffer |= b << (24 - j.CodeBits);
+            j.CodeBits += 8;
+        } while (j.CodeBits <= 24);
     }
 
-    public static unsafe int JpegHuffDecode(Jpeg* j, Huffman* h)
+    public static int JpegHuffDecode(Jpeg jpeg, Huffman huffman)
     {
-        if (j->CodeBits < 16)
+        if (jpeg.CodeBits < 16)
         {
-            GrowBuffer(j);
+            GrowBuffer(jpeg);
         }
 
         var c = unchecked(
-            (int)((j->CodeBuffer >> (32 - Constants.FastBits)) & ((1 << Constants.FastBits) - 1))
+            (int)((jpeg.CodeBuffer >> (32 - Constants.FastBits)) & ((1 << Constants.FastBits) - 1))
         );
 
-        var k = (int)h->Fast[c];
+        var k = (int)huffman.Fast[c];
         if (k < 255)
         {
-            var s = (int)h->Size[k];
-            if (s > j->CodeBits)
+            var s = (int)huffman.Size[k];
+            if (s > jpeg.CodeBits)
             {
                 return -1;
             }
 
-            j->CodeBuffer <<= s;
-            j->CodeBits -= s;
-            return h->Values[k];
+            jpeg.CodeBuffer <<= s;
+            jpeg.CodeBits -= s;
+            return huffman.Values[k];
         }
 
-        var temp = unchecked((uint)(j->CodeBuffer >> 16));
+        var temp = unchecked(jpeg.CodeBuffer >> 16);
         for (k = Constants.FastBits + 1; ; k++)
         {
-            if (temp < h->MaxCode[k])
+            if (temp < huffman.MaxCode[k])
             {
                 break;
             }
@@ -324,117 +315,120 @@ internal static class Methods
 
         if (k == 17)
         {
-            j->CodeBits -= 16;
+            jpeg.CodeBits -= 16;
             return -1;
         }
 
-        if (k > j->CodeBits)
+        if (k > jpeg.CodeBits)
         {
             return -1;
         }
 
-        c = unchecked((int)(((j->CodeBuffer >> (32 - k)) & Constants.BitsMask[k]) + h->Delta[k]));
+        c = unchecked(
+            (int)(((jpeg.CodeBuffer >> (32 - k)) & Constants.BitsMask[k]) + huffman.Delta[k])
+        );
         if (c < 0 || c >= 256)
         {
             return -1;
         }
 
         Debug.Assert(
-            ((j->CodeBuffer >> (32 - h->Size[c])) & Constants.BitsMask[h->Size[c]]) == h->Code[c]
+            ((jpeg.CodeBuffer >> (32 - huffman.Size[c])) & Constants.BitsMask[huffman.Size[c]])
+                == huffman.Code[c]
         );
 
-        j->CodeBits -= k;
-        j->CodeBuffer <<= k;
-        return h->Values[c];
+        jpeg.CodeBits -= k;
+        jpeg.CodeBuffer <<= k;
+        return huffman.Values[c];
     }
 
-    public static unsafe int ExtendReceive(Jpeg* j, int n)
+    public static int ExtendReceive(Jpeg jpeg, int count)
     {
-        if (j->CodeBits < n)
+        if (jpeg.CodeBits < count)
         {
-            GrowBuffer(j);
+            GrowBuffer(jpeg);
         }
 
-        if (j->CodeBits < n)
+        if (jpeg.CodeBits < count)
         {
             return 0;
         }
 
-        var sgn = unchecked((int)(j->CodeBuffer >> 31));
-        var k = BitOperations.RotateLeft(j->CodeBuffer, n);
-        j->CodeBuffer = k & ~Constants.BitsMask[n];
-        k &= Constants.BitsMask[n];
-        j->CodeBits -= n;
-        return unchecked((int)(k + (Constants.JpegBias[n] & (sgn - 1))));
+        var sgn = unchecked((int)(jpeg.CodeBuffer >> 31));
+        var k = BitOperations.RotateLeft(jpeg.CodeBuffer, count);
+        jpeg.CodeBuffer = k & ~Constants.BitsMask[count];
+        k &= Constants.BitsMask[count];
+        jpeg.CodeBits -= count;
+        return unchecked((int)(k + (Constants.JpegBias[count] & (sgn - 1))));
     }
 
-    public static unsafe int JpegGetBits(Jpeg* j, int n)
+    public static int JpegGetBits(Jpeg jpeg, int count)
     {
-        if (j->CodeBits < n)
+        if (jpeg.CodeBits < count)
         {
-            GrowBuffer(j);
+            GrowBuffer(jpeg);
         }
 
-        if (j->CodeBits < n)
+        if (jpeg.CodeBits < count)
         {
             return 0;
         }
 
-        var k = BitOperations.RotateLeft(j->CodeBuffer, n);
-        j->CodeBuffer = k & ~Constants.BitsMask[n];
-        k &= Constants.BitsMask[n];
-        j->CodeBits -= n;
+        var k = BitOperations.RotateLeft(jpeg.CodeBuffer, count);
+        jpeg.CodeBuffer = k & ~Constants.BitsMask[count];
+        k &= Constants.BitsMask[count];
+        jpeg.CodeBits -= count;
         return unchecked((int)k);
     }
 
-    public static unsafe int JpegGetBit(Jpeg* j)
+    public static int JpegGetBit(Jpeg jpeg)
     {
-        if (j->CodeBits < 1)
+        if (jpeg.CodeBits < 1)
         {
-            GrowBuffer(j);
+            GrowBuffer(jpeg);
         }
 
-        if (j->CodeBits < 1)
+        if (jpeg.CodeBits < 1)
         {
             return 0;
         }
 
-        var k = j->CodeBuffer;
-        j->CodeBuffer <<= 1;
-        --j->CodeBits;
+        var k = jpeg.CodeBuffer;
+        jpeg.CodeBuffer <<= 1;
+        --jpeg.CodeBits;
         return unchecked((int)(k & 0x8000_0000));
     }
 
-    public static unsafe bool JpegDecodeBlock(
-        Jpeg* j,
-        short* data,
-        Huffman* hdc,
-        Huffman* hac,
-        short* fac,
-        int b,
-        ushort* dequant
+    public static bool JpegDecodeBlock(
+        Jpeg jpeg,
+        Span<short> data,
+        Huffman hdc,
+        Huffman hac,
+        short[] fac,
+        int block,
+        ushort[] dequant
     )
     {
-        if (j->CodeBits < 16)
+        if (jpeg.CodeBits < 16)
         {
-            GrowBuffer(j);
+            GrowBuffer(jpeg);
         }
 
-        var t = JpegHuffDecode(j, hdc);
+        var t = JpegHuffDecode(jpeg, hdc);
         if (t < 0 || t > 15)
         {
             return Error("Bad huffman code. Corrupt JPEG.");
         }
 
-        NativeMemory.Fill(data, 64 * sizeof(short), 0);
-        var diff = t != 0 ? ExtendReceive(j, t) : 0;
-        if (!AddIntsValid(j->ImgComp[b].DCPred, diff))
+        data[..64].Clear();
+        var diff = t != 0 ? ExtendReceive(jpeg, t) : 0;
+        if (!AddIntsValid(jpeg.ImgComp[block].DCPred, diff))
         {
             return Error("Bad delta. Corrupt JPEG.");
         }
 
-        var dc = j->ImgComp[b].DCPred + diff;
-        j->ImgComp[b].DCPred = dc;
+        var dc = jpeg.ImgComp[block].DCPred + diff;
+        jpeg.ImgComp[block].DCPred = dc;
         if (!Mul2ShortsValid(dc, dequant[0]))
         {
             return Error("Can't merge DC and AC. Corrupt JPEG.");
@@ -444,14 +438,14 @@ internal static class Methods
         var k = 1;
         do
         {
-            if (j->CodeBits < 16)
+            if (jpeg.CodeBits < 16)
             {
-                GrowBuffer(j);
+                GrowBuffer(jpeg);
             }
 
             var c = unchecked(
                 (int)(
-                    (j->CodeBuffer >> (32 - Constants.FastBits)) & ((1 << Constants.FastBits) - 1)
+                    (jpeg.CodeBuffer >> (32 - Constants.FastBits)) & ((1 << Constants.FastBits) - 1)
                 )
             );
 
@@ -460,21 +454,21 @@ internal static class Methods
             {
                 k += (r >> 4) & 15;
                 var s = r & 15;
-                if (s > j->CodeBits)
+                if (s > jpeg.CodeBits)
                 {
                     return Error(
                         "Bad Huffman code. Combined length longer than code bits available."
                     );
                 }
 
-                j->CodeBuffer <<= s;
-                j->CodeBits -= s;
+                jpeg.CodeBuffer <<= s;
+                jpeg.CodeBits -= s;
                 var zig = Constants.JpegDezigzag[k++];
                 data[zig] = unchecked((short)((r >> 8) * dequant[zig]));
             }
             else
             {
-                var rs = JpegHuffDecode(j, hac);
+                var rs = JpegHuffDecode(jpeg, hac);
                 if (rs < 0)
                 {
                     return Error("Bad Huffman code. Corrupt JPEG.");
@@ -494,8 +488,8 @@ internal static class Methods
                 else
                 {
                     k += r;
-                    var zig = (uint)Constants.JpegDezigzag[k++];
-                    data[zig] = unchecked((short)(ExtendReceive(j, s) * dequant[zig]));
+                    var zig = (int)Constants.JpegDezigzag[k++];
+                    data[zig] = unchecked((short)(ExtendReceive(jpeg, s) * dequant[zig]));
                 }
             }
         } while (k < 64);
@@ -503,21 +497,21 @@ internal static class Methods
         return true;
     }
 
-    public static unsafe bool JpegDecodeBlockProgDC(Jpeg* j, short* data, Huffman* hdc, int b)
+    public static bool JpegDecodeBlockProgDC(Jpeg j, Span<short> data, Huffman hdc, int b)
     {
-        if (j->SpecEnd != 0)
+        if (j.SpecEnd != 0)
         {
             return Error("Can't merge DC and AC. Corrupt JPEG.");
         }
 
-        if (j->CodeBits < 16)
+        if (j.CodeBits < 16)
         {
             GrowBuffer(j);
         }
 
-        if (j->SuccHigh == 0)
+        if (j.SuccHigh == 0)
         {
-            NativeMemory.Fill(data, 64 * sizeof(short), 0);
+            data[..64].Clear();
             var t = JpegHuffDecode(j, hdc);
             if (t < 0 || t > 15)
             {
@@ -525,58 +519,58 @@ internal static class Methods
             }
 
             var diff = t != 0 ? ExtendReceive(j, t) : 0;
-            if (!AddIntsValid(j->ImgComp[b].DCPred, diff))
+            if (!AddIntsValid(j.ImgComp[b].DCPred, diff))
             {
                 return Error("Bad delta. Corrupt JPEG.");
             }
 
-            var dc = j->ImgComp[b].DCPred + diff;
-            j->ImgComp[b].DCPred = dc;
-            if (!Mul2ShortsValid(dc, 1 << j->SuccLow))
+            var dc = j.ImgComp[b].DCPred + diff;
+            j.ImgComp[b].DCPred = dc;
+            if (!Mul2ShortsValid(dc, 1 << j.SuccLow))
             {
                 return Error("Can't merge DC and AC. Corrupt JPEG.");
             }
 
-            data[0] = unchecked((short)(dc * (1 << j->SuccLow)));
+            data[0] = unchecked((short)(dc * (1 << j.SuccLow)));
         }
         else
         {
             if (JpegGetBit(j) != 0)
             {
-                data[0] += unchecked((short)(1 << j->SuccLow));
+                data[0] += unchecked((short)(1 << j.SuccLow));
             }
         }
 
         return true;
     }
 
-    public static unsafe bool JpegDecodeBlockProgAC(Jpeg* j, short* data, Huffman* hac, short* fac)
+    public static bool JpegDecodeBlockProgAC(Jpeg j, Span<short> data, Huffman hac, short[] fac)
     {
-        if (j->SpecStart == 0)
+        if (j.SpecStart == 0)
         {
             return Error("Can't merge DC and AC. Corrupt JPEG.");
         }
 
-        if (j->SuccHigh == 0)
+        if (j.SuccHigh == 0)
         {
-            var shift = j->SuccLow;
-            if (j->EobRun != 0)
+            var shift = j.SuccLow;
+            if (j.EobRun != 0)
             {
-                --j->EobRun;
+                --j.EobRun;
                 return true;
             }
 
-            var k = j->SpecStart;
+            var k = j.SpecStart;
             do
             {
-                if (j->CodeBits < 16)
+                if (j.CodeBits < 16)
                 {
                     GrowBuffer(j);
                 }
 
                 var c = unchecked(
                     (int)(
-                        (j->CodeBuffer >> (32 - Constants.FastBits))
+                        (j.CodeBuffer >> (32 - Constants.FastBits))
                         & ((1 << Constants.FastBits) - 1)
                     )
                 );
@@ -586,16 +580,16 @@ internal static class Methods
                 {
                     k += (r >> 4) & 15;
                     var s = r & 15;
-                    if (s > j->CodeBits)
+                    if (s > j.CodeBits)
                     {
                         return Error(
                             "Bad Huffman code. Combined length longer than code bits available."
                         );
                     }
 
-                    j->CodeBuffer <<= s;
-                    j->CodeBits -= s;
-                    var zig = (uint)Constants.JpegDezigzag[k++];
+                    j.CodeBuffer <<= s;
+                    j.CodeBits -= s;
+                    var zig = (int)Constants.JpegDezigzag[k++];
                     data[zig] = unchecked((short)((r >> 8) * (1 << shift)));
                 }
                 else
@@ -612,13 +606,13 @@ internal static class Methods
                     {
                         if (r < 15)
                         {
-                            j->EobRun = 1 << r;
+                            j.EobRun = 1 << r;
                             if (r != 0)
                             {
-                                j->EobRun += JpegGetBits(j, r);
+                                j.EobRun += JpegGetBits(j, r);
                             }
 
-                            --j->EobRun;
+                            --j.EobRun;
                             break;
                         }
 
@@ -627,34 +621,34 @@ internal static class Methods
                     else
                     {
                         k += r;
-                        var zig = (uint)Constants.JpegDezigzag[k++];
+                        var zig = (int)Constants.JpegDezigzag[k++];
                         data[zig] = unchecked((short)(ExtendReceive(j, s) * (1 << shift)));
                     }
                 }
-            } while (k <= j->SpecEnd);
+            } while (k <= j.SpecEnd);
         }
         else
         {
-            var bit = unchecked((short)(1 << j->SuccLow));
-            if (j->EobRun != 0)
+            var bit = unchecked((short)(1 << j.SuccLow));
+            if (j.EobRun != 0)
             {
-                --j->EobRun;
-                for (var k = j->SpecStart; k <= j->SpecEnd; k++)
+                --j.EobRun;
+                for (var k = j.SpecStart; k <= j.SpecEnd; k++)
                 {
-                    var p = &data[Constants.JpegDezigzag[k]];
-                    if (*p != 0)
+                    ref var p = ref data[Constants.JpegDezigzag[k]];
+                    if (p != 0)
                     {
                         if (JpegGetBit(j) != 0)
                         {
-                            if ((*p & bit) == 0)
+                            if ((p & bit) == 0)
                             {
-                                if (*p > 0)
+                                if (p > 0)
                                 {
-                                    *p += bit;
+                                    p += bit;
                                 }
                                 else
                                 {
-                                    *p -= bit;
+                                    p -= bit;
                                 }
                             }
                         }
@@ -663,7 +657,7 @@ internal static class Methods
             }
             else
             {
-                var k = j->SpecStart;
+                var k = j.SpecStart;
                 do
                 {
                     var rs = JpegHuffDecode(j, hac);
@@ -678,10 +672,10 @@ internal static class Methods
                     {
                         if (r < 15)
                         {
-                            j->EobRun = (1 << r) - 1;
+                            j.EobRun = (1 << r) - 1;
                             if (r != 0)
                             {
-                                j->EobRun += JpegGetBits(j, r);
+                                j.EobRun += JpegGetBits(j, r);
                             }
 
                             r = 64;
@@ -697,22 +691,22 @@ internal static class Methods
                         s = JpegGetBit(j) != 0 ? bit : -bit;
                     }
 
-                    while (k <= j->SpecEnd)
+                    while (k <= j.SpecEnd)
                     {
-                        var p = &data[Constants.JpegDezigzag[k++]];
-                        if (*p != 0)
+                        ref var p = ref data[Constants.JpegDezigzag[k++]];
+                        if (p != 0)
                         {
                             if (JpegGetBit(j) != 0)
                             {
-                                if ((*p & bit) == 0)
+                                if ((p & bit) == 0)
                                 {
-                                    if (*p > 0)
+                                    if (p > 0)
                                     {
-                                        *p += bit;
+                                        p += bit;
                                     }
                                     else
                                     {
-                                        *p -= bit;
+                                        p -= bit;
                                     }
                                 }
                             }
@@ -721,14 +715,14 @@ internal static class Methods
                         {
                             if (r == 0)
                             {
-                                *p = unchecked((short)s);
+                                p = unchecked((short)s);
                                 break;
                             }
 
                             --r;
                         }
                     }
-                } while (k <= j->SpecEnd);
+                } while (k <= j.SpecEnd);
             }
         }
 
@@ -787,37 +781,43 @@ internal static class Methods
         return (t0, t1, t2, t3, x0, x1, x2, x3);
     }
 
-    public static unsafe void IdctBlock(byte* @out, int outStride, short* data)
+    public static void IdctBlock(Span<byte> @out, int outStride, ReadOnlySpan<short> data)
     {
-        var val = stackalloc int[64];
-        var v = val;
-        var d = data;
-        for (var i = 0; i < 8; i++, d++, v++)
+        Span<int> val = stackalloc int[64];
+        for (var i = 0; i < 8; i++)
         {
             if (
-                d[8] == 0
-                && d[16] == 0
-                && d[24] == 0
-                && d[32] == 0
-                && d[40] == 0
-                && d[48] == 0
-                && d[56] == 0
+                data[i + 8] == 0
+                && data[i + 16] == 0
+                && data[i + 24] == 0
+                && data[i + 32] == 0
+                && data[i + 40] == 0
+                && data[i + 48] == 0
+                && data[i + 56] == 0
             )
             {
-                var dcterm = d[0] * 4;
-                v[0] = v[8] = v[16] = v[24] = v[32] = v[40] = v[48] = v[56] = dcterm;
+                var dcterm = data[i + 0] * 4;
+                val[i + 0] =
+                    val[i + 8] =
+                    val[i + 16] =
+                    val[i + 24] =
+                    val[i + 32] =
+                    val[i + 40] =
+                    val[i + 48] =
+                    val[i + 56] =
+                        dcterm;
             }
             else
             {
                 var (t0, t1, t2, t3, x0, x1, x2, x3) = Idct1D(
-                    d[0],
-                    d[8],
-                    d[16],
-                    d[24],
-                    d[32],
-                    d[40],
-                    d[48],
-                    d[56]
+                    data[i + 0],
+                    data[i + 8],
+                    data[i + 16],
+                    data[i + 24],
+                    data[i + 32],
+                    data[i + 40],
+                    data[i + 48],
+                    data[i + 56]
                 );
 
                 const int offset = 512;
@@ -826,30 +826,28 @@ internal static class Methods
                 x1 += offset;
                 x2 += offset;
                 x3 += offset;
-                v[0] = (x0 + t3) >> shift;
-                v[56] = (x0 - t3) >> shift;
-                v[8] = (x1 + t2) >> shift;
-                v[48] = (x1 - t2) >> shift;
-                v[16] = (x2 + t1) >> shift;
-                v[40] = (x2 - t1) >> shift;
-                v[24] = (x3 + t0) >> shift;
-                v[32] = (x3 - t0) >> shift;
+                val[i + 0] = (x0 + t3) >> shift;
+                val[i + 56] = (x0 - t3) >> shift;
+                val[i + 8] = (x1 + t2) >> shift;
+                val[i + 48] = (x1 - t2) >> shift;
+                val[i + 16] = (x2 + t1) >> shift;
+                val[i + 40] = (x2 - t1) >> shift;
+                val[i + 24] = (x3 + t0) >> shift;
+                val[i + 32] = (x3 - t0) >> shift;
             }
         }
 
-        v = val;
-        var o = @out;
-        for (var i = 0; i < 8; i++, v += 8, o += outStride)
+        for (var i = 0; i < 8; i++)
         {
             var (t0, t1, t2, t3, x0, x1, x2, x3) = Idct1D(
-                v[0],
-                v[1],
-                v[2],
-                v[3],
-                v[4],
-                v[5],
-                v[6],
-                v[7]
+                val[i * 8 + 0],
+                val[i * 8 + 1],
+                val[i * 8 + 2],
+                val[i * 8 + 3],
+                val[i * 8 + 4],
+                val[i * 8 + 5],
+                val[i * 8 + 6],
+                val[i * 8 + 7]
             );
 
             const int shift = 17;
@@ -858,32 +856,32 @@ internal static class Methods
             x1 += offset;
             x2 += offset;
             x3 += offset;
-            o[0] = (byte)int.Clamp((x0 + t3) >> shift, 0, 255);
-            o[7] = (byte)int.Clamp((x0 - t3) >> shift, 0, 255);
-            o[1] = (byte)int.Clamp((x1 + t2) >> shift, 0, 255);
-            o[6] = (byte)int.Clamp((x1 - t2) >> shift, 0, 255);
-            o[2] = (byte)int.Clamp((x2 + t1) >> shift, 0, 255);
-            o[5] = (byte)int.Clamp((x2 - t1) >> shift, 0, 255);
-            o[3] = (byte)int.Clamp((x3 + t0) >> shift, 0, 255);
-            o[4] = (byte)int.Clamp((x3 - t0) >> shift, 0, 255);
+            @out[i * outStride + 0] = (byte)int.Clamp((x0 + t3) >> shift, 0, 255);
+            @out[i * outStride + 7] = (byte)int.Clamp((x0 - t3) >> shift, 0, 255);
+            @out[i * outStride + 1] = (byte)int.Clamp((x1 + t2) >> shift, 0, 255);
+            @out[i * outStride + 6] = (byte)int.Clamp((x1 - t2) >> shift, 0, 255);
+            @out[i * outStride + 2] = (byte)int.Clamp((x2 + t1) >> shift, 0, 255);
+            @out[i * outStride + 5] = (byte)int.Clamp((x2 - t1) >> shift, 0, 255);
+            @out[i * outStride + 3] = (byte)int.Clamp((x3 + t0) >> shift, 0, 255);
+            @out[i * outStride + 4] = (byte)int.Clamp((x3 - t0) >> shift, 0, 255);
         }
     }
 
-    public static unsafe void IdctSimd(byte* @out, int outStride, short* data)
+    public static void IdctSimd(Span<byte> @out, int outStride, ReadOnlySpan<short> data)
     {
         if (!Sse2.IsSupported && !AdvSimd.Arm64.IsSupported)
         {
             throw new PlatformNotSupportedException();
         }
 
-        var row0 = Vector128.Load(data + 0 * 8);
-        var row1 = Vector128.Load(data + 1 * 8);
-        var row2 = Vector128.Load(data + 2 * 8);
-        var row3 = Vector128.Load(data + 3 * 8);
-        var row4 = Vector128.Load(data + 4 * 8);
-        var row5 = Vector128.Load(data + 5 * 8);
-        var row6 = Vector128.Load(data + 6 * 8);
-        var row7 = Vector128.Load(data + 7 * 8);
+        var row0 = Vector128.Create<short>(data.Slice(0 * 8, 8));
+        var row1 = Vector128.Create<short>(data.Slice(1 * 8, 8));
+        var row2 = Vector128.Create<short>(data.Slice(2 * 8, 8));
+        var row3 = Vector128.Create<short>(data.Slice(3 * 8, 8));
+        var row4 = Vector128.Create<short>(data.Slice(4 * 8, 8));
+        var row5 = Vector128.Create<short>(data.Slice(5 * 8, 8));
+        var row6 = Vector128.Create<short>(data.Slice(6 * 8, 8));
+        var row7 = Vector128.Create<short>(data.Slice(7 * 8, 8));
 
         DctPass(
             ref row0,
@@ -936,21 +934,23 @@ internal static class Methods
         Interleave8(ref p0, ref p2);
         Interleave8(ref p1, ref p3);
 
-        StoreRow(ref @out, outStride, p0);
-        StoreRow(ref @out, outStride, p2);
-        StoreRow(ref @out, outStride, p1);
-        StoreRow(ref @out, outStride, p3);
+        var outOffset = 0;
+        StoreRow(@out, ref outOffset, outStride, p0);
+        StoreRow(@out, ref outOffset, outStride, p2);
+        StoreRow(@out, ref outOffset, outStride, p1);
+        StoreRow(@out, ref outOffset, outStride, p3);
     }
 
-    public static unsafe void YCbCrToRgbRow(
-        byte* @out,
-        byte* y,
-        byte* pcb,
-        byte* pcr,
+    public static void YCbCrToRgbRow(
+        Span<byte> @out,
+        ReadOnlySpan<byte> y,
+        ReadOnlySpan<byte> pcb,
+        ReadOnlySpan<byte> pcr,
         int count,
         int step
     )
     {
+        var o = 0;
         for (var i = 0; i < count; i++)
         {
             var yFixed = (y[i] << 20) + (1 << 19);
@@ -972,24 +972,25 @@ internal static class Methods
             r = int.Clamp(r, 0, 255);
             g = int.Clamp(g, 0, 255);
             b = int.Clamp(b, 0, 255);
-            @out[0] = (byte)r;
-            @out[1] = (byte)g;
-            @out[2] = (byte)b;
-            @out[3] = 255;
-            @out += step;
+            @out[o + 0] = (byte)r;
+            @out[o + 1] = (byte)g;
+            @out[o + 2] = (byte)b;
+            @out[o + 3] = 255;
+            o += step;
         }
     }
 
     public static unsafe void YCbCrToRgbSimd(
-        byte* @out,
-        byte* y,
-        byte* pcb,
-        byte* pcr,
+        Span<byte> @out,
+        ReadOnlySpan<byte> y,
+        ReadOnlySpan<byte> pcb,
+        ReadOnlySpan<byte> pcr,
         int count,
         int step
     )
     {
         var i = 0;
+        var o = 0;
         if (step == 4 && Sse2.IsSupported)
         {
             var signFlip = Vector128.Create((byte)0x80);
@@ -1001,9 +1002,9 @@ internal static class Methods
             var xw = Vector128.Create((short)255);
             for (; i + 7 < count; i += 8)
             {
-                var yBytes = Sse2.LoadScalarVector128((long*)(y + i)).AsByte();
-                var crBytes = Sse2.LoadScalarVector128((long*)(pcr + i)).AsByte();
-                var cbBytes = Sse2.LoadScalarVector128((long*)(pcb + i)).AsByte();
+                var yBytes = Vector128.CreateScalar(MemoryMarshal.Read<long>(y[i..])).AsByte();
+                var crBytes = Vector128.CreateScalar(MemoryMarshal.Read<long>(pcr[i..])).AsByte();
+                var cbBytes = Vector128.CreateScalar(MemoryMarshal.Read<long>(pcb[i..])).AsByte();
                 var crBiased = Sse2.Xor(crBytes, signFlip);
                 var cbBiased = Sse2.Xor(cbBytes, signFlip);
 
@@ -1033,9 +1034,9 @@ internal static class Methods
                 var o0 = Sse2.UnpackLow(t0, t1);
                 var o1 = Sse2.UnpackHigh(t0, t1);
 
-                Sse2.Store(@out, o0.AsByte());
-                Sse2.Store(@out + 16, o1.AsByte());
-                @out += 32;
+                o0.AsByte().CopyTo(@out.Slice(o, 16));
+                o1.AsByte().CopyTo(@out.Slice(o + 16, 16));
+                o += 32;
             }
         }
         else if (step == 4 && AdvSimd.Arm64.IsSupported)
@@ -1048,9 +1049,9 @@ internal static class Methods
 
             for (; i + 7 < count; i += 8)
             {
-                var yBytes = AdvSimd.LoadVector64(y + i);
-                var crBytes = AdvSimd.LoadVector64(pcr + i);
-                var cbBytes = AdvSimd.LoadVector64(pcb + i);
+                var yBytes = Vector64.Create<byte>(y.Slice(i, 8));
+                var crBytes = Vector64.Create<byte>(pcr.Slice(i, 8));
+                var cbBytes = Vector64.Create<byte>(pcb.Slice(i, 8));
                 var crBiased = AdvSimd.Subtract(crBytes, signFlip).AsSByte();
                 var cbBiased = AdvSimd.Subtract(cbBytes, signFlip).AsSByte();
 
@@ -1071,14 +1072,18 @@ internal static class Methods
                 var b = AdvSimd.ShiftRightArithmeticRoundedNarrowingSaturateUnsignedLower(bws, 4);
                 var a = Vector64.Create((byte)255);
 
-                AdvSimd.StoreVectorAndZip(@out, (r, g, b, a));
-                @out += 8 * 4;
+                fixed (byte* p = &@out[o])
+                {
+                    AdvSimd.StoreVectorAndZip(p, (r, g, b, a));
+                }
+
+                o += 8 * 4;
             }
         }
 
         if (i < count)
         {
-            YCbCrToRgbRow(@out, y + i, pcb + i, pcr + i, count - i, step);
+            YCbCrToRgbRow(@out[o..], y[i..], pcb[i..], pcr[i..], count - i, step);
         }
     }
 
@@ -1086,26 +1091,49 @@ internal static class Methods
 
     public static byte Div16(int value) => unchecked((byte)(value >> 4));
 
-    public static unsafe byte* ResampleRow1(byte* @out, byte* inNear, byte* inFar, int w, int hs) =>
-        inNear;
+    public static (byte[] Data, int Offset) ResampleRow1(
+        byte[] @out,
+        byte[] inNear,
+        int inNearPos,
+        byte[] inFar,
+        int inFarPos,
+        int w,
+        int hs
+    ) => (inNear, inNearPos);
 
-    public static unsafe byte* ResampleRowV2(byte* @out, byte* inNear, byte* inFar, int w, int hs)
+    public static (byte[] Data, int Offset) ResampleRowV2(
+        byte[] @out,
+        byte[] inNear,
+        int inNearPos,
+        byte[] inFar,
+        int inFarPos,
+        int w,
+        int hs
+    )
     {
         for (var i = 0; i < w; i++)
         {
-            @out[i] = Div4(3 * inNear[i] + inFar[i] + 2);
+            @out[i] = Div4(3 * inNear[inNearPos + i] + inFar[inFarPos + i] + 2);
         }
 
-        return @out;
+        return (@out, 0);
     }
 
-    public static unsafe byte* ResampleRowH2(byte* @out, byte* inNear, byte* inFar, int w, int hs)
+    public static (byte[] Data, int Offset) ResampleRowH2(
+        byte[] @out,
+        byte[] inNear,
+        int inNearPos,
+        byte[] inFar,
+        int inFarPos,
+        int w,
+        int hs
+    )
     {
-        var input = inNear;
+        var input = inNear.AsSpan(inNearPos);
         if (w == 1)
         {
             @out[0] = @out[1] = input[0];
-            return @out;
+            return (@out, 0);
         }
 
         @out[0] = input[0];
@@ -1121,13 +1149,15 @@ internal static class Methods
         @out[i * 2 + 0] = Div4(input[w - 2] * 3 + input[w - 1] + 2);
         @out[i * 2 + 1] = input[w - 1];
 
-        return @out;
+        return (@out, 0);
     }
 
-    public static unsafe byte* ResampleRowGeneric(
-        byte* @out,
-        byte* inNear,
-        byte* inFar,
+    public static (byte[] Data, int Offset) ResampleRowGeneric(
+        byte[] @out,
+        byte[] inNear,
+        int inNearPos,
+        byte[] inFar,
+        int inFarPos,
         int w,
         int hs
     )
@@ -1136,63 +1166,77 @@ internal static class Methods
         {
             for (var j = 0; j < hs; j++)
             {
-                @out[i * hs + j] = inNear[i];
+                @out[i * hs + j] = inNear[inNearPos + i];
             }
         }
 
-        return @out;
+        return (@out, 0);
     }
 
-    public static unsafe byte* ResampleRowHV2(byte* @out, byte* inNear, byte* inFar, int w, int _)
+    public static (byte[] Data, int Offset) ResampleRowHV2(
+        byte[] @out,
+        byte[] inNear,
+        int inNearPos,
+        byte[] inFar,
+        int inFarPos,
+        int w,
+        int _
+    )
     {
+        var near = inNear.AsSpan(inNearPos);
+        var far = inFar.AsSpan(inFarPos);
         if (w == 1)
         {
-            @out[0] = @out[1] = Div4(3 * inNear[0] + inFar[0] + 2);
-            return @out;
+            @out[0] = @out[1] = Div4(3 * near[0] + far[0] + 2);
+            return (@out, 0);
         }
 
-        var t1 = 3 * inNear[0] + inFar[0];
+        var t1 = 3 * near[0] + far[0];
         @out[0] = Div4(t1 + 2);
         for (var i = 1; i < w; i++)
         {
             var t0 = t1;
-            t1 = 3 * inNear[i] + inFar[i];
+            t1 = 3 * near[i] + far[i];
             @out[i * 2 - 1] = Div16(3 * t0 + t1 + 8);
             @out[i * 2] = Div16(3 * t1 + t0 + 8);
         }
 
         @out[w * 2 - 1] = Div4(t1 + 2);
-        return @out;
+        return (@out, 0);
     }
 
-    public static unsafe byte* ResampleRowHV2Simd(
-        byte* @out,
-        byte* inNear,
-        byte* inFar,
+    public static unsafe (byte[] Data, int Offset) ResampleRowHV2Simd(
+        byte[] @out,
+        byte[] inNear,
+        int inNearPos,
+        byte[] inFar,
+        int inFarPos,
         int w,
         int hs
     )
     {
         if (!Sse2.IsSupported && !AdvSimd.Arm64.IsSupported)
         {
-            return ResampleRowHV2(@out, inNear, inFar, w, hs);
+            return ResampleRowHV2(@out, inNear, inNearPos, inFar, inFarPos, w, hs);
         }
 
+        var near = inNear.AsSpan(inNearPos);
+        var far = inFar.AsSpan(inFarPos);
         if (w == 1)
         {
-            @out[0] = @out[1] = Div4(3 * inNear[0] + inFar[0] + 2);
-            return @out;
+            @out[0] = @out[1] = Div4(3 * near[0] + far[0] + 2);
+            return (@out, 0);
         }
 
         var i = 0;
-        var t1 = 3 * inNear[0] + inFar[0];
+        var t1 = 3 * near[0] + far[0];
         for (; i < ((w - 1) & ~7); i += 8)
         {
             if (Sse2.IsSupported)
             {
                 var zero = V8.Zero;
-                var farB = Sse2.LoadScalarVector128((long*)(inFar + i)).AsByte();
-                var nearB = Sse2.LoadScalarVector128((long*)(inNear + i)).AsByte();
+                var farB = Vector128.CreateScalar(MemoryMarshal.Read<long>(far[i..])).AsByte();
+                var nearB = Vector128.CreateScalar(MemoryMarshal.Read<long>(near[i..])).AsByte();
                 var farW = Sse2.UnpackLow(farB, zero).AsInt16();
                 var nearW = Sse2.UnpackLow(nearB, zero).AsInt16();
                 var diff = Sse2.Subtract(farW, nearW);
@@ -1202,7 +1246,7 @@ internal static class Methods
                 var prv0 = Sse2.ShiftLeftLogical128BitLane(curr, 2);
                 var nxt0 = Sse2.ShiftRightLogical128BitLane(curr, 2);
                 var prev = Sse2.Insert(prv0, (short)t1, 0);
-                var next = Sse2.Insert(nxt0, (short)(3 * inNear[i + 8] + inFar[i + 8]), 7);
+                var next = Sse2.Insert(nxt0, (short)(3 * near[i + 8] + far[i + 8]), 7);
 
                 var bias = Vector128.Create((short)8);
                 var curs = Sse2.ShiftLeftLogical(curr, 2);
@@ -1217,12 +1261,12 @@ internal static class Methods
                 var de0 = Sse2.ShiftRightLogical(int0.AsUInt16(), 4).AsInt16();
                 var de1 = Sse2.ShiftRightLogical(int1.AsUInt16(), 4).AsInt16();
 
-                Sse2.Store(@out + i * 2, Sse2.PackUnsignedSaturate(de0, de1));
+                Sse2.PackUnsignedSaturate(de0, de1).CopyTo(@out, i * 2);
             }
             else
             {
-                var farB = AdvSimd.LoadVector64(inFar + i);
-                var nearB = AdvSimd.LoadVector64(inNear + i);
+                var farB = Vector64.Create<byte>(far.Slice(i, 8));
+                var nearB = Vector64.Create<byte>(near.Slice(i, 8));
                 var diff = AdvSimd.SubtractWideningLower(farB, nearB).AsInt16();
                 var nears = AdvSimd.ShiftLeftLogicalWideningLower(nearB, 2).AsInt16();
                 var curr = AdvSimd.Add(nears, diff);
@@ -1230,7 +1274,7 @@ internal static class Methods
                 var prv0 = AdvSimd.ExtractVector128(curr, curr, 7);
                 var nxt0 = AdvSimd.ExtractVector128(curr, curr, 1);
                 var prev = AdvSimd.Insert(prv0, 0, (short)t1);
-                var next = AdvSimd.Insert(nxt0, 7, (short)(3 * inNear[i + 8] + inFar[i + 8]));
+                var next = AdvSimd.Insert(nxt0, 7, (short)(3 * near[i + 8] + far[i + 8]));
 
                 var curs = AdvSimd.ShiftLeftLogical(curr, 2);
                 var prvd = AdvSimd.Subtract(prev, curr);
@@ -1238,132 +1282,90 @@ internal static class Methods
                 var even = AdvSimd.Add(curs, prvd);
                 var odd = AdvSimd.Add(curs, nxtd);
 
-                AdvSimd.StoreVectorAndZip(
-                    @out + i * 2,
-                    (
-                        AdvSimd.ShiftRightArithmeticRoundedNarrowingSaturateUnsignedLower(even, 4),
-                        AdvSimd.ShiftRightArithmeticRoundedNarrowingSaturateUnsignedLower(odd, 4)
-                    )
-                );
+                fixed (byte* p = &@out[i * 2])
+                {
+                    AdvSimd.StoreVectorAndZip(
+                        p,
+                        (
+                            AdvSimd.ShiftRightArithmeticRoundedNarrowingSaturateUnsignedLower(
+                                even,
+                                4
+                            ),
+                            AdvSimd.ShiftRightArithmeticRoundedNarrowingSaturateUnsignedLower(
+                                odd,
+                                4
+                            )
+                        )
+                    );
+                }
             }
 
-            t1 = 3 * inNear[i + 7] + inFar[i + 7];
+            t1 = 3 * near[i + 7] + far[i + 7];
         }
 
         var t0 = t1;
-        t1 = 3 * inNear[i] + inFar[i];
+        t1 = 3 * near[i] + far[i];
         @out[i * 2] = Div16(3 * t1 + t0 + 8);
         for (++i; i < w; ++i)
         {
             t0 = t1;
-            t1 = 3 * inNear[i] + inFar[i];
+            t1 = 3 * near[i] + far[i];
             @out[i * 2 - 1] = Div16(3 * t0 + t1 + 8);
             @out[i * 2] = Div16(3 * t1 + t0 + 8);
         }
 
         @out[w * 2 - 1] = Div4(t1 + 2);
-        return @out;
+        return (@out, 0);
     }
 
-    public static unsafe bool AllocJpegTables(Jpeg* j)
+    public static bool AllocJpegTables(Jpeg j)
     {
-        j->HuffDC = (Huffman*)
-            NativeMemory.AllocZeroed((nuint)(sizeof(Huffman) * Constants.JpegFixedArrayLength));
-
-        j->HuffAC = (Huffman*)
-            NativeMemory.AllocZeroed((nuint)(sizeof(Huffman) * Constants.JpegFixedArrayLength));
-
-        j->Dequant = (ushort**)
-            NativeMemory.AllocZeroed((nuint)(sizeof(ushort*) * Constants.JpegFixedArrayLength));
-
-        j->FastAC = (short**)
-            NativeMemory.AllocZeroed((nuint)(sizeof(short*) * Constants.JpegFixedArrayLength));
-
-        j->ImgComp = (Jpeg.CompStruct*)
-            NativeMemory.AllocZeroed(
-                (nuint)(sizeof(Jpeg.CompStruct) * Constants.JpegFixedArrayLength)
-            );
-
-        if (
-            j->HuffDC is null
-            || j->HuffAC is null
-            || j->Dequant is null
-            || j->FastAC is null
-            || j->ImgComp is null
-        )
-        {
-            FreeJpegTables(j);
-            return Error("Out of memory.");
-        }
-
+        j.HuffDC = new Huffman[Constants.JpegFixedArrayLength];
+        j.HuffAC = new Huffman[Constants.JpegFixedArrayLength];
+        j.Dequant = new ushort[Constants.JpegFixedArrayLength][];
+        j.FastAC = new short[Constants.JpegFixedArrayLength][];
+        j.ImgComp = new Jpeg.CompStruct[Constants.JpegFixedArrayLength];
         for (var i = 0; i < Constants.JpegFixedArrayLength; i++)
         {
-            j->Dequant[i] = (ushort*)
-                NativeMemory.AllocZeroed(sizeof(ushort) * Constants.JpegDequantLength);
-
-            j->FastAC[i] = (short*)NativeMemory.AllocZeroed(sizeof(short) * Constants.JpegACLength);
-            if (j->Dequant[i] is null || j->FastAC[i] is null)
-            {
-                FreeJpegTables(j);
-                return Error("Out of memory.");
-            }
+            j.HuffDC[i] = new Huffman();
+            j.HuffAC[i] = new Huffman();
+            j.ImgComp[i] = new Jpeg.CompStruct();
+            j.Dequant[i] = new ushort[Constants.JpegDequantLength];
+            j.FastAC[i] = new short[Constants.JpegACLength];
         }
 
         return true;
     }
 
-    public static unsafe void FreeJpegTables(Jpeg* j)
-    {
-        if (j->Dequant is not null)
-        {
-            for (var i = 0; i < Constants.JpegFixedArrayLength; i++)
-            {
-                NativeMemory.Free(j->Dequant[i]);
-            }
-        }
+    public static void FreeJpegTables(Jpeg j) { }
 
-        if (j->FastAC is not null)
-        {
-            for (var i = 0; i < Constants.JpegFixedArrayLength; i++)
-            {
-                NativeMemory.Free(j->FastAC[i]);
-            }
-        }
-
-        NativeMemory.Free(j->HuffDC);
-        NativeMemory.Free(j->HuffAC);
-        NativeMemory.Free(j->Dequant);
-        NativeMemory.Free(j->FastAC);
-        NativeMemory.Free(j->ImgComp);
-    }
-
-    public static unsafe void SetupJpeg(Jpeg* j)
+    public static void SetupJpeg(Jpeg j)
     {
         if (Sse2.IsSupported || AdvSimd.Arm64.IsSupported)
         {
-            j->IdctBlockKernel = &IdctSimd;
-            j->YCbCrToRgbKernel = &YCbCrToRgbSimd;
-            j->ResampleRowHV2Kernel = &ResampleRowHV2Simd;
+            j.IdctBlockKernel = IdctSimd;
+            j.YCbCrToRgbKernel = YCbCrToRgbSimd;
+            j.ResampleRowHV2Kernel = ResampleRowHV2Simd;
         }
         else
         {
-            j->IdctBlockKernel = &IdctBlock;
-            j->YCbCrToRgbKernel = &YCbCrToRgbRow;
-            j->ResampleRowHV2Kernel = &ResampleRowHV2;
+            j.IdctBlockKernel = IdctBlock;
+            j.YCbCrToRgbKernel = YCbCrToRgbRow;
+            j.ResampleRowHV2Kernel = ResampleRowHV2;
         }
     }
 
-    public static unsafe byte GetMarker(Jpeg* j)
+    public static byte GetMarker(Jpeg j)
     {
         byte x;
-        if (j->Marker != Constants.MarkerNone)
+        if (j.Marker != Constants.MarkerNone)
         {
-            x = j->Marker;
-            j->Marker = Constants.MarkerNone;
+            x = j.Marker;
+            j.Marker = Constants.MarkerNone;
             return x;
         }
 
-        x = Get8(j->S);
+        x = Get8(j.S);
         if (x != 0xFF)
         {
             return Constants.MarkerNone;
@@ -1371,7 +1373,7 @@ internal static class Methods
 
         while (x == 0xFF)
         {
-            x = Get8(j->S);
+            x = Get8(j.S);
         }
 
         return x;
@@ -1385,7 +1387,7 @@ internal static class Methods
 
     public static bool Dnl(int value) => value == 0xDC;
 
-    public static unsafe bool BuildHuffman(Huffman* h, int* count)
+    public static bool BuildHuffman(Huffman h, ReadOnlySpan<int> count)
     {
         int j;
         var k = 0;
@@ -1393,7 +1395,7 @@ internal static class Methods
         {
             for (j = 0; j < count[i]; j++)
             {
-                h->Size[k++] = unchecked((byte)(i + 1));
+                h.Size[k++] = unchecked((byte)(i + 1));
                 if (k >= 257)
                 {
                     return Error("Bad size list. Corrupt JPEG.");
@@ -1401,17 +1403,17 @@ internal static class Methods
             }
         }
 
-        h->Size[k] = 0;
+        h.Size[k] = 0;
         var code = 0U;
         k = 0;
         for (j = 1; j <= 16; j++)
         {
-            h->Delta[j] = unchecked((int)(k - code));
-            if (h->Size[k] == j)
+            h.Delta[j] = unchecked((int)(k - code));
+            if (h.Size[k] == j)
             {
-                while (h->Size[k] == j)
+                while (h.Size[k] == j)
                 {
-                    h->Code[k++] = unchecked((ushort)code++);
+                    h.Code[k++] = unchecked((ushort)code++);
                 }
 
                 if (code - 1 >= (1U << j))
@@ -1420,22 +1422,22 @@ internal static class Methods
                 }
             }
 
-            h->MaxCode[j] = code << (16 - j);
+            h.MaxCode[j] = code << (16 - j);
             code <<= 1;
         }
 
-        h->MaxCode[j] = 0xFFFF_FFFF;
-        NativeMemory.Fill(h->Fast, 1 << Constants.FastBits, 255);
+        h.MaxCode[j] = 0xFFFF_FFFF;
+        Array.Fill(h.Fast, (byte)255, 0, 1 << Constants.FastBits);
         for (var i = 0; i < k; i++)
         {
-            var s = (int)h->Size[i];
+            var s = (int)h.Size[i];
             if (s <= Constants.FastBits)
             {
-                var c = h->Code[i] << (Constants.FastBits - s);
+                var c = h.Code[i] << (Constants.FastBits - s);
                 var m = 1 << (Constants.FastBits - s);
                 for (j = 0; j < m; j++)
                 {
-                    h->Fast[c + j] = unchecked((byte)i);
+                    h.Fast[c + j] = unchecked((byte)i);
                 }
             }
         }
@@ -1443,7 +1445,7 @@ internal static class Methods
         return true;
     }
 
-    public static unsafe bool ProcessMarker(Jpeg* z, int m)
+    public static bool ProcessMarker(Jpeg z, int m)
     {
         int l;
         switch (m)
@@ -1451,18 +1453,18 @@ internal static class Methods
             case Constants.MarkerNone:
                 return Error("Expected marker. Corrupt JPEG.");
             case 0xDD:
-                if (Get16BE(z->S) != 4)
+                if (Get16BE(z.S) != 4)
                 {
                     return Error("Invalid DRI length. Corrupt JPEG.");
                 }
 
-                z->RestartInterval = Get16BE(z->S);
+                z.RestartInterval = Get16BE(z.S);
                 return true;
             case 0xDB:
-                l = Get16BE(z->S) - 2;
+                l = Get16BE(z.S) - 2;
                 while (l > 0)
                 {
-                    var q = (int)Get8(z->S);
+                    var q = (int)Get8(z.S);
                     var p = q >> 4;
                     var sixteen = p != 0;
                     var t = q & 15;
@@ -1478,8 +1480,8 @@ internal static class Methods
 
                     for (var i = 0; i < 64; i++)
                     {
-                        z->Dequant[t][Constants.JpegDezigzag[i]] = unchecked(
-                            (ushort)(sixteen ? Get16BE(z->S) : Get8(z->S))
+                        z.Dequant[t][Constants.JpegDezigzag[i]] = unchecked(
+                            (ushort)(sixteen ? Get16BE(z.S) : Get8(z.S))
                         );
                     }
 
@@ -1488,13 +1490,13 @@ internal static class Methods
 
                 return l == 0;
             case 0xC4:
-                l = Get16BE(z->S) - 2;
+                l = Get16BE(z.S) - 2;
                 while (l > 0)
                 {
-                    byte* v;
-                    var sizes = stackalloc int[16];
+                    byte[] v;
+                    Span<int> sizes = stackalloc int[16];
                     var n = 0;
-                    var q = (int)Get8(z->S);
+                    var q = (int)Get8(z.S);
                     var tc = q >> 4;
                     var th = q & 15;
                     if (tc > 1 || th > 3)
@@ -1504,7 +1506,7 @@ internal static class Methods
 
                     for (var i = 0; i < 16; i++)
                     {
-                        sizes[i] = Get8(z->S);
+                        sizes[i] = Get8(z.S);
                         n += sizes[i];
                     }
 
@@ -1516,31 +1518,31 @@ internal static class Methods
                     l -= 17;
                     if (tc == 0)
                     {
-                        if (!BuildHuffman(z->HuffDC + th, sizes))
+                        if (!BuildHuffman(z.HuffDC[th], sizes))
                         {
                             return false;
                         }
 
-                        v = z->HuffDC[th].Values;
+                        v = z.HuffDC[th].Values;
                     }
                     else
                     {
-                        if (!BuildHuffman(z->HuffAC + th, sizes))
+                        if (!BuildHuffman(z.HuffAC[th], sizes))
                         {
                             return false;
                         }
 
-                        v = z->HuffAC[th].Values;
+                        v = z.HuffAC[th].Values;
                     }
 
                     for (var i = 0; i < n; i++)
                     {
-                        v[i] = Get8(z->S);
+                        v[i] = Get8(z.S);
                     }
 
                     if (tc != 0)
                     {
-                        BuildFastAC(z->HuffAC + th, z->FastAC[th]);
+                        BuildFastAC(z.HuffAC[th], z.FastAC[th]);
                     }
 
                     l -= n;
@@ -1550,7 +1552,7 @@ internal static class Methods
 
         if ((m >= 0xE0 && m <= 0xEF) || m == 0xFE)
         {
-            l = Get16BE(z->S);
+            l = Get16BE(z.S);
             if (l < 2)
             {
                 return m == 0xFE
@@ -1565,7 +1567,7 @@ internal static class Methods
                 var ok = true;
                 for (var i = 0; i < 5; i++)
                 {
-                    if (Get8(z->S) != tag[i])
+                    if (Get8(z.S) != tag[i])
                     {
                         ok = false;
                     }
@@ -1574,7 +1576,7 @@ internal static class Methods
                 l -= 5;
                 if (ok)
                 {
-                    z->JFif = 1;
+                    z.JFif = 1;
                 }
             }
             else if (m == 0xEE && l >= 12)
@@ -1583,7 +1585,7 @@ internal static class Methods
                 var ok = true;
                 for (var i = 0; i < 6; i++)
                 {
-                    if (Get8(z->S) != tag[i])
+                    if (Get8(z.S) != tag[i])
                     {
                         ok = false;
                     }
@@ -1592,42 +1594,42 @@ internal static class Methods
                 l -= 6;
                 if (ok)
                 {
-                    _ = Get8(z->S); // version
-                    _ = Get16BE(z->S); // flags0
-                    _ = Get16BE(z->S); // flags1
-                    z->App14ColorTransform = Get8(z->S);
+                    _ = Get8(z.S); // version
+                    _ = Get16BE(z.S); // flags0
+                    _ = Get16BE(z.S); // flags1
+                    z.App14ColorTransform = Get8(z.S);
                     l -= 6;
                 }
             }
 
-            Skip(z->S, l);
+            Skip(z.S, l);
             return true;
         }
 
         return Error("Unknown marker. Corrupt JPEG.");
     }
 
-    public static unsafe bool AtEof(Context* s)
+    public static bool AtEof(Context context)
     {
-        if (s->IO.Read is not null)
+        if (context.IO.Read is not null)
         {
-            if (!s->IO.Eof(s->IOUserData))
+            if (!context.IO.Eof!(context.IOUserData))
             {
                 return false;
             }
 
-            if (s->ReadFromCallbacks == 0)
+            if (context.ReadFromCallbacks == 0)
             {
                 return true;
             }
         }
 
-        return s->ImgBuffer >= s->ImgBufferEnd;
+        return context.ImgBufferPosition >= context.ImgBufferEndPosition;
     }
 
-    public static unsafe bool ProcessFrameHeader(Jpeg* z, Scan scan)
+    public static bool ProcessFrameHeader(Jpeg z, Scan scan)
     {
-        var s = z->S;
+        var s = z.S;
         var hMax = 1;
         var vMax = 1;
         var lf = Get16BE(s);
@@ -1642,19 +1644,19 @@ internal static class Methods
             return Error("Only 8-bit. JPEG format not supported: 8-bit only.");
         }
 
-        s->ImgY = Get16BE(s);
-        if (s->ImgY == 0)
+        s.ImgY = Get16BE(s);
+        if (s.ImgY == 0)
         {
             return Error("No Header height. JPEG format not supported: delayed height.");
         }
 
-        s->ImgX = Get16BE(s);
-        if (s->ImgX == 0)
+        s.ImgX = Get16BE(s);
+        if (s.ImgX == 0)
         {
             return Error("0 width. Corrupt JPEG.");
         }
 
-        if (s->ImgY > Constants.MaxDimensions || s->ImgX > Constants.MaxDimensions)
+        if (s.ImgY > Constants.MaxDimensions || s.ImgX > Constants.MaxDimensions)
         {
             return Error("Too large. Very large image (corrupt?).");
         }
@@ -1665,43 +1667,43 @@ internal static class Methods
             return Error("Bad component count. Corrupt JPEG.");
         }
 
-        s->ImgN = c;
+        s.ImgN = c;
         for (var i = 0; i < c; i++)
         {
-            z->ImgComp[i].Data = null;
-            z->ImgComp[i].LineBuf = null;
+            z.ImgComp[i].Data = null;
+            z.ImgComp[i].LineBuf = null;
         }
 
-        if (lf != 8 + 3 * s->ImgN)
+        if (lf != 8 + 3 * s.ImgN)
         {
             return Error("Bad SOF length. Corrupt JPEG.");
         }
 
-        z->Rgb = 0;
-        for (var i = 0; i < s->ImgN; i++)
+        z.Rgb = 0;
+        for (var i = 0; i < s.ImgN; i++)
         {
             var rgb = "RGB"u8;
-            z->ImgComp[i].ID = Get8(s);
-            if (s->ImgN == 3 && z->ImgComp[i].ID == rgb[i])
+            z.ImgComp[i].ID = Get8(s);
+            if (s.ImgN == 3 && z.ImgComp[i].ID == rgb[i])
             {
-                ++z->Rgb;
+                ++z.Rgb;
             }
 
             var q = Get8(s);
-            z->ImgComp[i].H = q >> 4;
-            if (z->ImgComp[i].H == 0 || z->ImgComp[i].H > 4)
+            z.ImgComp[i].H = q >> 4;
+            if (z.ImgComp[i].H == 0 || z.ImgComp[i].H > 4)
             {
                 return Error("Bad H. Corrupt JPEG.");
             }
 
-            z->ImgComp[i].V = q & 15;
-            if (z->ImgComp[i].V == 0 || z->ImgComp[i].V > 4)
+            z.ImgComp[i].V = q & 15;
+            if (z.ImgComp[i].V == 0 || z.ImgComp[i].V > 4)
             {
                 return Error("Bad V. Corrupt JPEG.");
             }
 
-            z->ImgComp[i].TQ = Get8(s);
-            if (z->ImgComp[i].TQ > 3)
+            z.ImgComp[i].TQ = Get8(s);
+            if (z.ImgComp[i].TQ > 3)
             {
                 return Error("Bad TQ. Corrupt JPEG.");
             }
@@ -1712,87 +1714,70 @@ internal static class Methods
             return true;
         }
 
-        if (s->ImgX * s->ImgY * s->ImgN > int.MaxValue)
+        if (s.ImgX * s.ImgY * s.ImgN > int.MaxValue)
         {
             return Error("Too large. Image too large to decode.");
         }
 
-        for (var i = 0; i < s->ImgN; i++)
+        for (var i = 0; i < s.ImgN; i++)
         {
-            if (z->ImgComp[i].H > hMax)
+            if (z.ImgComp[i].H > hMax)
             {
-                hMax = z->ImgComp[i].H;
+                hMax = z.ImgComp[i].H;
             }
 
-            if (z->ImgComp[i].V > vMax)
+            if (z.ImgComp[i].V > vMax)
             {
-                vMax = z->ImgComp[i].V;
+                vMax = z.ImgComp[i].V;
             }
         }
 
-        for (var i = 0; i < s->ImgN; i++)
+        for (var i = 0; i < s.ImgN; i++)
         {
-            if (hMax % z->ImgComp[i].H != 0)
+            if (hMax % z.ImgComp[i].H != 0)
             {
                 return Error("Bad H. Corrupt JPEG.");
             }
 
-            if (vMax % z->ImgComp[i].V != 0)
+            if (vMax % z.ImgComp[i].V != 0)
             {
                 return Error("Bad V. Corrupt JPEG.");
             }
         }
 
-        z->ImgHMax = hMax;
-        z->ImgVMax = vMax;
-        z->ImgMcuW = hMax * 8;
-        z->ImgMcuH = vMax * 8;
-        z->ImgMcuX = unchecked((int)((s->ImgX + z->ImgMcuW - 1) / z->ImgMcuW));
-        z->ImgMcuY = unchecked((int)((s->ImgY + z->ImgMcuH - 1) / z->ImgMcuH));
-        for (var i = 0; i < s->ImgN; i++)
+        z.ImgHMax = hMax;
+        z.ImgVMax = vMax;
+        z.ImgMcuW = hMax * 8;
+        z.ImgMcuH = vMax * 8;
+        z.ImgMcuX = unchecked((int)((s.ImgX + z.ImgMcuW - 1) / z.ImgMcuW));
+        z.ImgMcuY = unchecked((int)((s.ImgY + z.ImgMcuH - 1) / z.ImgMcuH));
+        for (var i = 0; i < s.ImgN; i++)
         {
-            z->ImgComp[i].X = unchecked((int)((s->ImgX * z->ImgComp[i].H + hMax - 1) / hMax));
-            z->ImgComp[i].Y = unchecked((int)((s->ImgY * z->ImgComp[i].V + vMax - 1) / vMax));
-            z->ImgComp[i].W2 = z->ImgMcuX * z->ImgComp[i].H * 8;
-            z->ImgComp[i].H2 = z->ImgMcuY * z->ImgComp[i].V * 8;
-            z->ImgComp[i].Coeff = null;
-            z->ImgComp[i].RawCoeff = null;
-            z->ImgComp[i].LineBuf = null;
-            z->ImgComp[i].RawData = NativeMemory.AllocZeroed(
-                (nuint)(z->ImgComp[i].W2 * z->ImgComp[i].H2 + 15)
-            );
-
-            if (z->ImgComp[i].RawData is null)
+            z.ImgComp[i].X = unchecked((int)((s.ImgX * z.ImgComp[i].H + hMax - 1) / hMax));
+            z.ImgComp[i].Y = unchecked((int)((s.ImgY * z.ImgComp[i].V + vMax - 1) / vMax));
+            z.ImgComp[i].W2 = z.ImgMcuX * z.ImgComp[i].H * 8;
+            z.ImgComp[i].H2 = z.ImgMcuY * z.ImgComp[i].V * 8;
+            z.ImgComp[i].Coeff = null;
+            z.ImgComp[i].RawCoeff = null;
+            z.ImgComp[i].LineBuf = null;
+            z.ImgComp[i].RawData = new byte[z.ImgComp[i].W2 * z.ImgComp[i].H2 + 15];
+            z.ImgComp[i].Data = z.ImgComp[i].RawData;
+            if (z.Progressive)
             {
-                return FreeJpegComponents(z, i + 1, Error("Out of memory."));
-            }
-
-            z->ImgComp[i].Data = (byte*)(((nint)z->ImgComp[i].RawData + 15) & ~15);
-            if (z->Progressive)
-            {
-                z->ImgComp[i].CoeffW = z->ImgComp[i].W2 / 8;
-                z->ImgComp[i].CoeffH = z->ImgComp[i].H2 / 8;
-                z->ImgComp[i].RawCoeff = NativeMemory.AllocZeroed(
-                    (nuint)(z->ImgComp[i].W2 * z->ImgComp[i].H2 * sizeof(short) + 15)
-                );
-
-                if (z->ImgComp[i].RawCoeff is null)
-                {
-                    return FreeJpegComponents(z, i + 1, Error("Out of memory."));
-                }
-
-                z->ImgComp[i].Coeff = (short*)(((nint)z->ImgComp[i].RawCoeff + 15) & ~15);
+                z.ImgComp[i].CoeffW = z.ImgComp[i].W2 / 8;
+                z.ImgComp[i].CoeffH = z.ImgComp[i].H2 / 8;
+                z.ImgComp[i].Coeff = new short[z.ImgComp[i].W2 * z.ImgComp[i].H2 + 15];
             }
         }
 
         return true;
     }
 
-    public static unsafe bool DecodeJpegHeader(Jpeg* z, Scan scan)
+    public static bool DecodeJpegHeader(Jpeg z, Scan scan)
     {
-        z->JFif = 0;
-        z->App14ColorTransform = -1;
-        z->Marker = Constants.MarkerNone;
+        z.JFif = 0;
+        z.App14ColorTransform = -1;
+        z.Marker = Constants.MarkerNone;
         var m = (int)GetMarker(z);
         if (!Soi(m))
         {
@@ -1815,7 +1800,7 @@ internal static class Methods
             m = GetMarker(z);
             while (m == Constants.MarkerNone)
             {
-                if (AtEof(z->S))
+                if (AtEof(z.S))
                 {
                     return Error("No SOF. Corrupt JPEG.");
                 }
@@ -1824,22 +1809,16 @@ internal static class Methods
             }
         }
 
-        z->Progressive = SofProgressive(m);
+        z.Progressive = SofProgressive(m);
         return ProcessFrameHeader(z, scan);
     }
 
-    public static unsafe bool JpegTest(Context* s)
+    public static bool JpegTest(Context s)
     {
-        var j = (Jpeg*)NativeMemory.AllocZeroed((nuint)sizeof(Jpeg));
-        if (j is null)
-        {
-            return Error("Out of memory.");
-        }
-
-        j->S = s;
+        var j = new Jpeg();
+        j.S = s;
         if (!AllocJpegTables(j))
         {
-            NativeMemory.Free(j);
             return false;
         }
 
@@ -1848,71 +1827,70 @@ internal static class Methods
         Rewind(s);
         FreeJpegComponents(j, Constants.JpegFixedArrayLength, false);
         FreeJpegTables(j);
-        NativeMemory.Free(j);
         return r;
     }
 
-    public static unsafe bool ProcessScanHeader(Jpeg* z)
+    public static bool ProcessScanHeader(Jpeg z)
     {
-        var ls = Get16BE(z->S);
-        z->ScanN = Get8(z->S);
-        if (z->ScanN < 1 || z->ScanN > 4 || z->ScanN > (int)z->S->ImgN)
+        var ls = Get16BE(z.S);
+        z.ScanN = Get8(z.S);
+        if (z.ScanN < 1 || z.ScanN > 4 || z.ScanN > (int)z.S.ImgN)
         {
             return Error("Bad SOS component count. Corrupt JPEG.");
         }
 
-        if (ls != 6 + 2 * z->ScanN)
+        if (ls != 6 + 2 * z.ScanN)
         {
             return Error("Bad SOS length. Corrupt JPG.");
         }
 
-        for (var i = 0; i < z->ScanN; i++)
+        for (var i = 0; i < z.ScanN; i++)
         {
-            var id = (int)Get8(z->S);
-            var q = (int)Get8(z->S);
+            var id = (int)Get8(z.S);
+            var q = (int)Get8(z.S);
             int which;
-            for (which = 0; which < z->S->ImgN; which++)
+            for (which = 0; which < z.S.ImgN; which++)
             {
-                if (z->ImgComp[which].ID == id)
+                if (z.ImgComp[which].ID == id)
                 {
                     break;
                 }
             }
 
-            if (which == z->S->ImgN)
+            if (which == z.S.ImgN)
             {
                 return false;
             }
 
-            z->ImgComp[which].HD = q >> 4;
-            if (z->ImgComp[which].HD > 3)
+            z.ImgComp[which].HD = q >> 4;
+            if (z.ImgComp[which].HD > 3)
             {
                 return Error("Bad DC Huffman. Corrupt JPEG.");
             }
 
-            z->ImgComp[which].HA = q & 15;
-            if (z->ImgComp[which].HA > 3)
+            z.ImgComp[which].HA = q & 15;
+            if (z.ImgComp[which].HA > 3)
             {
                 return Error("Bad AC Huffman. Corrupt JPEG.");
             }
 
-            z->Order[i] = which;
+            z.Order[i] = which;
         }
 
         {
-            z->SpecStart = Get8(z->S);
-            z->SpecEnd = Get8(z->S);
-            var aa = (int)Get8(z->S);
-            z->SuccHigh = aa >> 4;
-            z->SuccLow = aa & 15;
-            if (z->Progressive)
+            z.SpecStart = Get8(z.S);
+            z.SpecEnd = Get8(z.S);
+            var aa = (int)Get8(z.S);
+            z.SuccHigh = aa >> 4;
+            z.SuccLow = aa & 15;
+            if (z.Progressive)
             {
                 if (
-                    z->SpecStart > 63
-                    || z->SpecEnd > 63
-                    || z->SpecStart > z->SpecEnd
-                    || z->SuccHigh > 13
-                    || z->SuccLow > 13
+                    z.SpecStart > 63
+                    || z.SpecEnd > 63
+                    || z.SpecStart > z.SpecEnd
+                    || z.SuccHigh > 13
+                    || z.SuccLow > 13
                 )
                 {
                     return Error("Bad SOS. Corrupt JPEG.");
@@ -1920,86 +1898,82 @@ internal static class Methods
             }
             else
             {
-                if (z->SpecStart != 0)
+                if (z.SpecStart != 0)
                 {
                     return Error("Bad SOS. Corrupt JPEG.");
                 }
 
-                if (z->SuccHigh != 0 || z->SuccLow != 0)
+                if (z.SuccHigh != 0 || z.SuccLow != 0)
                 {
                     return Error("Bad SOS. Corrupt JPEG.");
                 }
 
-                z->SpecEnd = 63;
+                z.SpecEnd = 63;
             }
         }
 
         return true;
     }
 
-    public static unsafe void JpegReset(Jpeg* j)
+    public static void JpegReset(Jpeg j)
     {
-        j->CodeBits = 0;
-        j->CodeBuffer = 0;
-        j->NoMore = 0;
-        j->ImgComp[0].DCPred =
-            j->ImgComp[1].DCPred =
-            j->ImgComp[2].DCPred =
-            j->ImgComp[3].DCPred =
-                0;
+        j.CodeBits = 0;
+        j.CodeBuffer = 0;
+        j.NoMore = 0;
+        j.ImgComp[0].DCPred = j.ImgComp[1].DCPred = j.ImgComp[2].DCPred = j.ImgComp[3].DCPred = 0;
 
-        j->Marker = Constants.MarkerNone;
-        j->Todo = j->RestartInterval != 0 ? j->RestartInterval : 0x7FFF_FFFF;
-        j->EobRun = 0;
+        j.Marker = Constants.MarkerNone;
+        j.Todo = j.RestartInterval != 0 ? j.RestartInterval : 0x7FFF_FFFF;
+        j.EobRun = 0;
     }
 
     public static bool Restart(int x) => x >= 0xD0 && x <= 0xD7;
 
-    public static unsafe bool ParseEntropyCodedData(Jpeg* z)
+    public static bool ParseEntropyCodedData(Jpeg z)
     {
         JpegReset(z);
-        if (!z->Progressive)
+        if (!z.Progressive)
         {
-            if (z->ScanN == 1)
+            if (z.ScanN == 1)
             {
-                var data = stackalloc short[64];
-                var n = z->Order[0];
-                var w = (z->ImgComp[n].X + 7) >> 3;
-                var h = (z->ImgComp[n].Y + 7) >> 3;
+                Span<short> data = stackalloc short[64];
+                var n = z.Order[0];
+                var w = (z.ImgComp[n].X + 7) >> 3;
+                var h = (z.ImgComp[n].Y + 7) >> 3;
                 for (var j = 0; j < h; j++)
                 {
                     for (var i = 0; i < w; i++)
                     {
-                        var ha = z->ImgComp[n].HA;
+                        var ha = z.ImgComp[n].HA;
                         if (
                             !JpegDecodeBlock(
                                 z,
                                 data,
-                                z->HuffDC + z->ImgComp[n].HD,
-                                z->HuffAC + ha,
-                                z->FastAC[ha],
+                                z.HuffDC[z.ImgComp[n].HD],
+                                z.HuffAC[ha],
+                                z.FastAC[ha],
                                 n,
-                                z->Dequant[z->ImgComp[n].TQ]
+                                z.Dequant[z.ImgComp[n].TQ]
                             )
                         )
                         {
                             return false;
                         }
 
-                        z->IdctBlockKernel(
-                            z->ImgComp[n].Data + z->ImgComp[n].W2 * j * 8 + i * 8,
-                            z->ImgComp[n].W2,
+                        z.IdctBlockKernel(
+                            z.ImgComp[n].Data.AsSpan(z.ImgComp[n].W2 * j * 8 + i * 8),
+                            z.ImgComp[n].W2,
                             data
                         );
 
-                        if (--z->Todo <= 0)
+                        if (--z.Todo <= 0)
                         {
-                            if (z->CodeBits < 24)
+                            if (z.CodeBits < 24)
                             {
                                 GrowBuffer(z);
                             }
 
-                            if (!Restart(z->Marker))
+                            if (!Restart(z.Marker))
                             {
                                 return true;
                             }
@@ -2013,53 +1987,53 @@ internal static class Methods
             }
             else
             {
-                var data = stackalloc short[64];
-                for (var j = 0; j < z->ImgMcuY; j++)
+                Span<short> data = stackalloc short[64];
+                for (var j = 0; j < z.ImgMcuY; j++)
                 {
-                    for (var i = 0; i < z->ImgMcuX; i++)
+                    for (var i = 0; i < z.ImgMcuX; i++)
                     {
-                        for (var k = 0; k < z->ScanN; k++)
+                        for (var k = 0; k < z.ScanN; k++)
                         {
-                            var n = z->Order[k];
-                            for (var y = 0; y < z->ImgComp[n].V; y++)
+                            var n = z.Order[k];
+                            for (var y = 0; y < z.ImgComp[n].V; y++)
                             {
-                                for (var x = 0; x < z->ImgComp[n].H; x++)
+                                for (var x = 0; x < z.ImgComp[n].H; x++)
                                 {
-                                    var x2 = (i * z->ImgComp[n].H + x) * 8;
-                                    var y2 = (j * z->ImgComp[n].V + y) * 8;
-                                    var ha = z->ImgComp[n].HA;
+                                    var x2 = (i * z.ImgComp[n].H + x) * 8;
+                                    var y2 = (j * z.ImgComp[n].V + y) * 8;
+                                    var ha = z.ImgComp[n].HA;
                                     if (
                                         !JpegDecodeBlock(
                                             z,
                                             data,
-                                            z->HuffDC + z->ImgComp[n].HD,
-                                            z->HuffAC + ha,
-                                            z->FastAC[ha],
+                                            z.HuffDC[z.ImgComp[n].HD],
+                                            z.HuffAC[ha],
+                                            z.FastAC[ha],
                                             n,
-                                            z->Dequant[z->ImgComp[n].TQ]
+                                            z.Dequant[z.ImgComp[n].TQ]
                                         )
                                     )
                                     {
                                         return false;
                                     }
 
-                                    z->IdctBlockKernel(
-                                        z->ImgComp[n].Data + z->ImgComp[n].W2 * y2 + x2,
-                                        z->ImgComp[n].W2,
+                                    z.IdctBlockKernel(
+                                        z.ImgComp[n].Data.AsSpan(z.ImgComp[n].W2 * y2 + x2),
+                                        z.ImgComp[n].W2,
                                         data
                                     );
                                 }
                             }
                         }
 
-                        if (--z->Todo <= 0)
+                        if (--z.Todo <= 0)
                         {
-                            if (z->CodeBits < 24)
+                            if (z.CodeBits < 24)
                             {
                                 GrowBuffer(z);
                             }
 
-                            if (!Restart(z->Marker))
+                            if (!Restart(z.Marker))
                             {
                                 return true;
                             }
@@ -2074,40 +2048,40 @@ internal static class Methods
         }
         else
         {
-            if (z->ScanN == 1)
+            if (z.ScanN == 1)
             {
-                var n = z->Order[0];
-                var w = (z->ImgComp[n].X + 7) >> 3;
-                var h = (z->ImgComp[n].Y + 7) >> 3;
+                var n = z.Order[0];
+                var w = (z.ImgComp[n].X + 7) >> 3;
+                var h = (z.ImgComp[n].Y + 7) >> 3;
                 for (var j = 0; j < h; j++)
                 {
                     for (var i = 0; i < w; i++)
                     {
-                        var data = z->ImgComp[n].Coeff + 64 * (i + j * z->ImgComp[n].CoeffW);
-                        if (z->SpecStart == 0)
+                        var data = z.ImgComp[n].Coeff.AsSpan(64 * (i + j * z.ImgComp[n].CoeffW));
+                        if (z.SpecStart == 0)
                         {
-                            if (!JpegDecodeBlockProgDC(z, data, &z->HuffDC[z->ImgComp[n].HD], n))
+                            if (!JpegDecodeBlockProgDC(z, data, z.HuffDC[z.ImgComp[n].HD], n))
                             {
                                 return false;
                             }
                         }
                         else
                         {
-                            var ha = z->ImgComp[n].HA;
-                            if (!JpegDecodeBlockProgAC(z, data, &z->HuffAC[ha], z->FastAC[ha]))
+                            var ha = z.ImgComp[n].HA;
+                            if (!JpegDecodeBlockProgAC(z, data, z.HuffAC[ha], z.FastAC[ha]))
                             {
                                 return false;
                             }
                         }
 
-                        if (--z->Todo <= 0)
+                        if (--z.Todo <= 0)
                         {
-                            if (z->CodeBits < 24)
+                            if (z.CodeBits < 24)
                             {
                                 GrowBuffer(z);
                             }
 
-                            if (!Restart(z->Marker))
+                            if (!Restart(z.Marker))
                             {
                                 return true;
                             }
@@ -2121,26 +2095,26 @@ internal static class Methods
             }
             else
             {
-                for (var j = 0; j < z->ImgMcuY; j++)
+                for (var j = 0; j < z.ImgMcuY; j++)
                 {
-                    for (var i = 0; i < z->ImgMcuX; i++)
+                    for (var i = 0; i < z.ImgMcuX; i++)
                     {
-                        for (var k = 0; k < z->ScanN; k++)
+                        for (var k = 0; k < z.ScanN; k++)
                         {
-                            var n = z->Order[k];
-                            for (var y = 0; y < z->ImgComp[n].V; y++)
+                            var n = z.Order[k];
+                            for (var y = 0; y < z.ImgComp[n].V; y++)
                             {
-                                for (var x = 0; x < z->ImgComp[n].H; x++)
+                                for (var x = 0; x < z.ImgComp[n].H; x++)
                                 {
-                                    var x2 = (i * z->ImgComp[n].H + x);
-                                    var y2 = (j * z->ImgComp[n].V + y);
-                                    var data =
-                                        z->ImgComp[n].Coeff + 64 * (x2 + y2 * z->ImgComp[n].CoeffW);
+                                    var x2 = (i * z.ImgComp[n].H + x);
+                                    var y2 = (j * z.ImgComp[n].V + y);
+                                    var data = z.ImgComp[n]
+                                        .Coeff.AsSpan(64 * (x2 + y2 * z.ImgComp[n].CoeffW));
                                     if (
                                         !JpegDecodeBlockProgDC(
                                             z,
                                             data,
-                                            &z->HuffDC[z->ImgComp[n].HD],
+                                            z.HuffDC[z.ImgComp[n].HD],
                                             n
                                         )
                                     )
@@ -2151,14 +2125,14 @@ internal static class Methods
                             }
                         }
 
-                        if (--z->Todo <= 0)
+                        if (--z.Todo <= 0)
                         {
-                            if (z->CodeBits < 24)
+                            if (z.CodeBits < 24)
                             {
                                 GrowBuffer(z);
                             }
 
-                            if (!Restart(z->Marker))
+                            if (!Restart(z.Marker))
                             {
                                 return true;
                             }
@@ -2173,19 +2147,19 @@ internal static class Methods
         }
     }
 
-    public static unsafe byte SkipJpegJunkAtEnd(Jpeg* j)
+    public static byte SkipJpegJunkAtEnd(Jpeg j)
     {
-        while (!AtEof(j->S))
+        while (!AtEof(j.S))
         {
-            var x = Get8(j->S);
+            var x = Get8(j.S);
             while (x == 0xFF)
             {
-                if (AtEof(j->S))
+                if (AtEof(j.S))
                 {
                     return Constants.MarkerNone;
                 }
 
-                x = Get8(j->S);
+                x = Get8(j.S);
                 if (x != 0x00 && x != 0xFF)
                 {
                     return x;
@@ -2196,7 +2170,7 @@ internal static class Methods
         return Constants.MarkerNone;
     }
 
-    public static unsafe void JpegDequantize(short* data, ushort* dequant)
+    public static void JpegDequantize(Span<short> data, ushort[] dequant)
     {
         for (var i = 0; i < 64; i++)
         {
@@ -2204,23 +2178,23 @@ internal static class Methods
         }
     }
 
-    public static unsafe void JpegFinish(Jpeg* z)
+    public static void JpegFinish(Jpeg z)
     {
-        if (z->Progressive)
+        if (z.Progressive)
         {
-            for (var n = 0; n < z->S->ImgN; n++)
+            for (var n = 0; n < z.S.ImgN; n++)
             {
-                var w = (z->ImgComp[n].X + 7) >> 3;
-                var h = (z->ImgComp[n].Y + 7) >> 3;
+                var w = (z.ImgComp[n].X + 7) >> 3;
+                var h = (z.ImgComp[n].Y + 7) >> 3;
                 for (var j = 0; j < h; j++)
                 {
                     for (var i = 0; i < w; i++)
                     {
-                        var data = z->ImgComp[n].Coeff + 64 * (i + j * z->ImgComp[n].CoeffW);
-                        JpegDequantize(data, z->Dequant[z->ImgComp[n].TQ]);
-                        z->IdctBlockKernel(
-                            z->ImgComp[n].Data + z->ImgComp[n].W2 * j * 8 + i * 8,
-                            z->ImgComp[n].W2,
+                        var data = z.ImgComp[n].Coeff.AsSpan(64 * (i + j * z.ImgComp[n].CoeffW));
+                        JpegDequantize(data, z.Dequant[z.ImgComp[n].TQ]);
+                        z.IdctBlockKernel(
+                            z.ImgComp[n].Data.AsSpan(z.ImgComp[n].W2 * j * 8 + i * 8),
+                            z.ImgComp[n].W2,
                             data
                         );
                     }
@@ -2229,16 +2203,16 @@ internal static class Methods
         }
     }
 
-    public static unsafe bool DecodeJpegImage(Jpeg* j)
+    public static bool DecodeJpegImage(Jpeg j)
     {
         int m;
         for (m = 0; m < 4; m++)
         {
-            j->ImgComp[m].RawData = null;
-            j->ImgComp[m].RawCoeff = null;
+            j.ImgComp[m].RawData = null;
+            j.ImgComp[m].RawCoeff = null;
         }
 
-        j->RestartInterval = 0;
+        j.RestartInterval = 0;
         if (!DecodeJpegHeader(j, Scan.Load))
         {
             return false;
@@ -2259,9 +2233,9 @@ internal static class Methods
                     return false;
                 }
 
-                if (j->Marker == Constants.MarkerNone)
+                if (j.Marker == Constants.MarkerNone)
                 {
-                    j->Marker = SkipJpegJunkAtEnd(j);
+                    j.Marker = SkipJpegJunkAtEnd(j);
                 }
 
                 m = GetMarker(j);
@@ -2272,14 +2246,14 @@ internal static class Methods
             }
             else if (Dnl(m))
             {
-                var ld = Get16BE(j->S);
-                var nl = unchecked((uint)Get16BE(j->S));
+                var ld = Get16BE(j.S);
+                var nl = unchecked((uint)Get16BE(j.S));
                 if (ld != 4)
                 {
                     return Error("Bad DNL length. Corrupt JPEG.");
                 }
 
-                if (nl != j->S->ImgY)
+                if (nl != j.S.ImgY)
                 {
                     return Error("Bad DNL height. Corrupt JPEG.");
                 }
@@ -2297,7 +2271,7 @@ internal static class Methods
             }
         }
 
-        if (j->Progressive)
+        if (j.Progressive)
         {
             JpegFinish(j);
         }
@@ -2305,35 +2279,21 @@ internal static class Methods
         return true;
     }
 
-    public static unsafe bool FreeJpegComponents(Jpeg* z, int ncomp, bool why)
+    public static bool FreeJpegComponents(Jpeg z, int ncomp, bool why)
     {
         for (var i = 0; i < ncomp; i++)
         {
-            if (z->ImgComp[i].RawData is not null)
-            {
-                NativeMemory.Free(z->ImgComp[i].RawData);
-                z->ImgComp[i].RawData = null;
-                z->ImgComp[i].Data = null;
-            }
-
-            if (z->ImgComp[i].RawCoeff is not null)
-            {
-                NativeMemory.Free(z->ImgComp[i].RawCoeff);
-                z->ImgComp[i].RawCoeff = null;
-                z->ImgComp[i].Coeff = null;
-            }
-
-            if (z->ImgComp[i].LineBuf is not null)
-            {
-                NativeMemory.Free(z->ImgComp[i].LineBuf);
-                z->ImgComp[i].LineBuf = null;
-            }
+            z.ImgComp[i].RawData = null;
+            z.ImgComp[i].Data = null;
+            z.ImgComp[i].RawCoeff = null;
+            z.ImgComp[i].Coeff = null;
+            z.ImgComp[i].LineBuf = null;
         }
 
         return why;
     }
 
-    public static unsafe void CleanupJpeg(Jpeg* j) => FreeJpegComponents(j, j->S->ImgN, false);
+    public static void CleanupJpeg(Jpeg j) => FreeJpegComponents(j, j.S.ImgN, false);
 
     public static byte Blinn8x8(byte x, byte y)
     {
@@ -2344,9 +2304,29 @@ internal static class Methods
     public static byte ComputeY(int r, int g, int b) =>
         unchecked((byte)(((r * 77) + (g * 150) + (29 * b)) >> 8));
 
-    public static unsafe byte* LoadJpegImage(Jpeg* z, int* outX, int* outY, int* comp, int reqComp)
+    public static byte[]? LoadJpegImage(
+        Jpeg z,
+        out int outX,
+        out int outY,
+        out int comp,
+        int reqComp
+    )
     {
-        z->S->ImgN = 0;
+        outX = 0;
+        outY = 0;
+        comp = 0;
+        return LoadJpegImageCore(z, ref outX, ref outY, ref comp, reqComp);
+    }
+
+    private static byte[]? LoadJpegImageCore(
+        Jpeg z,
+        ref int outX,
+        ref int outY,
+        ref int comp,
+        int reqComp
+    )
+    {
+        z.S.ImgN = 0;
         if (reqComp is < 0 or > 4)
         {
             return ErrorPtr("Bad required component count. Internal error.");
@@ -2360,13 +2340,12 @@ internal static class Methods
 
         var n =
             reqComp != 0 ? reqComp
-            : z->S->ImgN >= 3 ? 3
+            : z.S.ImgN >= 3 ? 3
             : 1;
 
-        var isRgb =
-            z->S->ImgN == 3 && (z->Rgb == 3 || (z->App14ColorTransform == 0 && z->JFif == 0));
+        var isRgb = z.S.ImgN == 3 && (z.Rgb == 3 || (z.App14ColorTransform == 0 && z.JFif == 0));
 
-        int decodeN = z->S->ImgN == 3 && n < 3 && !isRgb ? 1 : z->S->ImgN;
+        int decodeN = z.S.ImgN == 3 && n < 3 && !isRgb ? 1 : z.S.ImgN;
         if (decodeN <= 0)
         {
             CleanupJpeg(z);
@@ -2374,148 +2353,131 @@ internal static class Methods
         }
 
         {
-            byte* output;
-            byte** coutput = stackalloc byte*[4];
-            var resComp = stackalloc Resample[4];
+            byte[] output;
+            var coutput = new (byte[] Data, int Offset)[4];
+            var resComp = new Resample[4];
             for (var k = 0; k < decodeN; k++)
             {
-                var r = &resComp[k];
-                z->ImgComp[k].LineBuf = (byte*)NativeMemory.AllocZeroed((nuint)(z->S->ImgX + 3));
-                if (z->ImgComp[k].LineBuf is null)
-                {
-                    CleanupJpeg(z);
-                    return ErrorPtr("Out of memory.");
-                }
+                var r = resComp[k] = new Resample();
+                z.ImgComp[k].LineBuf = new byte[unchecked((int)z.S.ImgX) + 3];
 
-                r->HS = z->ImgHMax / z->ImgComp[k].H;
-                r->VS = z->ImgVMax / z->ImgComp[k].V;
-                r->YStep = r->VS >> 1;
-                r->WLores = unchecked((int)((z->S->ImgX + r->HS - 1) / r->HS));
-                r->YPos = 0;
-                r->Line0 = r->Line1 = z->ImgComp[k].Data;
-                r->ResampleFunc = r->HS switch
+                r.HS = z.ImgHMax / z.ImgComp[k].H;
+                r.VS = z.ImgVMax / z.ImgComp[k].V;
+                r.YStep = r.VS >> 1;
+                r.WLores = unchecked((int)((z.S.ImgX + r.HS - 1) / r.HS));
+                r.YPos = 0;
+                r.Line0 = r.Line1 = z.ImgComp[k].Data;
+                r.Line0Position = r.Line1Position = 0;
+                r.ResampleAction = r.HS switch
                 {
-                    1 when r->VS == 1 => &ResampleRow1,
-                    1 when r->VS == 2 => &ResampleRowV2,
-                    2 when r->VS == 1 => &ResampleRowH2,
-                    2 when r->VS == 2 => z->ResampleRowHV2Kernel,
-                    _ => &ResampleRowGeneric,
+                    1 when r.VS == 1 => ResampleRow1,
+                    1 when r.VS == 2 => ResampleRowV2,
+                    2 when r.VS == 1 => ResampleRowH2,
+                    2 when r.VS == 2 => z.ResampleRowHV2Kernel,
+                    _ => ResampleRowGeneric,
                 };
             }
 
-            output = (byte*)NativeMemory.AllocZeroed((nuint)(n * z->S->ImgX * z->S->ImgY + 1));
-            if (output is null)
-            {
-                CleanupJpeg(z);
-                return ErrorPtr("Out of memory.");
-            }
+            output = new byte[unchecked((int)(n * z.S.ImgX * z.S.ImgY)) + 1];
 
-            for (var j = 0; j < z->S->ImgY; j++)
+            for (var j = 0; j < z.S.ImgY; j++)
             {
-                var @out = output + n * z->S->ImgX * j;
+                Span<byte> @out = output.AsSpan(unchecked((int)(n * z.S.ImgX)) * j);
                 for (var k = 0; k < decodeN; k++)
                 {
-                    var r = &resComp[k];
-                    var yBot = r->YStep >= (r->VS >> 1);
-                    coutput[k] = r->ResampleFunc(
-                        z->ImgComp[k].LineBuf,
-                        yBot ? r->Line1 : r->Line0,
-                        yBot ? r->Line0 : r->Line1,
-                        r->WLores,
-                        r->HS
+                    var r = resComp[k];
+                    var yBot = r.YStep >= (r.VS >> 1);
+                    coutput[k] = r.ResampleAction(
+                        z.ImgComp[k].LineBuf!,
+                        yBot ? r.Line1! : r.Line0!,
+                        yBot ? r.Line1Position : r.Line0Position,
+                        yBot ? r.Line0! : r.Line1!,
+                        yBot ? r.Line0Position : r.Line1Position,
+                        r.WLores,
+                        r.HS
                     );
 
-                    if (++r->YStep >= r->VS)
+                    if (++r.YStep >= r.VS)
                     {
-                        r->YStep = 0;
-                        r->Line0 = r->Line1;
-                        if (++r->YPos < z->ImgComp[k].Y)
+                        r.YStep = 0;
+                        r.Line0 = r.Line1;
+                        r.Line0Position = r.Line1Position;
+                        if (++r.YPos < z.ImgComp[k].Y)
                         {
-                            r->Line1 += z->ImgComp[k].W2;
+                            r.Line1Position += z.ImgComp[k].W2;
                         }
                     }
                 }
 
+                ReadOnlySpan<byte> c0 = coutput[0].Data.AsSpan(coutput[0].Offset);
+                ReadOnlySpan<byte> c1 =
+                    decodeN > 1 ? coutput[1].Data.AsSpan(coutput[1].Offset) : default;
+
+                ReadOnlySpan<byte> c2 =
+                    decodeN > 2 ? coutput[2].Data.AsSpan(coutput[2].Offset) : default;
+
+                ReadOnlySpan<byte> c3 =
+                    decodeN > 3 ? coutput[3].Data.AsSpan(coutput[3].Offset) : default;
+
                 if (n >= 3)
                 {
-                    var y = coutput[0];
-                    if (z->S->ImgN == 3)
+                    var y = c0;
+                    if (z.S.ImgN == 3)
                     {
                         if (isRgb)
                         {
-                            for (var i = 0; i < z->S->ImgX; i++)
+                            for (var i = 0; i < z.S.ImgX; i++)
                             {
                                 @out[0] = y[i];
-                                @out[1] = coutput[1][i];
-                                @out[2] = coutput[2][i];
+                                @out[1] = c1[i];
+                                @out[2] = c2[i];
                                 @out[3] = 255;
-                                @out += n;
+                                @out = @out[n..];
                             }
                         }
                         else
                         {
-                            z->YCbCrToRgbKernel(
-                                @out,
-                                y,
-                                coutput[1],
-                                coutput[2],
-                                unchecked((int)z->S->ImgX),
-                                n
-                            );
+                            z.YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)z.S.ImgX), n);
                         }
                     }
-                    else if (z->S->ImgN == 4)
+                    else if (z.S.ImgN == 4)
                     {
-                        if (z->App14ColorTransform == 0)
+                        if (z.App14ColorTransform == 0)
                         {
-                            for (var i = 0; i < z->S->ImgX; i++)
+                            for (var i = 0; i < z.S.ImgX; i++)
                             {
-                                var m = coutput[3][i];
-                                @out[0] = Blinn8x8(coutput[0][i], m);
-                                @out[1] = Blinn8x8(coutput[1][i], m);
-                                @out[2] = Blinn8x8(coutput[2][i], m);
+                                var m = c3[i];
+                                @out[0] = Blinn8x8(c0[i], m);
+                                @out[1] = Blinn8x8(c1[i], m);
+                                @out[2] = Blinn8x8(c2[i], m);
                                 @out[3] = 255;
-                                @out += n;
+                                @out = @out[n..];
                             }
                         }
-                        else if (z->App14ColorTransform == 2)
+                        else if (z.App14ColorTransform == 2)
                         {
-                            z->YCbCrToRgbKernel(
-                                @out,
-                                y,
-                                coutput[1],
-                                coutput[2],
-                                unchecked((int)z->S->ImgX),
-                                n
-                            );
-                            for (var i = 0; i < z->S->ImgX; i++)
+                            z.YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)z.S.ImgX), n);
+                            for (var i = 0; i < z.S.ImgX; i++)
                             {
-                                var m = coutput[3][i];
+                                var m = c3[i];
                                 @out[0] = Blinn8x8(unchecked((byte)(255 - @out[0])), m);
                                 @out[1] = Blinn8x8(unchecked((byte)(255 - @out[1])), m);
                                 @out[2] = Blinn8x8(unchecked((byte)(255 - @out[2])), m);
-                                @out += n;
+                                @out = @out[n..];
                             }
                         }
                         else
                         {
-                            z->YCbCrToRgbKernel(
-                                @out,
-                                y,
-                                coutput[1],
-                                coutput[2],
-                                unchecked((int)z->S->ImgX),
-                                n
-                            );
+                            z.YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)z.S.ImgX), n);
                         }
                     }
                     else
                     {
-                        for (var i = 0; i < z->S->ImgX; i++)
+                        for (var i = 0; i < z.S.ImgX; i++)
                         {
                             @out[0] = @out[1] = @out[2] = y[i];
                             @out[3] = 255;
-                            @out += n;
+                            @out = @out[n..];
                         }
                     }
                 }
@@ -2525,62 +2487,61 @@ internal static class Methods
                     {
                         if (n == 1)
                         {
-                            for (var i = 0; i < z->S->ImgX; i++)
+                            for (var i = 0; i < z.S.ImgX; i++)
                             {
-                                *@out++ = ComputeY(coutput[0][i], coutput[1][i], coutput[2][i]);
+                                @out[0] = ComputeY(c0[i], c1[i], c2[i]);
+                                @out = @out[1..];
                             }
                         }
                         else
                         {
-                            for (var i = 0; i < z->S->ImgX; i++, @out += 2)
+                            for (var i = 0; i < z.S.ImgX; i++, @out = @out[2..])
                             {
-                                @out[0] = ComputeY(coutput[0][i], coutput[1][i], coutput[2][i]);
+                                @out[0] = ComputeY(c0[i], c1[i], c2[i]);
                                 @out[1] = 255;
                             }
                         }
                     }
-                    else if (z->S->ImgN == 4 && z->App14ColorTransform == 0)
+                    else if (z.S.ImgN == 4 && z.App14ColorTransform == 0)
                     {
-                        for (var i = 0; i < z->S->ImgX; i++)
+                        for (var i = 0; i < z.S.ImgX; i++)
                         {
-                            var m = coutput[3][i];
-                            var r = Blinn8x8(coutput[0][i], m);
-                            var g = Blinn8x8(coutput[1][i], m);
-                            var b = Blinn8x8(coutput[2][i], m);
+                            var m = c3[i];
+                            var r = Blinn8x8(c0[i], m);
+                            var g = Blinn8x8(c1[i], m);
+                            var b = Blinn8x8(c2[i], m);
                             @out[0] = ComputeY(r, g, b);
                             @out[1] = 255;
-                            @out += n;
+                            @out = @out[n..];
                         }
                     }
-                    else if (z->S->ImgN == 4 && z->App14ColorTransform == 2)
+                    else if (z.S.ImgN == 4 && z.App14ColorTransform == 2)
                     {
-                        for (var i = 0; i < z->S->ImgX; i++)
+                        for (var i = 0; i < z.S.ImgX; i++)
                         {
-                            @out[0] = Blinn8x8(
-                                unchecked((byte)(255 - coutput[0][i])),
-                                coutput[3][i]
-                            );
+                            @out[0] = Blinn8x8(unchecked((byte)(255 - c0[i])), c3[i]);
 
                             @out[1] = 255;
-                            @out += n;
+                            @out = @out[n..];
                         }
                     }
                     else
                     {
-                        var y = coutput[0];
+                        var y = c0;
                         if (n == 1)
                         {
-                            for (var i = 0; i < z->S->ImgX; i++)
+                            for (var i = 0; i < z.S.ImgX; i++)
                             {
                                 @out[i] = y[i];
                             }
                         }
                         else
                         {
-                            for (var i = 0; i < z->S->ImgX; i++)
+                            for (var i = 0; i < z.S.ImgX; i++)
                             {
-                                *@out++ = y[i];
-                                *@out++ = 255;
+                                @out[0] = y[i];
+                                @out[1] = 255;
+                                @out = @out[2..];
                             }
                         }
                     }
@@ -2588,74 +2549,65 @@ internal static class Methods
             }
 
             CleanupJpeg(z);
-            *outX = unchecked((int)z->S->ImgX);
-            *outY = unchecked((int)z->S->ImgY);
-            if (comp is not null)
-            {
-                *comp = z->S->ImgN >= 3 ? 3 : 1;
-            }
+            outX = unchecked((int)z.S.ImgX);
+            outY = unchecked((int)z.S.ImgY);
+            comp = z.S.ImgN >= 3 ? 3 : 1;
 
             return output;
         }
     }
 
-    public static unsafe void* JpegLoad(
-        Context* s,
-        int* x,
-        int* y,
-        int* channelCount,
+    public static byte[]? JpegLoad(
+        Context s,
+        out int x,
+        out int y,
+        out int channelCount,
         int requiredChannels,
-        ResultInfo* ri
+        ResultInfo _
     )
     {
-        var j = (Jpeg*)NativeMemory.AllocZeroed((nuint)sizeof(Jpeg));
-        if (j is null)
-        {
-            return ErrorPtr("Out of memory.");
-        }
-
-        j->S = s;
+        var j = new Jpeg { S = s };
         if (!AllocJpegTables(j))
         {
-            NativeMemory.Free(j);
+            x = y = channelCount = 0;
             return null;
         }
 
         SetupJpeg(j);
-        var result = LoadJpegImage(j, x, y, channelCount, requiredChannels);
+        var result = LoadJpegImage(j, out x, out y, out channelCount, requiredChannels);
         FreeJpegTables(j);
-        NativeMemory.Free(j);
         return result;
     }
 
-    public static unsafe void* LoadMain(
-        Context* s,
-        int* x,
-        int* y,
-        int* comp,
+    public static byte[]? LoadMain(
+        Context s,
+        out int x,
+        out int y,
+        out int comp,
         int reqComp,
-        ResultInfo* ri,
-        int bpc
+        ResultInfo ri,
+        int _
     )
     {
-        ri->BitsPerChannel = 8;
-        ri->ChannelOrder = default;
-        ri->NumChannels = 0;
+        ri.BitsPerChannel = 8;
+        ri.ChannelOrder = default;
+        ri.NumChannels = 0;
         if (JpegTest(s))
         {
-            return JpegLoad(s, x, y, comp, reqComp, ri);
+            return JpegLoad(s, out x, out y, out comp, reqComp, ri);
         }
 
+        x = y = comp = 0;
         return ErrorPtr("Unsupported image format. No decoder recognized the data.");
     }
 
-    public static unsafe void StoreRow(ref byte* output, int stride, V8 pair)
+    public static void StoreRow(Span<byte> output, ref int offset, int stride, V8 pair)
     {
         var u = pair.AsUInt64();
-        *(ulong*)output = u.GetElement(0);
-        output += stride;
-        *(ulong*)output = u.GetElement(1);
-        output += stride;
+        MemoryMarshal.Write(output.Slice(offset, 8), u.GetElement(0));
+        offset += stride;
+        MemoryMarshal.Write(output.Slice(offset, 8), u.GetElement(1));
+        offset += stride;
     }
 
     public static V16 DctConst(int x, int y) =>
@@ -2795,21 +2747,16 @@ internal static class Methods
 
     public static int Float2Fixed(float value) => unchecked((int)(value * 4096F + .5F) << 8);
 
-    public static unsafe byte* Convert16To8(ushort* orig, int w, int h, int channels)
+    public static byte[]? Convert16To8(byte[] orig, int w, int h, int channels)
     {
         var imgLen = w * h * channels;
-        var reduced = (byte*)NativeMemory.AllocZeroed((nuint)imgLen);
-        if (reduced is null)
-        {
-            return ErrorPtr("Out of memory.");
-        }
-
+        var reduced = new byte[imgLen];
+        var source = MemoryMarshal.Cast<byte, ushort>(orig.AsSpan());
         for (var i = 0; i < imgLen; i++)
         {
-            reduced[i] = unchecked((byte)((orig[i] >> 8) & 0xFF));
+            reduced[i] = unchecked((byte)((source[i] >> 8) & 0xFF));
         }
 
-        NativeMemory.Free(orig);
         return reduced;
     }
 
@@ -2819,22 +2766,21 @@ internal static class Methods
         Constants.VerticallyFlipOnLoadSet = true;
     }
 
-    public static unsafe void VerticalFlip(void* image, int w, int h, int bytesPerPixel)
+    public static void VerticalFlip(byte[] image, int w, int h, int bytesPerPixel)
     {
-        var bytesPerRow = (nint)(w * bytesPerPixel);
-        var temp = stackalloc byte[2048];
-        var bytes = (byte*)image;
+        var bytesPerRow = w * bytesPerPixel;
+        Span<byte> temp = stackalloc byte[2048];
         for (var row = 0; row < (h >> 1); row++)
         {
-            var row0 = bytes + row * bytesPerRow;
-            var row1 = bytes + (h - row - 1) * bytesPerRow;
-            var bytesLeft = (nint)bytesPerRow;
+            var row0 = row * bytesPerRow;
+            var row1 = (h - row - 1) * bytesPerRow;
+            var bytesLeft = bytesPerRow;
             while (bytesLeft > 0)
             {
-                var bytesCopy = (bytesLeft < 2048) ? bytesLeft : 2048;
-                Buffer.MemoryCopy(row0, temp, bytesCopy, bytesCopy);
-                Buffer.MemoryCopy(row1, row0, bytesCopy, bytesCopy);
-                Buffer.MemoryCopy(temp, row1, bytesCopy, bytesCopy);
+                var bytesCopy = bytesLeft < 2048 ? bytesLeft : 2048;
+                image.AsSpan(row0, bytesCopy).CopyTo(temp);
+                image.AsSpan(row1, bytesCopy).CopyTo(image.AsSpan(row0, bytesCopy));
+                temp[..bytesCopy].CopyTo(image.AsSpan(row1, bytesCopy));
                 row0 += bytesCopy;
                 row1 += bytesCopy;
                 bytesLeft -= bytesCopy;
@@ -2842,16 +2788,16 @@ internal static class Methods
         }
     }
 
-    public static unsafe byte* LoadAndPostprocess8Bit(
-        Context* s,
-        int* x,
-        int* y,
-        int* comp,
+    public static byte[]? LoadAndPostprocess8Bit(
+        Context s,
+        out int x,
+        out int y,
+        out int comp,
         int reqComp
     )
     {
-        ResultInfo ri = default;
-        var result = LoadMain(s, x, y, comp, reqComp, &ri, 8);
+        var ri = new ResultInfo();
+        var result = LoadMain(s, out x, out y, out comp, reqComp, ri, 8);
         if (result is null)
         {
             return null;
@@ -2860,17 +2806,17 @@ internal static class Methods
         Debug.Assert(ri.BitsPerChannel == 8 || ri.BitsPerChannel == 16);
         if (ri.BitsPerChannel != 8)
         {
-            result = Convert16To8((ushort*)result, *x, *y, reqComp == 0 ? *comp : reqComp);
+            result = Convert16To8(result, x, y, reqComp == 0 ? comp : reqComp);
             ri.BitsPerChannel = 8;
         }
 
         if (Constants.VerticallyFlipOnLoad)
         {
-            var channels = reqComp != 0 ? reqComp : *comp;
-            VerticalFlip(result, *x, *y, channels * sizeof(byte));
+            var channels = reqComp != 0 ? reqComp : comp;
+            VerticalFlip(result!, x, y, channels);
         }
 
-        return (byte*)result;
+        return result;
     }
 
     public enum Scan
@@ -2878,12 +2824,6 @@ internal static class Methods
         Load,
         Type,
         Header,
-    }
-
-    public enum ImageChannelOrder
-    {
-        Rgb,
-        Bgr,
     }
 
     public readonly struct Wide(V32 lo, V32 hi)

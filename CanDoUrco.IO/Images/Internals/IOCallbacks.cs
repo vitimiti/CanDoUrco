@@ -14,14 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices;
-
 namespace CanDoUrco.IO.Images.Internals;
 
-[StructLayout(LayoutKind.Sequential)]
-internal struct IOCallbacks
+internal delegate int ReadFunc(object? user, Span<byte> data, int size);
+
+internal sealed class IOCallbacks
 {
-    public unsafe delegate* managed<void*, byte*, int, int> Read { get; set; }
-    public unsafe delegate* managed<void*, int, void> Skip { get; set; }
-    public unsafe delegate* managed<void*, bool> Eof { get; set; }
+    public ReadFunc? Read { get; set; }
+    public Action<object?, int>? Skip { get; set; }
+    public Func<object?, bool>? Eof { get; set; }
 }
