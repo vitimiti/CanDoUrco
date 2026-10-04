@@ -14,34 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using V32 = System.Runtime.Intrinsics.Vector128<int>;
+
 namespace CanDoUrco.IO.Images.Internals;
 
-internal delegate int ReadFunc(object? user, Span<byte> data, int size);
-
-internal delegate void IdctKernel(Span<byte> output, int outStride, ReadOnlySpan<short> data);
-
-internal delegate void YCbCrToRgbKernelFunc(
-    Span<byte> output,
-    ReadOnlySpan<byte> y,
-    ReadOnlySpan<byte> cb,
-    ReadOnlySpan<byte> cr,
-    int count,
-    int step
-);
-
-internal delegate (byte[] Data, int Offset) ResampleFunc(
-    byte[] output,
-    byte[] inNear,
-    int inNearPos,
-    byte[] inFar,
-    int inFarPos,
-    int w,
-    int hs
-);
-
-internal sealed class IOCallbacks
+public readonly struct Wide(V32 lo, V32 hi)
 {
-    public ReadFunc? Read { get; set; }
-    public Action<object?, int>? Skip { get; set; }
-    public Func<object?, bool>? Eof { get; set; }
+    public readonly V32 Lo = lo;
+    public readonly V32 Hi = hi;
 }

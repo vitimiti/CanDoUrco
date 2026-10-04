@@ -16,32 +16,9 @@
 
 namespace CanDoUrco.IO.Images.Internals;
 
-internal delegate int ReadFunc(object? user, Span<byte> data, int size);
-
-internal delegate void IdctKernel(Span<byte> output, int outStride, ReadOnlySpan<short> data);
-
-internal delegate void YCbCrToRgbKernelFunc(
-    Span<byte> output,
-    ReadOnlySpan<byte> y,
-    ReadOnlySpan<byte> cb,
-    ReadOnlySpan<byte> cr,
-    int count,
-    int step
-);
-
-internal delegate (byte[] Data, int Offset) ResampleFunc(
-    byte[] output,
-    byte[] inNear,
-    int inNearPos,
-    byte[] inFar,
-    int inFarPos,
-    int w,
-    int hs
-);
-
-internal sealed class IOCallbacks
+public enum Scan
 {
-    public ReadFunc? Read { get; set; }
-    public Action<object?, int>? Skip { get; set; }
-    public Func<object?, bool>? Eof { get; set; }
+    Load,
+    Type,
+    Header,
 }

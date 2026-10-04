@@ -56,13 +56,7 @@ public static class Image
         Methods.ClearFailure();
         var context = Methods.StartFile(stream);
         var result =
-            Methods.LoadAndPostprocess8Bit(
-                context,
-                out var x,
-                out var y,
-                out var comp,
-                requiredChannelCount
-            )
+            context.LoadAndPostprocess8Bit(out var x, out var y, out var comp, requiredChannelCount)
             ?? throw new InvalidOperationException(
                 Methods.FailureReason ?? "Unknown image load failure."
             );
