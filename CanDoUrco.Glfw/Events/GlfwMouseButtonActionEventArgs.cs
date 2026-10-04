@@ -33,7 +33,7 @@ public sealed class GlfwMouseButtonActionEventArgs(
     /// <summary>
     /// Gets the <see cref="GlfwMouseButton"/> that started the event.
     /// </summary>
-    public GlfwMouseButton Key { get; init; } = mouseButton;
+    public GlfwMouseButton Button { get; init; } = mouseButton;
 
     /// <summary>
     /// Gets the <see cref="GlfwMouseButtonAction"/> of the key.
