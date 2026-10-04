@@ -23,5 +23,5 @@ internal struct ResultInfo
 {
     public int BitsPerChannel { get; set; }
     public int NumChannels { get; set; }
-    public ImageChannelOrder ChannelOrder { get; set; }
+    public Methods.ImageChannelOrder ChannelOrder { get; set; }
 }

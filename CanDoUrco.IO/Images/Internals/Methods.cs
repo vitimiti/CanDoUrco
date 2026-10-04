@@ -288,6 +288,7 @@ internal static class Methods
         var c = unchecked(
             (int)((j->CodeBuffer >> (32 - Constants.FastBits)) & ((1 << Constants.FastBits) - 1))
         );
+
         var k = (int)h->Fast[c];
         if (k < 255)
         {
@@ -988,7 +989,6 @@ internal static class Methods
             var cbConst1 = Vector128.Create((short)(1.77200F * 4096F + .5F));
             var yBias = Vector128.Create((byte)128);
             var xw = Vector128.Create((short)255);
-
             for (; i + 7 < count; i += 8)
             {
                 var yBytes = Sse2.LoadScalarVector128((long*)(y + i)).AsByte();
@@ -1259,16 +1259,21 @@ internal static class Methods
     {
         j->HuffDC = (Huffman*)
             NativeMemory.AllocZeroed((nuint)(sizeof(Huffman) * Constants.JpegFixedArrayLength));
+
         j->HuffAC = (Huffman*)
             NativeMemory.AllocZeroed((nuint)(sizeof(Huffman) * Constants.JpegFixedArrayLength));
+
         j->Dequant = (ushort**)
             NativeMemory.AllocZeroed((nuint)(sizeof(ushort*) * Constants.JpegFixedArrayLength));
+
         j->FastAC = (short**)
             NativeMemory.AllocZeroed((nuint)(sizeof(short*) * Constants.JpegFixedArrayLength));
+
         j->ImgComp = (Jpeg.CompStruct*)
             NativeMemory.AllocZeroed(
                 (nuint)(sizeof(Jpeg.CompStruct) * Constants.JpegFixedArrayLength)
             );
+
         if (
             j->HuffDC is null
             || j->HuffAC is null
@@ -1284,9 +1289,9 @@ internal static class Methods
         for (var i = 0; i < Constants.JpegFixedArrayLength; i++)
         {
             j->Dequant[i] = (ushort*)
-                NativeMemory.AllocZeroed((nuint)(sizeof(ushort) * Constants.JpegDequantLength));
-            j->FastAC[i] = (short*)
-                NativeMemory.AllocZeroed((nuint)(sizeof(short) * Constants.JpegACLength));
+                NativeMemory.AllocZeroed(sizeof(ushort) * Constants.JpegDequantLength);
+
+            j->FastAC[i] = (short*)NativeMemory.AllocZeroed(sizeof(short) * Constants.JpegACLength);
             if (j->Dequant[i] is null || j->FastAC[i] is null)
             {
                 FreeJpegTables(j);
@@ -1538,14 +1543,9 @@ internal static class Methods
             l = Get16BE(z->S);
             if (l < 2)
             {
-                if (m == 0xFE)
-                {
-                    return Error("Bad COM length. Corrupt JPEG.");
-                }
-                else
-                {
-                    return Error("Bad APP length. Corrupt JPEG.");
-                }
+                return m == 0xFE
+                    ? Error("Bad COM length. Corrupt JPEG.")
+                    : Error("Bad APP length. Corrupt JPEG.");
             }
 
             l -= 2;
@@ -1937,6 +1937,7 @@ internal static class Methods
             j->ImgComp[2].DCPred =
             j->ImgComp[3].DCPred =
                 0;
+
         j->Marker = Constants.MarkerNone;
         j->Todo = j->RestartInterval != 0 ? j->RestartInterval : 0x7FFF_FFFF;
         j->EobRun = 0;
@@ -1980,6 +1981,7 @@ internal static class Methods
                             z->ImgComp[n].W2,
                             data
                         );
+
                         if (--z->Todo <= 0)
                         {
                             if (z->CodeBits < 24)
@@ -2350,8 +2352,10 @@ internal static class Methods
             reqComp != 0 ? reqComp
             : z->S->ImgN >= 3 ? 3
             : 1;
+
         var isRgb =
             z->S->ImgN == 3 && (z->Rgb == 3 || (z->App14ColorTransform == 0 && z->JFif == 0));
+
         int decodeN = z->S->ImgN == 3 && n < 3 && !isRgb ? 1 : z->S->ImgN;
         if (decodeN <= 0)
         {
@@ -2546,6 +2550,7 @@ internal static class Methods
                                 unchecked((byte)(255 - coutput[0][i])),
                                 coutput[3][i]
                             );
+
                             @out[1] = 255;
                             @out += n;
                         }
@@ -2590,7 +2595,7 @@ internal static class Methods
         int* y,
         int* channelCount,
         int requiredChannels,
-        ResultInfo* _
+        ResultInfo* ri
     )
     {
         var j = (Jpeg*)NativeMemory.AllocZeroed((nuint)sizeof(Jpeg));
@@ -2687,7 +2692,6 @@ internal static class Methods
         out1 = new Wide(MultiplyAddAdjacent(lo, c1), MultiplyAddAdjacent(hi, c1));
     }
 
-    // in << 12, widened from 16 to 32 bits.
     public static Wide DctWiden(V16 v) =>
         new(
             Vector128.ShiftRightArithmetic(UnpackLow16(V16.Zero, v).AsInt32(), 4),
@@ -2740,7 +2744,6 @@ internal static class Methods
         int shift
     )
     {
-        // Even part.
         DctRot(row2, row6, Constants.Rot00, Constants.Rot01, out var t2E, out var t3E);
         var t0E = DctWiden(row0 + row4);
         var t1E = DctWiden(row0 - row4);
@@ -2749,7 +2752,6 @@ internal static class Methods
         var x1 = WAdd(t1E, t2E);
         var x2 = WSub(t1E, t2E);
 
-        // Odd part.
         DctRot(row7, row3, Constants.Rot20, Constants.Rot21, out var y0O, out var y2O);
         DctRot(row5, row1, Constants.Rot30, Constants.Rot31, out var y1O, out var y3O);
         DctRot(
