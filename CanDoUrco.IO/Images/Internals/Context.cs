@@ -42,17 +42,17 @@ internal sealed class Context
 
     public bool JpegTest()
     {
-        var j = new Jpeg { S = this };
+        var jpeg = new Jpeg { Context = this };
 
-        if (!j.AllocTables())
+        if (!jpeg.AllocTables())
         {
             return false;
         }
 
-        j.Setup();
-        var r = j.DecodeHeader(Scan.Type);
+        jpeg.Setup();
+        var r = jpeg.DecodeHeader(Scan.Type);
         Rewind();
-        j.FreeComponents(Constants.JpegFixedArrayLength, false);
+        jpeg.FreeComponents(Constants.JpegFixedArrayLength, false);
         return r;
     }
 
@@ -64,15 +64,15 @@ internal sealed class Context
         ResultInfo _
     )
     {
-        var j = new Jpeg { S = this };
-        if (!j.AllocTables())
+        var jpeg = new Jpeg { Context = this };
+        if (!jpeg.AllocTables())
         {
             x = y = channelCount = 0;
             return null;
         }
 
-        j.Setup();
-        var result = j.LoadImage(out x, out y, out channelCount, requiredChannels);
+        jpeg.Setup();
+        var result = jpeg.LoadImage(out x, out y, out channelCount, requiredChannels);
         return result;
     }
 

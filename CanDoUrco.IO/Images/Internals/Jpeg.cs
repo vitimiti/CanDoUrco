@@ -23,7 +23,7 @@ namespace CanDoUrco.IO.Images.Internals;
 
 internal sealed class Jpeg
 {
-    public Context S { get; set; } = null!;
+    public Context Context { get; set; } = null!;
     public Huffman[] HuffDC { get; set; } = null!;
     public Huffman[] HuffAC { get; set; } = null!;
     public ushort[][] Dequant { get; set; } = null!;
@@ -71,7 +71,7 @@ internal sealed class Jpeg
 
     private byte[]? LoadImageCore(ref int outX, ref int outY, ref int comp, int reqComp)
     {
-        S.ImgN = 0;
+        Context.ImgN = 0;
         if (reqComp is < 0 or > 4)
         {
             return Methods.ErrorPtr("Bad required component count. Internal error.");
@@ -85,12 +85,12 @@ internal sealed class Jpeg
 
         var n =
             reqComp != 0 ? reqComp
-            : S.ImgN >= 3 ? 3
+            : Context.ImgN >= 3 ? 3
             : 1;
 
-        var isRgb = S.ImgN == 3 && (Rgb == 3 || (App14ColorTransform == 0 && JFif == 0));
+        var isRgb = Context.ImgN == 3 && (Rgb == 3 || (App14ColorTransform == 0 && JFif == 0));
 
-        int decodeN = S.ImgN == 3 && n < 3 && !isRgb ? 1 : S.ImgN;
+        int decodeN = Context.ImgN == 3 && n < 3 && !isRgb ? 1 : Context.ImgN;
         if (decodeN <= 0)
         {
             Cleanup();
@@ -104,12 +104,12 @@ internal sealed class Jpeg
             for (var k = 0; k < decodeN; k++)
             {
                 var r = resComp[k] = new Resample();
-                ImgComp[k].LineBuf = new byte[unchecked((int)S.ImgX) + 3];
+                ImgComp[k].LineBuf = new byte[unchecked((int)Context.ImgX) + 3];
 
                 r.HS = ImgHMax / ImgComp[k].H;
                 r.VS = ImgVMax / ImgComp[k].V;
                 r.YStep = r.VS >> 1;
-                r.WLores = unchecked((int)((S.ImgX + r.HS - 1) / r.HS));
+                r.WLores = unchecked((int)((Context.ImgX + r.HS - 1) / r.HS));
                 r.YPos = 0;
                 r.Line0 = r.Line1 = ImgComp[k].Data;
                 r.Line0Position = r.Line1Position = 0;
@@ -123,10 +123,10 @@ internal sealed class Jpeg
                 };
             }
 
-            output = new byte[unchecked((int)(n * S.ImgX * S.ImgY)) + 1];
-            for (var j = 0; j < S.ImgY; j++)
+            output = new byte[unchecked((int)(n * Context.ImgX * Context.ImgY)) + 1];
+            for (var j = 0; j < Context.ImgY; j++)
             {
-                Span<byte> @out = output.AsSpan(unchecked((int)(n * S.ImgX)) * j);
+                Span<byte> @out = output.AsSpan(unchecked((int)(n * Context.ImgX)) * j);
                 for (var k = 0; k < decodeN; k++)
                 {
                     var r = resComp[k];
@@ -166,11 +166,11 @@ internal sealed class Jpeg
                 if (n >= 3)
                 {
                     var y = c0;
-                    if (S.ImgN == 3)
+                    if (Context.ImgN == 3)
                     {
                         if (isRgb)
                         {
-                            for (var i = 0; i < S.ImgX; i++)
+                            for (var i = 0; i < Context.ImgX; i++)
                             {
                                 @out[0] = y[i];
                                 @out[1] = c1[i];
@@ -181,14 +181,14 @@ internal sealed class Jpeg
                         }
                         else
                         {
-                            YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)S.ImgX), n);
+                            YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)Context.ImgX), n);
                         }
                     }
-                    else if (S.ImgN == 4)
+                    else if (Context.ImgN == 4)
                     {
                         if (App14ColorTransform == 0)
                         {
-                            for (var i = 0; i < S.ImgX; i++)
+                            for (var i = 0; i < Context.ImgX; i++)
                             {
                                 var m = c3[i];
                                 @out[0] = Methods.Blinn8x8(c0[i], m);
@@ -200,8 +200,8 @@ internal sealed class Jpeg
                         }
                         else if (App14ColorTransform == 2)
                         {
-                            YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)S.ImgX), n);
-                            for (var i = 0; i < S.ImgX; i++)
+                            YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)Context.ImgX), n);
+                            for (var i = 0; i < Context.ImgX; i++)
                             {
                                 var m = c3[i];
                                 @out[0] = Methods.Blinn8x8(unchecked((byte)(255 - @out[0])), m);
@@ -212,12 +212,12 @@ internal sealed class Jpeg
                         }
                         else
                         {
-                            YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)S.ImgX), n);
+                            YCbCrToRgbKernel(@out, y, c1, c2, unchecked((int)Context.ImgX), n);
                         }
                     }
                     else
                     {
-                        for (var i = 0; i < S.ImgX; i++)
+                        for (var i = 0; i < Context.ImgX; i++)
                         {
                             @out[0] = @out[1] = @out[2] = y[i];
                             @out[3] = 255;
@@ -231,7 +231,7 @@ internal sealed class Jpeg
                     {
                         if (n == 1)
                         {
-                            for (var i = 0; i < S.ImgX; i++)
+                            for (var i = 0; i < Context.ImgX; i++)
                             {
                                 @out[0] = Methods.ComputeY(c0[i], c1[i], c2[i]);
                                 @out = @out[1..];
@@ -239,16 +239,16 @@ internal sealed class Jpeg
                         }
                         else
                         {
-                            for (var i = 0; i < S.ImgX; i++, @out = @out[2..])
+                            for (var i = 0; i < Context.ImgX; i++, @out = @out[2..])
                             {
                                 @out[0] = Methods.ComputeY(c0[i], c1[i], c2[i]);
                                 @out[1] = 255;
                             }
                         }
                     }
-                    else if (S.ImgN == 4 && App14ColorTransform == 0)
+                    else if (Context.ImgN == 4 && App14ColorTransform == 0)
                     {
-                        for (var i = 0; i < S.ImgX; i++)
+                        for (var i = 0; i < Context.ImgX; i++)
                         {
                             var m = c3[i];
                             var r = Methods.Blinn8x8(c0[i], m);
@@ -259,9 +259,9 @@ internal sealed class Jpeg
                             @out = @out[n..];
                         }
                     }
-                    else if (S.ImgN == 4 && App14ColorTransform == 2)
+                    else if (Context.ImgN == 4 && App14ColorTransform == 2)
                     {
-                        for (var i = 0; i < S.ImgX; i++)
+                        for (var i = 0; i < Context.ImgX; i++)
                         {
                             @out[0] = Methods.Blinn8x8(unchecked((byte)(255 - c0[i])), c3[i]);
 
@@ -274,14 +274,14 @@ internal sealed class Jpeg
                         var y = c0;
                         if (n == 1)
                         {
-                            for (var i = 0; i < S.ImgX; i++)
+                            for (var i = 0; i < Context.ImgX; i++)
                             {
                                 @out[i] = y[i];
                             }
                         }
                         else
                         {
-                            for (var i = 0; i < S.ImgX; i++)
+                            for (var i = 0; i < Context.ImgX; i++)
                             {
                                 @out[0] = y[i];
                                 @out[1] = 255;
@@ -293,9 +293,9 @@ internal sealed class Jpeg
             }
 
             Cleanup();
-            outX = unchecked((int)S.ImgX);
-            outY = unchecked((int)S.ImgY);
-            comp = S.ImgN >= 3 ? 3 : 1;
+            outX = unchecked((int)Context.ImgX);
+            outY = unchecked((int)Context.ImgY);
+            comp = Context.ImgN >= 3 ? 3 : 1;
 
             return output;
         }
@@ -324,13 +324,13 @@ internal sealed class Jpeg
     {
         do
         {
-            var b = (uint)(NoMore != 0 ? 0 : S.Get8());
+            var b = (uint)(NoMore != 0 ? 0 : Context.Get8());
             if (b == 0xFF)
             {
-                var c = (int)S.Get8();
+                var c = (int)Context.Get8();
                 while (c == 0xFF)
                 {
-                    c = S.Get8();
+                    c = Context.Get8();
                 }
 
                 if (c != 0)
@@ -348,17 +348,17 @@ internal sealed class Jpeg
 
     public byte SkipJunkAtEnd()
     {
-        while (!S.AtEof())
+        while (!Context.AtEof())
         {
-            var x = S.Get8();
+            var x = Context.Get8();
             while (x == 0xFF)
             {
-                if (S.AtEof())
+                if (Context.AtEof())
                 {
                     return Constants.MarkerNone;
                 }
 
-                x = S.Get8();
+                x = Context.Get8();
                 if (x != 0x00 && x != 0xFF)
                 {
                     return x;
@@ -744,7 +744,7 @@ internal sealed class Jpeg
             return x;
         }
 
-        x = S.Get8();
+        x = Context.Get8();
         if (x != 0xFF)
         {
             return Constants.MarkerNone;
@@ -752,7 +752,7 @@ internal sealed class Jpeg
 
         while (x == 0xFF)
         {
-            x = S.Get8();
+            x = Context.Get8();
         }
 
         return x;
@@ -766,18 +766,18 @@ internal sealed class Jpeg
             case Constants.MarkerNone:
                 return Methods.Error("Expected marker. Corrupt JPEG.");
             case 0xDD:
-                if (S.Get16BE() != 4)
+                if (Context.Get16BE() != 4)
                 {
                     return Methods.Error("Invalid DRI length. Corrupt JPEG.");
                 }
 
-                RestartInterval = S.Get16BE();
+                RestartInterval = Context.Get16BE();
                 return true;
             case 0xDB:
-                l = S.Get16BE() - 2;
+                l = Context.Get16BE() - 2;
                 while (l > 0)
                 {
-                    var q = (int)S.Get8();
+                    var q = (int)Context.Get8();
                     var p = q >> 4;
                     var sixteen = p != 0;
                     var t = q & 15;
@@ -793,7 +793,9 @@ internal sealed class Jpeg
 
                     for (var i = 0; i < 64; i++)
                     {
-                        Dequant[t][Constants.JpegDezigzag[i]] = sixteen ? S.Get16BE() : S.Get8();
+                        Dequant[t][Constants.JpegDezigzag[i]] = sixteen
+                            ? Context.Get16BE()
+                            : Context.Get8();
                     }
 
                     l -= sixteen ? 129 : 65;
@@ -801,13 +803,13 @@ internal sealed class Jpeg
 
                 return l == 0;
             case 0xC4:
-                l = S.Get16BE() - 2;
+                l = Context.Get16BE() - 2;
                 while (l > 0)
                 {
                     byte[] v;
                     Span<int> sizes = stackalloc int[16];
                     var n = 0;
-                    var q = (int)S.Get8();
+                    var q = (int)Context.Get8();
                     var tc = q >> 4;
                     var th = q & 15;
                     if (tc > 1 || th > 3)
@@ -817,7 +819,7 @@ internal sealed class Jpeg
 
                     for (var i = 0; i < 16; i++)
                     {
-                        sizes[i] = S.Get8();
+                        sizes[i] = Context.Get8();
                         n += sizes[i];
                     }
 
@@ -848,7 +850,7 @@ internal sealed class Jpeg
 
                     for (var i = 0; i < n; i++)
                     {
-                        v[i] = S.Get8();
+                        v[i] = Context.Get8();
                     }
 
                     if (tc != 0)
@@ -863,7 +865,7 @@ internal sealed class Jpeg
 
         if ((m >= 0xE0 && m <= 0xEF) || m == 0xFE)
         {
-            l = S.Get16BE();
+            l = Context.Get16BE();
             if (l < 2)
             {
                 return m == 0xFE
@@ -878,7 +880,7 @@ internal sealed class Jpeg
                 var ok = true;
                 for (var i = 0; i < 5; i++)
                 {
-                    if (S.Get8() != tag[i])
+                    if (Context.Get8() != tag[i])
                     {
                         ok = false;
                     }
@@ -896,7 +898,7 @@ internal sealed class Jpeg
                 var ok = true;
                 for (var i = 0; i < 6; i++)
                 {
-                    if (S.Get8() != tag[i])
+                    if (Context.Get8() != tag[i])
                     {
                         ok = false;
                     }
@@ -905,15 +907,15 @@ internal sealed class Jpeg
                 l -= 6;
                 if (ok)
                 {
-                    _ = S.Get8(); // version
-                    _ = S.Get16BE(); // flags0
-                    _ = S.Get16BE(); // flags1
-                    App14ColorTransform = S.Get8();
+                    _ = Context.Get8(); // version
+                    _ = Context.Get16BE(); // flags0
+                    _ = Context.Get16BE(); // flags1
+                    App14ColorTransform = Context.Get8();
                     l -= 6;
                 }
             }
 
-            S.Skip(l);
+            Context.Skip(l);
             return true;
         }
 
@@ -922,67 +924,67 @@ internal sealed class Jpeg
 
     public bool ProcessFrameHeader(Scan scan)
     {
-        var s = S;
+        var context = Context;
         var hMax = 1;
         var vMax = 1;
-        var lf = s.Get16BE();
+        var lf = context.Get16BE();
         if (lf < 11)
         {
             return Methods.Error("Bad SOF length. Corrupt JPEG.");
         }
 
-        var p = (int)s.Get8();
+        var p = (int)context.Get8();
         if (p != 8)
         {
             return Methods.Error("Only 8-bit. JPEG format not supported: 8-bit only.");
         }
 
-        s.ImgY = s.Get16BE();
-        if (s.ImgY == 0)
+        context.ImgY = context.Get16BE();
+        if (context.ImgY == 0)
         {
             return Methods.Error("No Header height. JPEG format not supported: delayed height.");
         }
 
-        s.ImgX = s.Get16BE();
-        if (s.ImgX == 0)
+        context.ImgX = context.Get16BE();
+        if (context.ImgX == 0)
         {
             return Methods.Error("0 width. Corrupt JPEG.");
         }
 
-        if (s.ImgY > Constants.MaxDimensions || s.ImgX > Constants.MaxDimensions)
+        if (context.ImgY > Constants.MaxDimensions || context.ImgX > Constants.MaxDimensions)
         {
             return Methods.Error("Too large. Very large image (corrupt?).");
         }
 
-        var c = (int)s.Get8();
+        var c = (int)context.Get8();
         if (c != 3 && c != 1 && c != 4)
         {
             return Methods.Error("Bad component count. Corrupt JPEG.");
         }
 
-        s.ImgN = c;
+        context.ImgN = c;
         for (var i = 0; i < c; i++)
         {
             ImgComp[i].Data = null;
             ImgComp[i].LineBuf = null;
         }
 
-        if (lf != 8 + 3 * s.ImgN)
+        if (lf != 8 + 3 * context.ImgN)
         {
             return Methods.Error("Bad SOF length. Corrupt JPEG.");
         }
 
         Rgb = 0;
-        for (var i = 0; i < s.ImgN; i++)
+        for (var i = 0; i < context.ImgN; i++)
         {
             var rgb = "RGB"u8;
-            ImgComp[i].ID = s.Get8();
-            if (s.ImgN == 3 && ImgComp[i].ID == rgb[i])
+            ImgComp[i].ID = context.Get8();
+            if (context.ImgN == 3 && ImgComp[i].ID == rgb[i])
             {
                 ++Rgb;
             }
 
-            var q = s.Get8();
+            var q = context.Get8();
             ImgComp[i].H = q >> 4;
             if (ImgComp[i].H == 0 || ImgComp[i].H > 4)
             {
@@ -995,7 +997,7 @@ internal sealed class Jpeg
                 return Methods.Error("Bad V. Corrupt JPEG.");
             }
 
-            ImgComp[i].TQ = s.Get8();
+            ImgComp[i].TQ = context.Get8();
             if (ImgComp[i].TQ > 3)
             {
                 return Methods.Error("Bad TQ. Corrupt JPEG.");
@@ -1007,12 +1009,12 @@ internal sealed class Jpeg
             return true;
         }
 
-        if (s.ImgX * s.ImgY * s.ImgN > int.MaxValue)
+        if (context.ImgX * context.ImgY * context.ImgN > int.MaxValue)
         {
             return Methods.Error("Too large. Image too large to decode.");
         }
 
-        for (var i = 0; i < s.ImgN; i++)
+        for (var i = 0; i < context.ImgN; i++)
         {
             if (ImgComp[i].H > hMax)
             {
@@ -1025,7 +1027,7 @@ internal sealed class Jpeg
             }
         }
 
-        for (var i = 0; i < s.ImgN; i++)
+        for (var i = 0; i < context.ImgN; i++)
         {
             if (hMax % ImgComp[i].H != 0)
             {
@@ -1042,12 +1044,12 @@ internal sealed class Jpeg
         ImgVMax = vMax;
         ImgMcuW = hMax * 8;
         ImgMcuH = vMax * 8;
-        ImgMcuX = unchecked((int)((s.ImgX + ImgMcuW - 1) / ImgMcuW));
-        ImgMcuY = unchecked((int)((s.ImgY + ImgMcuH - 1) / ImgMcuH));
-        for (var i = 0; i < s.ImgN; i++)
+        ImgMcuX = unchecked((int)((context.ImgX + ImgMcuW - 1) / ImgMcuW));
+        ImgMcuY = unchecked((int)((context.ImgY + ImgMcuH - 1) / ImgMcuH));
+        for (var i = 0; i < context.ImgN; i++)
         {
-            ImgComp[i].X = unchecked((int)((s.ImgX * ImgComp[i].H + hMax - 1) / hMax));
-            ImgComp[i].Y = unchecked((int)((s.ImgY * ImgComp[i].V + vMax - 1) / vMax));
+            ImgComp[i].X = unchecked((int)((context.ImgX * ImgComp[i].H + hMax - 1) / hMax));
+            ImgComp[i].Y = unchecked((int)((context.ImgY * ImgComp[i].V + vMax - 1) / vMax));
             ImgComp[i].W2 = ImgMcuX * ImgComp[i].H * 8;
             ImgComp[i].H2 = ImgMcuY * ImgComp[i].V * 8;
             ImgComp[i].Coeff = null;
@@ -1093,7 +1095,7 @@ internal sealed class Jpeg
             m = GetMarker();
             while (m == Constants.MarkerNone)
             {
-                if (S.AtEof())
+                if (Context.AtEof())
                 {
                     return Methods.Error("No SOF. Corrupt JPEG.");
                 }
@@ -1108,9 +1110,9 @@ internal sealed class Jpeg
 
     public bool ProcessScanHeader()
     {
-        var ls = S.Get16BE();
-        ScanN = S.Get8();
-        if (ScanN < 1 || ScanN > 4 || ScanN > S.ImgN)
+        var ls = Context.Get16BE();
+        ScanN = Context.Get8();
+        if (ScanN < 1 || ScanN > 4 || ScanN > Context.ImgN)
         {
             return Methods.Error("Bad SOS component count. Corrupt JPEG.");
         }
@@ -1122,10 +1124,10 @@ internal sealed class Jpeg
 
         for (var i = 0; i < ScanN; i++)
         {
-            var id = (int)S.Get8();
-            var q = (int)S.Get8();
+            var id = (int)Context.Get8();
+            var q = (int)Context.Get8();
             int which;
-            for (which = 0; which < S.ImgN; which++)
+            for (which = 0; which < Context.ImgN; which++)
             {
                 if (ImgComp[which].ID == id)
                 {
@@ -1133,7 +1135,7 @@ internal sealed class Jpeg
                 }
             }
 
-            if (which == S.ImgN)
+            if (which == Context.ImgN)
             {
                 return false;
             }
@@ -1154,9 +1156,9 @@ internal sealed class Jpeg
         }
 
         {
-            SpecStart = S.Get8();
-            SpecEnd = S.Get8();
-            var aa = (int)S.Get8();
+            SpecStart = Context.Get8();
+            SpecEnd = Context.Get8();
+            var aa = (int)Context.Get8();
             SuccHigh = aa >> 4;
             SuccLow = aa & 15;
             if (Progressive)
@@ -1511,7 +1513,7 @@ internal sealed class Jpeg
     {
         if (Progressive)
         {
-            for (var n = 0; n < S.ImgN; n++)
+            for (var n = 0; n < Context.ImgN; n++)
             {
                 var w = (ImgComp[n].X + 7) >> 3;
                 var h = (ImgComp[n].Y + 7) >> 3;
@@ -1575,14 +1577,14 @@ internal sealed class Jpeg
             }
             else if (Methods.Dnl(m))
             {
-                var ld = S.Get16BE();
-                var nl = unchecked((uint)S.Get16BE());
+                var ld = Context.Get16BE();
+                var nl = unchecked((uint)Context.Get16BE());
                 if (ld != 4)
                 {
                     return Methods.Error("Bad DNL length. Corrupt JPEG.");
                 }
 
-                if (nl != S.ImgY)
+                if (nl != Context.ImgY)
                 {
                     return Methods.Error("Bad DNL height. Corrupt JPEG.");
                 }
@@ -1622,7 +1624,7 @@ internal sealed class Jpeg
         return why;
     }
 
-    public void Cleanup() => FreeComponents(S.ImgN, false);
+    public void Cleanup() => FreeComponents(Context.ImgN, false);
 
     public static void Dequantize(Span<short> data, ushort[] dequant)
     {
