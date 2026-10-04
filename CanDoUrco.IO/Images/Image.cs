@@ -20,16 +20,40 @@ using CanDoUrco.IO.Images.Internals;
 
 namespace CanDoUrco.IO.Images;
 
+/// <summary>
+/// Provides methods for loading image data from various sources.
+/// </summary>
 public static class Image
 {
+    /// <summary>
+    /// Loads an image from the specified file path.
+    /// </summary>
+    /// <param name="path">The path to the image file.</param>
+    /// <param name="requiredChannelCount">The number of color channels required in the loaded image. If 0, the original channel count is used.</param>
+    /// <returns>An <see cref="ImageData"/> object containing the loaded image data.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if the path is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the image cannot be loaded.</exception>
     public static ImageData Load(string path, int requiredChannelCount = 0)
     {
+        ArgumentNullException.ThrowIfNull(path);
         using var stream = File.OpenRead(path);
         return Load(stream, requiredChannelCount);
     }
 
+    /// <summary>
+    /// Loads an image from the specified stream.
+    /// </summary>
+    /// <param name="stream">The stream containing the image data.</param>
+    /// <param name="requiredChannelCount">The number of color channels required in the loaded image. If 0, the original channel count is used.</param>
+    /// <returns>An <see cref="ImageData"/> object containing the loaded image data.</returns>
+    /// <remarks>
+    /// The stream must support seeking.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">Thrown if the stream is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the image cannot be loaded.</exception>
     public static unsafe ImageData Load(Stream stream, int requiredChannelCount = 0)
     {
+        ArgumentNullException.ThrowIfNull(stream);
         Methods.ClearFailure();
         Context s = default;
         Methods.StartFile(&s, stream);

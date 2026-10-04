@@ -18,4 +18,10 @@ using System.Drawing;
 
 namespace CanDoUrco.IO.Images;
 
-public readonly record struct ImageData(byte[] Data, Size Size, ImageChannelCount ChannelCount);
+/// <summary>
+/// Represents image data including pixel values, size, and channel count.
+/// </summary>
+/// <param name="Pixels">The raw pixel data of the image.</param>
+/// <param name="Size">The dimensions of the image.</param>
+/// <param name="ChannelCount">The number of color channels in the image.</param>
+public readonly record struct ImageData(byte[] Pixels, Size Size, ImageChannelCount ChannelCount);

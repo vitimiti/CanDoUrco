@@ -185,7 +185,7 @@ return CrashReporter.Run(() =>
             border: 0,
             GL.PixelFormatEnum.Rgb,
             GL.PixelTypeEnum.UnsignedByte,
-            imageData.Data
+            imageData.Pixels
         );
         GL.GenerateMipmap(GL.TextureTargetEnum.Texture2D);
     }

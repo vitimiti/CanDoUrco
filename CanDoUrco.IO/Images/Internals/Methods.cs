@@ -2868,6 +2868,12 @@ internal static class Methods
         Header,
     }
 
+    public enum ImageChannelOrder
+    {
+        Rgb,
+        Bgr,
+    }
+
     public readonly struct Wide(V32 lo, V32 hi)
     {
         public readonly V32 Lo = lo;

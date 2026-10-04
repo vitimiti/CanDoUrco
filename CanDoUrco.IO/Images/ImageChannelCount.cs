@@ -16,11 +16,33 @@
 
 namespace CanDoUrco.IO.Images;
 
+/// <summary>
+/// Represents the number of color channels in an image.
+/// </summary>
 public enum ImageChannelCount
 {
+    /// <summary>
+    /// No color channels.
+    /// </summary>
     None,
+
+    /// <summary>
+    /// Single-channel grayscale image.
+    /// </summary>
     Grey,
+
+    /// <summary>
+    /// Two-channel grayscale image with alpha.
+    /// </summary>
     GreyAlpha,
+
+    /// <summary>
+    /// Three-channel RGB image.
+    /// </summary>
     Rgb,
+
+    /// <summary>
+    /// Four-channel RGB image with alpha.
+    /// </summary>
     RgbAlpha,
 }
