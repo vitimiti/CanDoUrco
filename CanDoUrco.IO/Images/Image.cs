@@ -55,12 +55,11 @@ public static class Image
     {
         ArgumentNullException.ThrowIfNull(stream);
         Methods.ClearFailure();
-        Context s = default;
-        Methods.StartFile(&s, stream);
+        Methods.StartFile(stream, out var context);
         var x = 0;
         var y = 0;
         var comp = 0;
-        var result = Methods.LoadAndPostprocess8Bit(&s, &x, &y, &comp, requiredChannelCount);
+        var result = Methods.LoadAndPostprocess8Bit(&context, &x, &y, &comp, requiredChannelCount);
         if (result is null)
         {
             throw new InvalidOperationException(
@@ -70,7 +69,7 @@ public static class Image
 
         try
         {
-            stream.Seek(-(s.ImgBufferEnd - s.ImgBuffer), SeekOrigin.Current);
+            stream.Seek(-(context.ImgBufferEnd - context.ImgBuffer), SeekOrigin.Current);
             var channels = requiredChannelCount != 0 ? requiredChannelCount : comp;
             return new ImageData(
                 new Span<byte>(result, x * y * channels).ToArray(),

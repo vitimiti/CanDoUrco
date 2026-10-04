@@ -127,14 +127,20 @@ internal static class Methods
         s->ImgBufferOriginalEnd = s->ImgBufferEnd;
     }
 
-    public static unsafe void StartFile(Context* s, Stream stream)
+    public static unsafe void StartFile(Stream stream, out Context context)
     {
+        ArgumentNullException.ThrowIfNull(stream);
+        context = default;
         FileStreamHandle = GCHandle.Alloc(stream);
-        s->IOUserData = (void*)GCHandle.ToIntPtr(FileStreamHandle);
-        s->IO.Read = &Read;
-        s->IO.Skip = &Skip;
-        s->IO.Eof = &Eof;
-        StartCallbacks(s, ref s->IO, s->IOUserData);
+        context.IOUserData = (void*)GCHandle.ToIntPtr(FileStreamHandle);
+        context.IO.Read = &Read;
+        context.IO.Skip = &Skip;
+        context.IO.Eof = &Eof;
+        fixed (Context* pContext = &context)
+        {
+            StartCallbacks(pContext, ref context.IO, context.IOUserData);
+        }
+
         GC.KeepAlive(FileStreamHandle);
     }
 
