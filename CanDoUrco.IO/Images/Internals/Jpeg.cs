@@ -803,11 +803,11 @@ internal sealed class Jpeg
 
                 return l == 0;
             case 0xC4:
+                Span<int> sizes = stackalloc int[16];
                 l = Context.Get16BE() - 2;
                 while (l > 0)
                 {
                     byte[] v;
-                    Span<int> sizes = stackalloc int[16];
                     var n = 0;
                     var q = (int)Context.Get8();
                     var tc = q >> 4;
