@@ -16,10 +16,4 @@
       ReferenceOutputAssembly="false"
     />
   </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Shaders\Core.Vertex.glsl" />
-    <EmbeddedResource Include="Resources\Shaders\Core.Fragment.glsl" />
-    <EmbeddedResource Include="Resources\Textures\Wall.jpg" />
-  </ItemGroup>
 </Project>
