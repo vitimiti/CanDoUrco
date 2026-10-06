@@ -16,4 +16,9 @@
       ReferenceOutputAssembly="false"
     />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Resources\Shaders\Vertex.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Resources\Shaders\Fragment.glsl" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
