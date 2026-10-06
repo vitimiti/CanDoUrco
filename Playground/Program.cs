@@ -16,6 +16,41 @@
 
 // Following https://www.opengl-tutorial.org/
 
+using System.Drawing;
+using CanDoUrco.Glfw;
+using CanDoUrco.Glfw.Input;
+using CanDoUrco.Glfw.Options;
+using CanDoUrco.Glfw.Video;
 using CanDoUrco.Utilities;
+using Playground;
 
-return CrashReporter.Run(() => { });
+return CrashReporter.Run(() =>
+{
+    using var _ = new GlfwNativeContext();
+    using var window = new GlfwWindow(
+        new Size(1024, 768),
+        "Tutorial 01",
+        options: opts =>
+        {
+            opts.Samples = 4; // 4x Antialiasing
+            opts.ContextVersion = new Version(3, 3); // OpenGL 3.3
+            opts.OpenGLProfile = GlfwOpenGLProfile.Core; // Core Profile
+            opts.OpenGLForwardCompat = true; // Forward compatible
+        }
+    );
+
+    window.MakeContextCurrent(); // Initialize OpenGL context
+    window.EnableStickKeys(enabled: true); // Ensure we can capture the escape key being pressed
+
+    while (window.GetKeyState(GlfwKey.Escape) is not GlfwKeyState.Pressed && !window.ShouldClose())
+    {
+        // Clear the screen
+        GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit);
+
+        // Draw nothing
+
+        // Swap buffers
+        window.SwapBuffers();
+        GlfwEvents.Poll();
+    }
+});
