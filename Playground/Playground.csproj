@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../CanDoUrco.Glfw/CanDoUrco.Glfw.csproj" />
+    <ProjectReference Include="../CanDoUrco.Graphics/CanDoUrco.Graphics.csproj" />
     <ProjectReference Include="../CanDoUrco.IO/CanDoUrco.IO.csproj" />
     <ProjectReference Include="../CanDoUrco.Utilities/CanDoUrco.Utilities.csproj" />
     <ProjectReference
