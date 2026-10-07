@@ -141,33 +141,59 @@ public record struct Color(float R, float G, float B, float A = 1F)
     /// color.GraphicsClear(GL.ClearColor);
     /// </code>
     /// </example>
-    public void GraphicsClear(Action<float, float, float, float> clearAction) =>
+    public readonly void GraphicsClear(Action<float, float, float, float> clearAction) =>
         clearAction(R, G, B, A);
 
     /// <summary>
     /// Converts the color to an array of its components (red, green, blue, alpha).
     /// </summary>
     /// <returns>An array containing the red, green, blue, and alpha components of the color.</returns>
-    public float[] ToArrayRgba() => [R, G, B, A];
+    public readonly float[] ToArrayRgba() => [R, G, B, A];
 
     /// <summary>
     /// Converts the color to an array of its components (alpha, red, green, blue).
     /// </summary>
     /// <returns>An array containing the alpha, red, green, and blue components of the color.</returns>
-    public float[] ToArrayArgb() => [A, R, G, B];
+    public readonly float[] ToArrayArgb() => [A, R, G, B];
 
     /// <summary>
     /// Gets the color component at the specified index.
     /// </summary>
     /// <param name="index">The index of the color component (0 = red, 1 = green, 2 = blue, 3 = alpha).</param>
     /// <returns>The value of the color component at the specified index.</returns>
-    public float this[int index] =>
-        index switch
+    public float this[int index]
+    {
+        readonly get =>
+            index switch
+            {
+                0 => R,
+                1 => G,
+                2 => B,
+                3 => A,
+                _ => throw new IndexOutOfRangeException(),
+            };
+        set
         {
-            0 => R,
-            1 => G,
-            2 => B,
-            3 => A,
-            _ => throw new IndexOutOfRangeException(),
-        };
+            if (index == 0)
+            {
+                R = value;
+            }
+            else if (index == 1)
+            {
+                G = value;
+            }
+            else if (index == 2)
+            {
+                B = value;
+            }
+            else if (index == 3)
+            {
+                A = value;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+    }
 }

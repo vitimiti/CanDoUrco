@@ -1,4 +1,4 @@
-// A set of graphics utilities for Can Do Urco.
+// A set of math utilities for Can Do Urco.
 // Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
 // This program is free software: you can redistribute it and/or modify
