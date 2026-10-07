@@ -22,6 +22,7 @@ using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Video;
 using CanDoUrco.Graphics.Primitives;
+using CanDoUrco.Math;
 using CanDoUrco.Utilities;
 using Playground;
 
@@ -31,7 +32,7 @@ return CrashReporter.Run(() =>
 
     using var _ = new GlfwNativeContext();
     using var window = new GlfwWindow(
-        new System.Drawing.Size(1024, 768),
+        new Size(1024, 768),
         "Tutorial 01",
         options: opts =>
         {

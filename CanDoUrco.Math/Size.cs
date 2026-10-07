@@ -1,4 +1,4 @@
-// This is a small testing ground for CanDoUrco.
+// A set of graphics utilities for Can Do Urco.
 // Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,18 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using CanDoUrco.Math;
-
-namespace CanDoUrco.Glfw.Events;
+namespace CanDoUrco.Math;
 
 /// <summary>
-/// An event that happens when a cursor is repositioned.
+/// Represents the size of a two-dimensional object, defined by its width and height.
 /// </summary>
-/// <param name="position">A <see cref="PointF"/> with the new position.</param>
-public sealed class GlfwCursorPositionEventArgs(PointF position) : EventArgs
-{
-    /// <summary>
-    /// Gets the cursor position.
-    /// </summary>
-    public PointF Position { get; init; } = position;
-}
+/// <param name="Width">The width of the two-dimensional object.</param>
+/// <param name="Height">The height of the two-dimensional object.</param>
+public record Size(int Width, int Height);

@@ -3,6 +3,7 @@
   <Project Path="CanDoUrco.Utilities/CanDoUrco.Utilities.csproj" />
   <Project Path="CanDoUrco.Graphics/CanDoUrco.Graphics.csproj" />
   <Project Path="CanDoUrco.IO/CanDoUrco.IO.csproj" />
+  <Project Path="CanDoUrco.Math/CanDoUrco.Math.csproj" />
   <Project Path="CanDoUrco.OpenGL.Generator/CanDoUrco.OpenGL.Generator.csproj" />
   <Project Path="Playground/Playground.csproj" />
 </Solution>
