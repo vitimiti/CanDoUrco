@@ -21,4 +21,4 @@ namespace CanDoUrco.Math;
 /// </summary>
 /// <param name="Width">The width of the two-dimensional object.</param>
 /// <param name="Height">The height of the two-dimensional object.</param>
-public record Size(int Width, int Height);
+public record struct Size(int Width, int Height);

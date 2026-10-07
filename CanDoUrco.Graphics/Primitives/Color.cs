@@ -23,7 +23,7 @@ namespace CanDoUrco.Graphics.Primitives;
 /// <param name="G">The green component of the color, clamped between <c>0</c> and <c>1</c>.</param>
 /// <param name="B">The blue component of the color, clamped between <c>0</c> and <c>1</c>.</param>
 /// <param name="A">The alpha component of the color, clamped between <c>0</c> and <c>1</c>. The default value is <c>1</c>.</param>
-public record Color(float R, float G, float B, float A = 1F)
+public record struct Color(float R, float G, float B, float A = 1F)
 {
     /// <summary>
     /// Gets a color representing white.
