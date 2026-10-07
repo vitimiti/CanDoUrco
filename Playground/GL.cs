@@ -18,5 +18,5 @@ using CanDoUrco.OpenGL.Generator;
 
 namespace Playground;
 
-[OpenGL(3, 3, Profile = OpenGLProfile.Core)]
+[OpenGL(major: 3, minor: 3, Profile = OpenGLProfile.Core)]
 internal static partial class GL;
