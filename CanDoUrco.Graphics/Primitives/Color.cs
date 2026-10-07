@@ -133,6 +133,28 @@ public record struct Color(float R, float G, float B, float A = 1F)
         );
 
     /// <summary>
+    /// Creates a <see cref="Color"/> instance from an array of RGBA components.
+    /// </summary>
+    /// <param name="rgba">An array containing the red, green, blue, and alpha components of the color.</param>
+    /// <returns>A <see cref="Color"/> instance representing the specified RGBA components.</returns>
+    public static Color FromRgbaArray(ReadOnlySpan<float> rgba)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(rgba.Length, 4);
+        return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="Color"/> instance from an array of ARGB components.
+    /// </summary>
+    /// <param name="argb">An array containing the alpha, red, green, and blue components of the color.</param>
+    /// <returns>A <see cref="Color"/> instance representing the specified ARGB components.</returns>
+    public static Color FromArgbArray(ReadOnlySpan<float> argb)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(argb.Length, 4);
+        return new Color(argb[1], argb[2], argb[3], argb[0]);
+    }
+
+    /// <summary>
     /// Clears the graphics context using the specified clear action.
     /// </summary>
     /// <param name="clearAction">The action to perform for clearing the graphics context, taking the red, green, blue, and alpha components as parameters.</param>
