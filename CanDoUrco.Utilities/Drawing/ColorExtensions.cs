@@ -13,8 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 
+using System.Drawing;
 using System.Numerics;
-using CanDoUrco.Math;
 
 namespace CanDoUrco.Utilities.Drawing;
 
@@ -24,13 +24,9 @@ public static class ColorExtensions
     /// <summary>Extension methods for <see cref="Color"/>.</summary>
     extension(Color color)
     {
-        /// <summary>Returns the color components normalized to the range <c>[0, 1]</c>.</summary>
-        /// <returns>A <see cref="Vector4"/> containing the normalized RGBA components.</returns>
-        public Vector4 ToNormalized() =>
-            new(color.R / 255F, color.G / 255F, color.B / 255F, color.A / 255F);
-
-        /// <summary>Returns the RGB components normalized to the range <c>[0, 1]</c>.</summary>
-        /// <returns>A <see cref="Vector3"/> containing the normalized RGB components.</returns>
-        public Vector3 ToNormalizedRgb() => new(color.R / 255F, color.G / 255F, color.B / 255F);
+        /// <summary>Clears the graphics using the color's RGBA components normalized to the range <c>[0, 1]</c>.</summary>
+        /// <param name="graphicsClearingAction">The action to perform the graphics clearing.</param>
+        public void ClearGraphics(Action<float, float, float, float> graphicsClearingAction) =>
+            graphicsClearingAction(color.R / 255F, color.G / 255F, color.B / 255F, color.A / 255F);
     }
 }

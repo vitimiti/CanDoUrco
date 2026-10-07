@@ -16,14 +16,14 @@
 
 // Following https://www.opengl-tutorial.org/
 
+using System.Drawing;
 using System.Text;
 using CanDoUrco.Glfw;
 using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Video;
-using CanDoUrco.Graphics.Primitives;
-using CanDoUrco.Math;
 using CanDoUrco.Utilities;
+using CanDoUrco.Utilities.Drawing;
 using Playground;
 
 return CrashReporter.Run(() =>
@@ -66,12 +66,11 @@ return CrashReporter.Run(() =>
 
     // Create and compile our GLSL program from the shaders
     var programID = LoadShaders("Resources/Shaders/Vertex.glsl", "Resources/Shaders/Fragment.glsl");
-
-    var backgroundColor = new Color(0F, 0F, .4F, 0F);
+    var backgroundColor = Color.DarkBlue;
     while (window.GetKeyState(GlfwKey.Escape) is not GlfwKeyState.Pressed && !window.ShouldClose())
     {
         // Clear the screen
-        backgroundColor.GraphicsClear(GL.ClearColor);
+        backgroundColor.ClearGraphics(GL.ClearColor);
         GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit | GL.ClearBufferMaskEnum.DepthBufferBit);
 
         // Use our shader

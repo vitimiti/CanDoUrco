@@ -12,8 +12,4 @@
       <PublishState>Included</PublishState>
     </Content>
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../CanDoUrco.Math/CanDoUrco.Math.csproj" />
-  </ItemGroup>
 </Project>

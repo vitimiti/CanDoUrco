@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Glfw.Events;
 using CanDoUrco.Glfw.Exceptions;
 using CanDoUrco.Glfw.Utilities;
-using CanDoUrco.Math;
 
 namespace CanDoUrco.Glfw.Video;
 
