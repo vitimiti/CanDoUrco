@@ -1,5 +1,5 @@
-// A set of utilities to handle IO for Can Do Urco.
-// Copyright (C) <year>  <name of author>
+// A set of graphics utilities for Can Do Urco.
+// Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
