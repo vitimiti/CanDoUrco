@@ -70,7 +70,7 @@ public record struct Matrix4x4(
     /// Creates a matrix from a one-dimensional array.
     /// </summary>
     /// <param name="array">The array containing the matrix elements.</param>
-    /// <returns>A new Matrix4x4 instance.</returns>
+    /// <returns>A new <see cref="Matrix4x4"/> instance.</returns>
     public static Matrix4x4 FromArray(ReadOnlySpan<float> array)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(array.Length, 16);
@@ -98,16 +98,12 @@ public record struct Matrix4x4(
     /// Creates a matrix from a two-dimensional array.
     /// </summary>
     /// <param name="array">The 2D array containing the matrix elements.</param>
-    /// <returns>A new Matrix4x4 instance.</returns>
+    /// <returns>A new <see cref="Matrix4x4"/> instance.</returns>
     public static Matrix4x4 From2DArray(float[,] array)
     {
         ArgumentNullException.ThrowIfNull(array);
         ArgumentOutOfRangeException.ThrowIfLessThan(array.Rank, 2);
-        ArgumentOutOfRangeException.ThrowIfLessThan(array.Length, 4);
-        ArgumentOutOfRangeException.ThrowIfLessThan(array.GetLength(0), 4);
-        ArgumentOutOfRangeException.ThrowIfLessThan(array.GetLength(1), 4);
-        ArgumentOutOfRangeException.ThrowIfLessThan(array.GetLength(2), 4);
-        ArgumentOutOfRangeException.ThrowIfLessThan(array.GetLength(3), 4);
+        ArgumentOutOfRangeException.ThrowIfLessThan(array.Length, 16);
         return new Matrix4x4(
             array[0, 0],
             array[0, 1],
@@ -127,6 +123,67 @@ public record struct Matrix4x4(
             array[3, 3]
         );
     }
+
+    /// <summary>
+    /// Creates a matrix from four row vectors.
+    /// </summary>
+    /// <param name="row1">The first row vector.</param>
+    /// <param name="row2">The second row vector.</param>
+    /// <param name="row3">The third row vector.</param>
+    /// <param name="row4">The fourth row vector.</param>
+    /// <returns>A new <see cref="Matrix4x4"/> instance.</returns>
+    public static Matrix4x4 FromRows(Vector4 row1, Vector4 row2, Vector4 row3, Vector4 row4) =>
+        new(
+            row1.X,
+            row1.Y,
+            row1.Z,
+            row1.W,
+            row2.X,
+            row2.Y,
+            row2.Z,
+            row2.W,
+            row3.X,
+            row3.Y,
+            row3.Z,
+            row3.W,
+            row4.X,
+            row4.Y,
+            row4.Z,
+            row4.W
+        );
+
+    /// <summary>
+    /// Creates a matrix from four column vectors.
+    /// </summary>
+    /// <param name="column1">The first column vector.</param>
+    /// <param name="column2">The second column vector.</param>
+    /// <param name="column3">The third column vector.</param>
+    /// <param name="column4">The fourth column vector.</param>
+    /// <returns>A new <see cref="Matrix4x4"/> instance.</returns>
+    public static Matrix4x4 FromColumns(
+        Vector4 column1,
+        Vector4 column2,
+        Vector4 column3,
+        Vector4 column4
+    ) =>
+        new(
+            column1.X,
+            column2.X,
+            column3.X,
+            column4.X,
+            column1.Y,
+            column2.Y,
+            column3.Y,
+            column4.Y,
+            column1.Z,
+            column2.Z,
+            column3.Z,
+            column4.Z,
+            column1.W,
+            column2.W,
+            column3.W,
+            column4.W
+        );
 
     /// <summary>
     /// Converts the matrix to a one-dimensional array.
