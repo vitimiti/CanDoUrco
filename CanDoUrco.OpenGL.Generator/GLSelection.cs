@@ -13,8 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 
-using System.Text.RegularExpressions;
-
 namespace CanDoUrco.OpenGL.Generator;
 
 internal sealed class GLSelection
@@ -24,13 +22,11 @@ internal sealed class GLSelection
     public List<string> Commands { get; } = [];
     public List<(string Id, string Message)> Problems { get; } = [];
 
-    public static bool IsVersion(string text) => Regex.IsMatch(text, @"^\d+\.\d+$");
-
     public static GLSelection Create(
         GLRegistry registry,
         string? version,
         int profile,
-        string[] extensions
+        string?[] extensions
     )
     {
         var selection = new GLSelection();
@@ -81,6 +77,12 @@ internal sealed class GLSelection
 
         foreach (var requested in extensions)
         {
+            if (requested is null)
+            {
+                selection.Problems.Add(("OGL002", "An OpenGL extension name cannot be null."));
+                continue;
+            }
+
             var name = requested.StartsWith("GL_", StringComparison.OrdinalIgnoreCase)
                 ? "GL_" + requested.Substring(3)
                 : "GL_" + requested;

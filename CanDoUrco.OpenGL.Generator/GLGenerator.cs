@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 
+using System.Globalization;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -72,25 +73,28 @@ public sealed class GLGenerator : IIncrementalGenerator
 
         string? version = null;
         var profile = 0;
-        var profileSet = false;
-        var extensions = new List<string>();
+        var extensions = new List<string?>();
         string? loaderMethod = null;
         foreach (var attribute in ctx.Attributes)
         {
             if (
-                attribute.ConstructorArguments.Length != 1
-                || attribute.ConstructorArguments[0].Value is not string text
+                attribute.ConstructorArguments.Length != 2
+                || attribute.ConstructorArguments[0].Value is not int major
+                || attribute.ConstructorArguments[1].Value is not int minor
             )
             {
                 continue;
             }
 
-            var attributeProfile = 0;
+            version =
+                major.ToString(CultureInfo.InvariantCulture)
+                + "."
+                + minor.ToString(CultureInfo.InvariantCulture);
             foreach (var named in attribute.NamedArguments)
             {
                 if (named.Key == "Profile" && named.Value.Value is int value)
                 {
-                    attributeProfile = value;
+                    profile = value;
                 }
                 else if (
                     named.Key == "LoaderMethod"
@@ -102,20 +106,18 @@ public sealed class GLGenerator : IIncrementalGenerator
                     loaderMethod = method;
                 }
             }
+        }
 
-            if (GLSelection.IsVersion(text))
+        foreach (var attribute in symbol.GetAttributes())
+        {
+            if (
+                attribute.AttributeClass?.ToDisplayString()
+                    == GLAttributes.ExtensionAttributeMetadataName
+                && attribute.ConstructorArguments.Length == 1
+                && attribute.ConstructorArguments[0].Kind == TypedConstantKind.Primitive
+            )
             {
-                version = text;
-                profile = attributeProfile;
-                profileSet = true;
-            }
-            else
-            {
-                extensions.Add(text);
-                if (!profileSet)
-                {
-                    profile = attributeProfile;
-                }
+                extensions.Add(attribute.ConstructorArguments[0].Value as string);
             }
         }
 

@@ -23,7 +23,7 @@ internal sealed class GLTarget(
     string[] containers,
     string? version,
     int profile,
-    string[] extensions,
+    string?[] extensions,
     string? loaderMethod
 ) : IEquatable<GLTarget>
 {
@@ -34,26 +34,43 @@ internal sealed class GLTarget(
     public string[] Containers { get; } = containers;
     public string? Version { get; } = version;
     public int Profile { get; } = profile;
-    public string[] Extensions { get; } = extensions;
+    public string?[] Extensions { get; } = extensions;
     public string? LoaderMethod { get; } = loaderMethod;
 
-    private string Key =>
-        string.Join(
-            "|",
-            Namespace,
-            Name,
-            Accessibility,
-            IsStatic,
-            string.Join(",", Containers),
-            Version,
-            Profile,
-            string.Join(",", Extensions),
-            LoaderMethod
-        );
-
-    public bool Equals(GLTarget? other) => other is not null && Key == other.Key;
+    public bool Equals(GLTarget? other) =>
+        other is not null
+        && Namespace == other.Namespace
+        && Name == other.Name
+        && Accessibility == other.Accessibility
+        && IsStatic == other.IsStatic
+        && Containers.SequenceEqual(other.Containers)
+        && Version == other.Version
+        && Profile == other.Profile
+        && Extensions.SequenceEqual(other.Extensions)
+        && LoaderMethod == other.LoaderMethod;
 
     public override bool Equals(object? obj) => Equals(obj as GLTarget);
 
-    public override int GetHashCode() => Key.GetHashCode();
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hash = 17;
+            hash = hash * 31 + (Namespace?.GetHashCode() ?? 0);
+            hash = hash * 31 + Name.GetHashCode();
+            hash = hash * 31 + Accessibility.GetHashCode();
+            hash = hash * 31 + IsStatic.GetHashCode();
+            foreach (var container in Containers)
+            {
+                hash = hash * 31 + container.GetHashCode();
+            }
+            hash = hash * 31 + (Version?.GetHashCode() ?? 0);
+            hash = hash * 31 + Profile;
+            foreach (var extension in Extensions)
+            {
+                hash = hash * 31 + (extension?.GetHashCode() ?? 0);
+            }
+            return hash * 31 + (LoaderMethod?.GetHashCode() ?? 0);
+        }
+    }
 }

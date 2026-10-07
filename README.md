@@ -161,12 +161,13 @@ Then declare a `static partial class` and mark it with the attributes:
 ```csharp
 using CanDoUrco.OpenGL.Generator;
 
-[OpenGL("3.3", Profile = OpenGLProfile.Core)]
-[OpenGL("ARB_debug_output")]
+[OpenGL(3, 3, Profile = OpenGLProfile.Core)]
+[OpenGLExtension("ARB_debug_output")]
 public static partial class GL;
 ```
 
-- A value like `"3.3"` is an OpenGL version, and `Profile` is `Core`, `Compatibility` or `ES`. Anything else is an extension name (with or without the `GL_` prefix).
+- `OpenGL` takes the major and minor version numbers, and `Profile` is `Core`, `Compatibility` or `ES`.
+- Use a separate `OpenGLExtension` attribute for each extension name (with or without the `GL_` prefix). Each attribute accepts exactly one extension; comma-separated, space-separated or other lists are invalid extension names and produce `OGL002`.
 - The generated class has the same accessibility as your declaration.
 - Only the functions and enums that belong to the selected version, profile and extensions are generated.
 - Invalid versions and unknown or unsupported extensions are reported as warnings `OGL001`, `OGL002` and `OGL003`.
@@ -192,7 +193,7 @@ Functions are first looked up in the exports of the native OpenGL library. If th
 
 ```csharp
 // Per class: a static method `nint (string)`. Use a fully qualified name, since the generated code does not see your usings.
-[OpenGL("3.3", Profile = OpenGLProfile.Core, LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress")]
+[OpenGL(3, 3, Profile = OpenGLProfile.Core, LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress")]
 internal static partial class GL;
 
 // Or globally, before the first OpenGL call:

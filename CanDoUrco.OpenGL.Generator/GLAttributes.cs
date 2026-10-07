@@ -18,6 +18,8 @@ namespace CanDoUrco.OpenGL.Generator;
 internal static class GLAttributes
 {
     public const string AttributeMetadataName = "CanDoUrco.OpenGL.Generator.OpenGLAttribute";
+    public const string ExtensionAttributeMetadataName =
+        "CanDoUrco.OpenGL.Generator.OpenGLExtensionAttribute";
 
     public static string Generate() =>
         """
@@ -27,26 +29,84 @@ internal static class GLAttributes
 
             namespace CanDoUrco.OpenGL.Generator
             {
+                /// <summary>
+                /// Represents the different OpenGL profiles.
+                /// </summary>
                 internal enum OpenGLProfile
                 {
+                    /// <summary>
+                    /// The core profile.
+                    /// </summary>
                     Core,
+
+                    /// <summary>
+                    /// The compatibility profile.
+                    /// </summary>
                     Compatibility,
+
+                    /// <summary>
+                    /// The OpenGL ES profile.
+                    /// </summary>
                     ES,
                 }
 
-                [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
+                /// <summary>
+                /// Represents an OpenGL version requirement for a class.
+                /// </summary>
+                /// <remarks>
+                /// This attribute should be applied to partial, static classes that require a specific OpenGL version.
+                /// </remarks>
+                [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
                 internal sealed class OpenGLAttribute : Attribute
                 {
-                    public OpenGLAttribute(string versionOrExtension)
+                    /// <summary>
+                    /// Initializes a new instance of the <see cref="OpenGLAttribute"/> class with the specified OpenGL version.
+                    /// </summary>
+                    /// <param name="major">The major version number.</param>
+                    /// <param name="minor">The minor version number.</param>
+                    public OpenGLAttribute(int major, int minor)
                     {
-                        VersionOrExtension = versionOrExtension;
+                        Version = new Version(major, minor);
                     }
 
-                    public string VersionOrExtension { get; }
+                    /// <summary>
+                    /// Gets the OpenGL version required by the class.
+                    /// </summary>
+                    public Version Version { get; }
 
+                    /// <summary>
+                    /// Gets or sets the OpenGL profile required by the class.
+                    /// </summary>
                     public OpenGLProfile Profile { get; set; } = OpenGLProfile.Core;
 
+                    /// <summary>
+                    /// Gets or sets the name of the method used to load the OpenGL functions.
+                    /// </summary>
                     public string? LoaderMethod { get; set; }
+                }
+
+                /// <summary>
+                /// Represents an OpenGL extension requirement for a class.
+                /// </summary>
+                /// <remarks>
+                /// This attribute should be applied to partial, static classes that require a specific OpenGL extension.
+                /// </remarks>
+                [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
+                internal sealed class OpenGLExtensionAttribute : Attribute
+                {
+                    /// <summary>
+                    /// Initializes a new instance of the <see cref="OpenGLExtensionAttribute"/> class with the specified OpenGL extension.
+                    /// </summary>
+                    /// <param name="extension">The name of the OpenGL extension.</param>
+                    public OpenGLExtensionAttribute(string extension)
+                    {
+                        Extension = extension;
+                    }
+
+                    /// <summary>
+                    /// Gets the name of the OpenGL extension required by the class.
+                    /// </summary>
+                    public string Extension { get; }
                 }
             }
             """;
