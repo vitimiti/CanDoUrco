@@ -20,5 +20,6 @@
   <ItemGroup>
     <None Include="Resources\Shaders\Vertex.glsl" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Resources\Shaders\Fragment.glsl" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Resources\Textures\UVTemplate.bmp" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

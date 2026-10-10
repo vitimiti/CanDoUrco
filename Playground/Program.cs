@@ -23,6 +23,7 @@ using CanDoUrco.Glfw;
 using CanDoUrco.Glfw.Input;
 using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Video;
+using CanDoUrco.IO.Images;
 using CanDoUrco.Utilities;
 using CanDoUrco.Utilities.Drawing;
 using CanDoUrco.Utilities.Mathematics;
@@ -34,7 +35,7 @@ var windowSize = new Size(1024, 768);
 return CrashReporter.Run(() =>
 {
     // csharpier-ignore
-    Span<float> vertices =
+    ReadOnlySpan<float> vertices =
     [
         -1F,-1F,-1F,
         -1F,-1F, 1F,
@@ -71,48 +72,48 @@ return CrashReporter.Run(() =>
         -1F, 1F, 1F,
         1F, 1F, 1F,
         -1F, 1F, 1F,
-        1F,-1F, 1F
+        1F,-1F, 1F,
     ];
 
     // csharpier-ignore
-    Span<float> colors =
+    ReadOnlySpan<float> uvs =
     [
-        .583F,  .771F,  .014F,
-        .609F,  .115F,  .436F,
-        .327F,  .483F,  .844F,
-        .822F,  .569F,  .201F,
-        .435F,  .602F,  .223F,
-        .310F,  .747F,  .185F,
-        .597F,  .770F,  .761F,
-        .559F,  .436F,  .730F,
-        .359F,  .583F,  .152F,
-        .483F,  .596F,  .789F,
-        .559F,  .861F,  .639F,
-        .195F,  .548F,  .859F,
-        .014F,  .184F,  .576F,
-        .771F,  .328F,  .970F,
-        .406F,  .615F,  .116F,
-        .676F,  .977F,  .133F,
-        .971F,  .572F,  .833F,
-        .140F,  .616F,  .489F,
-        .997F,  .513F,  .064F,
-        .945F,  .719F,  .592F,
-        .543F,  .021F,  .978F,
-        .279F,  .317F,  .505F,
-        .167F,  .620F,  .077F,
-        .347F,  .857F,  .137F,
-        .055F,  .953F,  .042F,
-        .714F,  .505F,  .345F,
-        .783F,  .290F,  .734F,
-        .722F,  .645F,  .174F,
-        .302F,  .455F,  .848F,
-        .225F,  .587F,  .040F,
-        .517F,  .713F,  .338F,
-        .053F,  .959F,  .120F,
-        .393F,  .621F,  .362F,
-        .673F,  .211F,  .457F,
-        .820F,  .883F,  .371F,
-        .982F,  .099F,  .879F
+        .000059F, .000004F,
+        .000103F, .336048F,
+        .335973F, .335903F,
+        1.000023F, .000013F,
+        .667979F, .335851F,
+        .999958F, .336064F,
+        .667979F, .335851F,
+        .336024F, .671877F,
+        .667969F, .671889F,
+        1.000023F, .000013F,
+        .668104F, .000013F,
+        .667979F, .335851F,
+        .000059F, .000004F,
+        .335973F, .335903F,
+        .336098F, .000071F,
+        .667979F, .335851F,
+        .335973F, .335903F,
+        .336024F, .671877F,
+        1.000004F, .671847F,
+        .999958F, .336064F,
+        .667979F, .335851F,
+        .668104F, .000013F,
+        .335973F, .335903F,
+        .667979F, .335851F,
+        .335973F, .335903F,
+        .668104F, .000013F,
+        .336098F, .000071F,
+        .000103F, .336048F,
+        .000004F, .671870F,
+        .336024F, .671877F,
+        .000103F, .336048F,
+        .336024F, .671877F,
+        .335973F, .335903F,
+        .667969F, .671889F,
+        1.000004F, .671847F,
+        .667979F, .335851F,
     ];
 
     using var _ = new GlfwNativeContext();
@@ -130,6 +131,13 @@ return CrashReporter.Run(() =>
 
     window.MakeContextCurrent(); // Initialize OpenGL context
     window.EnableStickKeys(enabled: true); // Ensure we can capture the escape key being pressed
+
+    // Create and compile our GLSL program from the shaders
+    var programID = LoadShaders("Resources/Shaders/Vertex.glsl", "Resources/Shaders/Fragment.glsl");
+    GL.UseProgram(programID);
+
+    Span<uint> texture = stackalloc uint[1];
+    LoadTextures(texture, ["Resources/Textures/UVTemplate.bmp"]);
 
     var projection = Matrix4x4.CreatePerspectiveFieldOfView(
         fieldOfView: 45F.ToRadians(),
@@ -160,14 +168,14 @@ return CrashReporter.Run(() =>
         GL.BufferUsageARBEnum.StaticDraw
     );
 
-    // The color buffer (VBO for colors)
-    Span<uint> colorBuffer = stackalloc uint[1];
-    GL.GenBuffers(colorBuffer);
-    GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, colorBuffer[0]);
+    // The UV buffer (VBO for texture coordinates)
+    Span<uint> uvBuffer = stackalloc uint[1];
+    GL.GenBuffers(uvBuffer);
+    GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, uvBuffer[0]);
     GL.BufferData(
         GL.BufferTargetARBEnum.ArrayBuffer,
-        colors.Length * sizeof(float),
-        colors,
+        uvs.Length * sizeof(float),
+        uvs,
         GL.BufferUsageARBEnum.StaticDraw
     );
 
@@ -176,14 +184,17 @@ return CrashReporter.Run(() =>
     GL.GenVertexArrays(vertexArray);
     GL.BindVertexArray(vertexArray[0]);
 
-    // Create and compile our GLSL program from the shaders
-    var programID = LoadShaders("Resources/Shaders/Vertex.glsl", "Resources/Shaders/Fragment.glsl");
-    GL.UseProgram(programID);
-
     // Get a handle for our "MVP" uniform
     var matrixID = GL.GetUniformLocation(programID, "MVP");
     // Send our transformation to the currently bound shader
     GL.UniformMatrix4fv(matrixID, count: 1, transpose: false, value: mvp.ToArray());
+
+    // Bind texture
+    GL.ActiveTexture(GL.TextureUnitEnum.Texture0);
+    GL.BindTexture(GL.TextureTargetEnum.Texture2D, texture[0]);
+    // Set the texture sampler sampler to use Texture Unit 0
+    var textureSamplerID = GL.GetUniformLocation(programID, "myTextureSampler");
+    GL.Uniform1i(textureSamplerID, 0);
 
     // Enable depth test
     GL.Enable(GL.EnableCapEnum.DepthTest);
@@ -210,12 +221,12 @@ return CrashReporter.Run(() =>
             pointer: 0 // offset
         );
 
-        // 2nd attribute buffer : colors
+        // 2nd attribute buffer : texture coordinates
         GL.EnableVertexAttribArray(1);
-        GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, colorBuffer[0]);
+        GL.BindBuffer(GL.BufferTargetARBEnum.ArrayBuffer, uvBuffer[0]);
         GL.VertexAttribPointer(
             index: 1,
-            size: 3,
+            size: 2,
             GL.VertexAttribPointerTypeEnum.Float,
             normalized: false,
             stride: 0,
@@ -225,7 +236,7 @@ return CrashReporter.Run(() =>
         // Draw the triangle
         GL.DrawArrays(GL.PrimitiveTypeEnum.Triangles, first: 0, count: 12 * 3); // Starting from vertex 0, 12 triangles total
         GL.DisableVertexAttribArray(0); // Disable the vertex attribute array after drawing
-        GL.DisableVertexAttribArray(1); // Disable the color attribute array after drawing
+        GL.DisableVertexAttribArray(1); // Disable the texture coordinate attribute array after drawing
 
         // Swap buffers
         window.SwapBuffers();
@@ -293,4 +304,48 @@ static uint LoadShaders(string vertexFilePath, string fragmentFilePath)
     GL.DeleteShader(fragmentShaderID);
 
     return programID;
+}
+
+static void LoadTextures(Span<uint> textures, IReadOnlyCollection<string> textureFilePaths)
+{
+    var count = textures.Length;
+    var images = new ImageData[count];
+    for (var i = 0; i < images.Length; i++)
+    {
+        images[i] = Image.Load(textureFilePaths.ElementAt(i), requiredChannelCount: 3);
+    }
+
+    // Create one OpenGL texture
+    GL.GenTextures(textures);
+
+    for (var i = 0; i < count; i++)
+    {
+        // Bind the newly created texture : all future texture functions will modify this texture
+        GL.BindTexture(GL.TextureTargetEnum.Texture2D, textures[i]);
+
+        // Give the image to OpenGL
+        GL.TexImage2D(
+            GL.TextureTargetEnum.Texture2D,
+            level: 0,
+            (int)GL.PixelFormatEnum.Rgb,
+            images[i].Size.Width,
+            images[i].Size.Height,
+            border: 0,
+            GL.PixelFormatEnum.Rgb,
+            GL.PixelTypeEnum.UnsignedByte,
+            images[i].Pixels
+        );
+
+        GL.TexParameteri(
+            GL.TextureTargetEnum.Texture2D,
+            GL.TextureParameterNameEnum.TextureMagFilter,
+            (int)GL.TextureMagFilterEnum.Nearest
+        );
+
+        GL.TexParameteri(
+            GL.TextureTargetEnum.Texture2D,
+            GL.TextureParameterNameEnum.TextureMinFilter,
+            (int)GL.TextureMinFilterEnum.Nearest
+        );
+    }
 }
