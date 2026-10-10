@@ -17,6 +17,7 @@
 // Following https://www.opengl-tutorial.org/
 
 using System.Drawing;
+using System.Numerics;
 using System.Text;
 using CanDoUrco.Glfw;
 using CanDoUrco.Glfw.Input;
@@ -24,7 +25,11 @@ using CanDoUrco.Glfw.Options;
 using CanDoUrco.Glfw.Video;
 using CanDoUrco.Utilities;
 using CanDoUrco.Utilities.Drawing;
+using CanDoUrco.Utilities.Mathematics;
+using CanDoUrco.Utilities.Primitives;
 using Playground;
+
+var windowSize = new Size(1024, 768);
 
 return CrashReporter.Run(() =>
 {
@@ -32,7 +37,7 @@ return CrashReporter.Run(() =>
 
     using var _ = new GlfwNativeContext();
     using var window = new GlfwWindow(
-        new Size(1024, 768),
+        windowSize,
         "Tutorial 01",
         options: opts =>
         {
@@ -45,6 +50,22 @@ return CrashReporter.Run(() =>
 
     window.MakeContextCurrent(); // Initialize OpenGL context
     window.EnableStickKeys(enabled: true); // Ensure we can capture the escape key being pressed
+
+    var projection = Matrix4x4.CreatePerspectiveFieldOfView(
+        fieldOfView: 45F.ToRadians(),
+        aspectRatio: windowSize.Width / (float)windowSize.Height,
+        nearPlaneDistance: 0.1F,
+        farPlaneDistance: 100F
+    );
+
+    var view = Matrix4x4.CreateLookAt(
+        cameraPosition: new Vector3(4F, 3F, 3F),
+        cameraTarget: Vector3.Zero,
+        cameraUpVector: Vector3.UnitY
+    );
+
+    var model = Matrix4x4.Identity;
+    var mvp = model * view * projection;
 
     // The VBO (Vertex Buffer Object)
     Span<uint> vertexBuffer = stackalloc uint[1];
@@ -66,15 +87,19 @@ return CrashReporter.Run(() =>
 
     // Create and compile our GLSL program from the shaders
     var programID = LoadShaders("Resources/Shaders/Vertex.glsl", "Resources/Shaders/Fragment.glsl");
+    GL.UseProgram(programID);
+
+    // Get a handle for our "MVP" uniform
+    var matrixID = GL.GetUniformLocation(programID, "MVP");
+    // Send our transformation to the currently bound shader
+    GL.UniformMatrix4fv(matrixID, count: 1, transpose: false, value: mvp.ToArray());
+
     var backgroundColor = Color.DarkBlue;
     while (window.GetKeyState(GlfwKey.Escape) is not GlfwKeyState.Pressed && !window.ShouldClose())
     {
         // Clear the screen
         backgroundColor.ClearGraphics(GL.ClearColor);
         GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit | GL.ClearBufferMaskEnum.DepthBufferBit);
-
-        // Use our shader
-        GL.UseProgram(programID);
 
         // Draw triangle...
         // 1st attribute buffer : vertices
