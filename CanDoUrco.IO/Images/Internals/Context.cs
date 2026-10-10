@@ -503,7 +503,7 @@ internal sealed class Context
                     var bpp = bmp.Bpp;
                     for (var i = 0; i < unchecked((int)ImgX); i++)
                     {
-                        var v = bpp == 16 ? (uint)Get16LE() : Get32LE();
+                        var v = bpp == 16 ? Get16LE() : Get32LE();
                         result[z++] = Methods.ByteCast(Methods.ShiftSigned(v & mr, rShift, rCount));
                         result[z++] = Methods.ByteCast(Methods.ShiftSigned(v & mg, gShift, gCount));
                         result[z++] = Methods.ByteCast(Methods.ShiftSigned(v & mb, bShift, bCount));
