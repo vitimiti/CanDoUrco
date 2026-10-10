@@ -128,13 +128,13 @@ internal sealed class Context
 
         if (hsz == 12)
         {
-            ImgX = (uint)Get16LE();
-            ImgY = (uint)Get16LE();
+            ImgX = Get16LE();
+            ImgY = Get16LE();
         }
         else
         {
-            ImgX = (uint)Get32LE();
-            ImgY = (uint)Get32LE();
+            ImgX = Get32LE();
+            ImgY = Get32LE();
         }
 
         if (Get16LE() != 1)
@@ -249,8 +249,7 @@ internal sealed class Context
 
         var signedHeight = unchecked((int)ImgY);
         var flipVertically = signedHeight > 0;
-        ImgY = (uint)Math.Abs((long)signedHeight);
-
+        ImgY = (uint)long.Abs(signedHeight);
         if (ImgY > Constants.MaxDimensions || ImgX > Constants.MaxDimensions)
         {
             return Methods.ErrorPtr("Too large. Very large image (corrupt?).");
@@ -261,7 +260,6 @@ internal sealed class Context
         var mb = bmp.MB;
         var ma = bmp.MA;
         var allA = bmp.AllA;
-
         var pSize = 0;
         if (bmp.Hsz == 12)
         {
@@ -316,9 +314,9 @@ internal sealed class Context
         }
 
         var pal = new byte[256, 4];
-        var width = 0;
-        var pad = 0;
         var z = 0;
+        int width;
+        int pad;
         if (bmp.Bpp < 16)
         {
             if (pSize == 0 || pSize > 256)
