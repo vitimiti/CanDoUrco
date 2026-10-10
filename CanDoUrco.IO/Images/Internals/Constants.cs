@@ -156,6 +156,22 @@ internal static class Constants
         63,
         63,
     ];
+
+    public static readonly uint[] ShiftSignedMulTable =
+    [
+        0,
+        0xFF,
+        0x55,
+        0x49,
+        0x11,
+        0x21,
+        0x41,
+        0x81,
+        0x01,
+    ];
+
+    public static readonly uint[] ShiftSignedShiftTable = [0, 0, 0, 1, 0, 2, 4, 6, 0];
+
     public static V16 Rot00 =>
         Methods.DctConst(
             Methods.F2F(.5411961F),

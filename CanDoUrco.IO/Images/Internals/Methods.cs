@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
@@ -902,5 +903,203 @@ internal static class Methods
                 bytesLeft -= bytesCopy;
             }
         }
+    }
+
+    public static int HighBit(uint z)
+    {
+        var n = 0;
+        if (z == 0)
+        {
+            return -1;
+        }
+
+        if (z >= 0x10000)
+        {
+            n += 16;
+            z >>= 16;
+        }
+
+        if (z >= 0x00100)
+        {
+            n += 8;
+            z >>= 8;
+        }
+
+        if (z >= 0x00010)
+        {
+            n += 4;
+            z >>= 4;
+        }
+
+        if (z >= 0x00004)
+        {
+            n += 2;
+            z >>= 2;
+        }
+
+        if (z >= 0x00002)
+        {
+            n += 1;
+        }
+
+        return n;
+    }
+
+    public static int BitCount(uint a)
+    {
+        a = (a & 0x5555_5555) + ((a >> 1) & 0x5555_5555);
+        a = (a & 0x3333_3333) + ((a >> 2) & 0x3333_3333);
+        a = (a + (a >> 4)) & 0x0F0F_0F0F;
+        a += a >> 8;
+        a += a >> 16;
+        return unchecked((int)(a & 0xFF));
+    }
+
+    public static byte ByteCast(int x) => unchecked((byte)(x & 0xFF));
+
+    public static int ShiftSigned(uint v, int shift, int bits)
+    {
+        if (shift < 0)
+        {
+            v <<= -shift;
+        }
+        else
+        {
+            v >>= shift;
+        }
+
+        Debug.Assert(v < 256);
+        v >>= 8 - bits;
+        Debug.Assert(bits >= 0 && bits <= 8);
+        return unchecked(
+            (int)(v * Constants.ShiftSignedMulTable[bits])
+            >> (int)Constants.ShiftSignedShiftTable[bits]
+        );
+    }
+
+    public static bool Mad3SizesValid(int a, uint b, uint c) =>
+        a >= 0
+        && b <= int.MaxValue
+        && c <= int.MaxValue
+        && (ulong)(uint)a * b <= int.MaxValue
+        && (ulong)(uint)a * b * c <= int.MaxValue;
+
+    public static byte[]? MallocMad3(int a, uint b, uint c) =>
+        !Mad3SizesValid(a, b, c)
+            ? ErrorPtr("Out of memory.")
+            : (new byte[(int)((ulong)(uint)a * b * c)]);
+
+    public static byte[]? ConvertFormat(byte[]? data, int imgN, int reqComp, uint x, uint y)
+    {
+        if (data is null)
+        {
+            return data;
+        }
+
+        if (reqComp == imgN)
+        {
+            return data;
+        }
+
+        Debug.Assert(reqComp >= 1 && reqComp <= 4);
+        var converted = MallocMad3(reqComp, x, y);
+        if (converted is null)
+        {
+            return null;
+        }
+
+        var count = (int)((ulong)x * y);
+
+        var src = 0;
+        var dest = 0;
+        switch (imgN, reqComp)
+        {
+            case (1, 2):
+                for (var i = 0; i < count; i++, src++, dest += 2)
+                {
+                    converted[dest] = data[src];
+                    converted[dest + 1] = 255;
+                }
+                break;
+            case (1, 3):
+                for (var i = 0; i < count; i++, src++, dest += 3)
+                {
+                    converted[dest] = converted[dest + 1] = converted[dest + 2] = data[src];
+                }
+                break;
+            case (1, 4):
+                for (var i = 0; i < count; i++, src++, dest += 4)
+                {
+                    converted[dest] = converted[dest + 1] = converted[dest + 2] = data[src];
+                    converted[dest + 3] = 255;
+                }
+                break;
+            case (2, 1):
+                for (var i = 0; i < count; i++, src += 2, dest++)
+                {
+                    converted[dest] = data[src];
+                }
+                break;
+            case (2, 3):
+                for (var i = 0; i < count; i++, src += 2, dest += 3)
+                {
+                    converted[dest] = converted[dest + 1] = converted[dest + 2] = data[src];
+                }
+                break;
+            case (2, 4):
+                for (var i = 0; i < count; i++, src += 2, dest += 4)
+                {
+                    converted[dest] = converted[dest + 1] = converted[dest + 2] = data[src];
+                    converted[dest + 3] = data[src + 1];
+                }
+                break;
+            case (3, 1):
+                for (var i = 0; i < count; i++, src += 3, dest++)
+                {
+                    converted[dest] = ComputeY(data[src], data[src + 1], data[src + 2]);
+                }
+                break;
+            case (3, 2):
+                for (var i = 0; i < count; i++, src += 3, dest += 2)
+                {
+                    converted[dest] = ComputeY(data[src], data[src + 1], data[src + 2]);
+                    converted[dest + 1] = 255;
+                }
+                break;
+            case (3, 4):
+                for (var i = 0; i < count; i++, src += 3, dest += 4)
+                {
+                    converted[dest] = data[src];
+                    converted[dest + 1] = data[src + 1];
+                    converted[dest + 2] = data[src + 2];
+                    converted[dest + 3] = 255;
+                }
+                break;
+            case (4, 1):
+                for (var i = 0; i < count; i++, src += 4, dest++)
+                {
+                    converted[dest] = ComputeY(data[src], data[src + 1], data[src + 2]);
+                }
+                break;
+            case (4, 2):
+                for (var i = 0; i < count; i++, src += 4, dest += 2)
+                {
+                    converted[dest] = ComputeY(data[src], data[src + 1], data[src + 2]);
+                    converted[dest + 1] = data[src + 3];
+                }
+                break;
+            case (4, 3):
+                for (var i = 0; i < count; i++, src += 4, dest += 3)
+                {
+                    converted[dest] = data[src];
+                    converted[dest + 1] = data[src + 1];
+                    converted[dest + 2] = data[src + 2];
+                }
+                break;
+            default:
+                return ErrorPtr("Unsupported. Unsupported format conversion.");
+        }
+
+        return converted;
     }
 }
