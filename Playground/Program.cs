@@ -135,13 +135,17 @@ return CrashReporter.Run(() =>
     // Create and compile our GLSL program from the shaders
     var programID = LoadShaders("Resources/Shaders/Vertex.glsl", "Resources/Shaders/Fragment.glsl");
     GL.UseProgram(programID);
+    var matrixID = GL.GetUniformLocation(programID, "MVP");
+
+    var framebufferSize = window.GetFramebufferSize();
+    GL.Viewport(0, 0, framebufferSize.Width, framebufferSize.Height);
 
     Span<uint> texture = stackalloc uint[1];
     LoadTextures(texture, ["Resources/Textures/UVTemplate.bmp"]);
 
     var projection = Matrix4x4.CreatePerspectiveFieldOfView(
         fieldOfView: 45F.ToRadians(),
-        aspectRatio: windowSize.Width / (float)windowSize.Height,
+        aspectRatio: framebufferSize.Width / (float)framebufferSize.Height,
         nearPlaneDistance: .1F,
         farPlaneDistance: 100F
     );
@@ -154,6 +158,25 @@ return CrashReporter.Run(() =>
 
     var model = Matrix4x4.Identity;
     var mvp = model * view * projection;
+
+    window.FramebufferSizeUpdate += (_, args) =>
+    {
+        GL.Viewport(0, 0, args.Size.Width, args.Size.Height);
+        if (args.Size.Height == 0 || args.Size.Width == 0)
+        {
+            return;
+        }
+
+        projection = Matrix4x4.CreatePerspectiveFieldOfView(
+            fieldOfView: 45F.ToRadians(),
+            aspectRatio: args.Size.Width / (float)args.Size.Height,
+            nearPlaneDistance: .1F,
+            farPlaneDistance: 100F
+        );
+
+        mvp = model * view * projection;
+        GL.UniformMatrix4fv(matrixID, count: 1, transpose: false, value: mvp.ToArray());
+    };
 
     // The VBO (Vertex Buffer Object)
     Span<uint> vertexBuffer = stackalloc uint[1];
@@ -185,7 +208,6 @@ return CrashReporter.Run(() =>
     GL.BindVertexArray(vertexArray[0]);
 
     // Get a handle for our "MVP" uniform
-    var matrixID = GL.GetUniformLocation(programID, "MVP");
     // Send our transformation to the currently bound shader
     GL.UniformMatrix4fv(matrixID, count: 1, transpose: false, value: mvp.ToArray());
 
