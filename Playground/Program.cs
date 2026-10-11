@@ -332,7 +332,7 @@ static void LoadTextures(Span<uint> textures, IReadOnlyCollection<string> textur
 {
     var count = textures.Length;
     var images = new ImageData[count];
-    for (var i = 0; i < images.Length; i++)
+    for (var i = 0; i < count; i++)
     {
         images[i] = Image.Load(textureFilePaths.ElementAt(i), requiredChannelCount: 3);
     }
@@ -360,14 +360,28 @@ static void LoadTextures(Span<uint> textures, IReadOnlyCollection<string> textur
 
         GL.TexParameteri(
             GL.TextureTargetEnum.Texture2D,
+            GL.TextureParameterNameEnum.TextureWrapS,
+            (int)GL.TextureWrapModeEnum.Repeat
+        );
+
+        GL.TexParameteri(
+            GL.TextureTargetEnum.Texture2D,
+            GL.TextureParameterNameEnum.TextureWrapT,
+            (int)GL.TextureWrapModeEnum.Repeat
+        );
+
+        GL.TexParameteri(
+            GL.TextureTargetEnum.Texture2D,
             GL.TextureParameterNameEnum.TextureMagFilter,
-            (int)GL.TextureMagFilterEnum.Nearest
+            (int)GL.TextureMagFilterEnum.Linear
         );
 
         GL.TexParameteri(
             GL.TextureTargetEnum.Texture2D,
             GL.TextureParameterNameEnum.TextureMinFilter,
-            (int)GL.TextureMinFilterEnum.Nearest
+            (int)GL.TextureMinFilterEnum.LinearMipmapLinear
         );
+
+        GL.GenerateMipmap(GL.TextureTargetEnum.Texture2D);
     }
 }
