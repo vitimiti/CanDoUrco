@@ -19,4 +19,5 @@ using CanDoUrco.Sdl3.Internals;
 
 namespace CanDoUrco.Sdl3.Exceptions;
 
-public sealed class Sdl3Exception() : ExternalException(Sdl.GetError());
+public sealed class Sdl3Exception(string message)
+    : ExternalException($"{message}: {Sdl.GetError()}.");
