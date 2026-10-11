@@ -237,13 +237,12 @@ internal sealed class Context
 
     public byte[]? BmpLoad(out int x, out int y, out int comp, int reqComp, ResultInfo _)
     {
-        x = 0;
-        y = 0;
-        comp = 0;
-
         var bmp = new Bmp { AllA = 255 };
         if (ParseBmpHeader(bmp) is null)
         {
+            x = 0;
+            y = 0;
+            comp = 0;
             return null;
         }
 
@@ -252,6 +251,9 @@ internal sealed class Context
         ImgY = (uint)long.Abs(signedHeight);
         if (ImgY > Constants.MaxDimensions || ImgX > Constants.MaxDimensions)
         {
+            x = 0;
+            y = 0;
+            comp = 0;
             return Methods.ErrorPtr("Too large. Very large image (corrupt?).");
         }
 
@@ -285,11 +287,17 @@ internal sealed class Context
             const int extraDataLimit = 256 * 4;
             if (bytesReadSoFar <= 0 || bytesReadSoFar > headerLimit)
             {
+                x = 0;
+                y = 0;
+                comp = 0;
                 return Methods.ErrorPtr("Bad header. Corrupt BMP.");
             }
 
             if (bmp.Offset < bytesReadSoFar || bmp.Offset - bytesReadSoFar > extraDataLimit)
             {
+                x = 0;
+                y = 0;
+                comp = 0;
                 return Methods.ErrorPtr("Bad offset. Corrupt BMP.");
             }
 
@@ -304,12 +312,18 @@ internal sealed class Context
         var target = reqComp != 0 && reqComp >= 3 ? reqComp : ImgN;
         if (!Methods.Mad3SizesValid(target, ImgX, ImgY))
         {
+            x = 0;
+            y = 0;
+            comp = 0;
             return Methods.ErrorPtr("Too large. Corrupt BMP.");
         }
 
         var result = Methods.MallocMad3(target, ImgX, ImgY);
         if (result is null)
         {
+            x = 0;
+            y = 0;
+            comp = 0;
             return null;
         }
 
@@ -321,6 +335,9 @@ internal sealed class Context
         {
             if (pSize == 0 || pSize > 256)
             {
+                x = 0;
+                y = 0;
+                comp = 0;
                 return Methods.ErrorPtr("Invalid. Corrupt BMP.");
             }
 
@@ -352,6 +369,9 @@ internal sealed class Context
             }
             else
             {
+                x = 0;
+                y = 0;
+                comp = 0;
                 return Methods.ErrorPtr("Bad BPP. Corrupt BMP.");
             }
 
@@ -463,6 +483,9 @@ internal sealed class Context
             {
                 if (mr == 0 || mg == 0 || mb == 0)
                 {
+                    x = 0;
+                    y = 0;
+                    comp = 0;
                     return Methods.ErrorPtr("Bad masks. Corrupt BMP.");
                 }
 
@@ -476,6 +499,9 @@ internal sealed class Context
                 aCount = Methods.BitCount(ma);
                 if (rCount > 8 || gCount > 8 || bCount > 8 || aCount > 8)
                 {
+                    x = 0;
+                    y = 0;
+                    comp = 0;
                     return Methods.ErrorPtr("Bad masks. Corrupt BMP.");
                 }
             }
@@ -538,6 +564,9 @@ internal sealed class Context
             result = Methods.ConvertFormat(result, target, reqComp, ImgX, ImgY);
             if (result == null)
             {
+                x = 0;
+                y = 0;
+                comp = 0;
                 return result;
             }
         }
@@ -554,14 +583,14 @@ internal sealed class Context
         ri.ChannelOrder = default;
         ri.NumChannels = 0;
 
-        if (JpegTest())
-        {
-            return JpegLoad(out x, out y, out comp, reqComp, ri);
-        }
-
         if (BmpTest())
         {
             return BmpLoad(out x, out y, out comp, reqComp, ri);
+        }
+
+        if (JpegTest())
+        {
+            return JpegLoad(out x, out y, out comp, reqComp, ri);
         }
 
         x = y = comp = 0;
