@@ -20,14 +20,28 @@ public sealed record WindowOptions
 {
     public bool Fullscreen { get; set; }
     public bool OpenGLReady { get; set; }
+    public bool Occluded { get; set; }
+    public bool Hidden { get; set; }
+    public bool Borderless { get; set; }
     public bool Resizable { get; set; }
+    public bool Minimized { get; set; }
+    public bool Maximized { get; set; }
     public bool MouseGrabbed { get; set; }
     public bool InputFocus { get; set; }
     public bool MouseFocus { get; set; }
+    public bool External { get; set; }
+    public bool Modal { get; set; }
     public bool HighPixelDensity { get; set; }
     public bool MouseCapture { get; set; }
     public bool MouseRelativeMode { get; set; }
+    public bool AlwaysOnTop { get; set; }
+    public bool Utility { get; set; }
+    public bool Tooltip { get; set; }
+    public bool PopupMenu { get; set; }
     public bool KeyboardGrabbed { get; set; }
+    public bool FillDocument { get; set; }
     public bool VulkanReady { get; set; }
     public bool MetalReady { get; set; }
+    public bool Transparent { get; set; }
+    public bool NotFocusable { get; set; }
 }

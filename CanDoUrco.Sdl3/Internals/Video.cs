@@ -23,16 +23,30 @@ internal static partial class Sdl
 {
     public const ulong WindowFullscreen = 0x0000_0000_0000_0001UL;
     public const ulong WindowOpenGL = 0x0000_0000_0000_0002UL;
+    public const ulong WindowOccluded = 0x0000_0000_0000_0004UL;
+    public const ulong WindowHidden = 0x0000_0000_0000_0008UL;
+    public const ulong WindowBorderless = 0x0000_0000_0000_0010UL;
     public const ulong WindowResizable = 0x0000_0000_0000_0020UL;
+    public const ulong WindowMinimized = 0x0000_0000_0000_0040UL;
+    public const ulong WindowMaximized = 0x0000_0000_0000_0080UL;
     public const ulong WindowMouseGrabbed = 0x0000_0000_0000_0100UL;
     public const ulong WindowInputFocus = 0x0000_0000_0000_0200UL;
     public const ulong WindowMouseFocus = 0x0000_0000_0000_0400UL;
-    public const ulong WindowHighPixelDensity = 0x0000_0000_0002_0000UL;
-    public const ulong WindowMouseCapture = 0x0000_0000_0004_0000UL;
-    public const ulong WindowMouseRelativeMode = 0x0000_0000_0008_0000UL;
+    public const ulong WindowExternal = 0x0000_0000_0000_0800UL;
+    public const ulong WindowModal = 0x0000_0000_0000_1000UL;
+    public const ulong WindowHighPixelDensity = 0x0000_0000_0000_2000UL;
+    public const ulong WindowMouseCapture = 0x0000_0000_0000_4000UL;
+    public const ulong WindowMouseRelativeMode = 0x0000_0000_0000_8000UL;
+    public const ulong WindowAlwaysOnTop = 0x0000_0000_0001_0000UL;
+    public const ulong WindowUtility = 0x0000_0000_0002_0000UL;
+    public const ulong WindowTooltip = 0x0000_0000_0004_0000UL;
+    public const ulong WindowPopupMenu = 0x0000_0000_0008_0000UL;
     public const ulong WindowKeyboardGrabbed = 0x0000_0000_0010_0000UL;
+    public const ulong WindowFillDocument = 0x0000_0000_0020_0000UL;
     public const ulong WindowVulkan = 0x0000_0000_1000_0000UL;
     public const ulong WindowMetal = 0x0000_0000_2000_0000UL;
+    public const ulong WindowTransparent = 0x0000_0000_4000_0000UL;
+    public const ulong WindowNotFocusable = 0x0000_0000_8000_0000UL;
 
     [LibraryImport(
         DllName,

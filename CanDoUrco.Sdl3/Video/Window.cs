@@ -70,9 +70,29 @@ public sealed class Window : IDisposable
         {
             windowFlags |= Sdl.WindowOpenGL;
         }
+        if (opts.Occluded)
+        {
+            windowFlags |= Sdl.WindowOccluded;
+        }
+        if (opts.Hidden)
+        {
+            windowFlags |= Sdl.WindowHidden;
+        }
+        if (opts.Borderless)
+        {
+            windowFlags |= Sdl.WindowBorderless;
+        }
         if (opts.Resizable)
         {
             windowFlags |= Sdl.WindowResizable;
+        }
+        if (opts.Minimized)
+        {
+            windowFlags |= Sdl.WindowMinimized;
+        }
+        if (opts.Maximized)
+        {
+            windowFlags |= Sdl.WindowMaximized;
         }
         if (opts.MouseGrabbed)
         {
@@ -86,6 +106,14 @@ public sealed class Window : IDisposable
         {
             windowFlags |= Sdl.WindowMouseFocus;
         }
+        if (opts.External)
+        {
+            windowFlags |= Sdl.WindowExternal;
+        }
+        if (opts.Modal)
+        {
+            windowFlags |= Sdl.WindowModal;
+        }
         if (opts.HighPixelDensity)
         {
             windowFlags |= Sdl.WindowHighPixelDensity;
@@ -98,9 +126,29 @@ public sealed class Window : IDisposable
         {
             windowFlags |= Sdl.WindowMouseRelativeMode;
         }
+        if (opts.AlwaysOnTop)
+        {
+            windowFlags |= Sdl.WindowAlwaysOnTop;
+        }
+        if (opts.Utility)
+        {
+            windowFlags |= Sdl.WindowUtility;
+        }
+        if (opts.Tooltip)
+        {
+            windowFlags |= Sdl.WindowTooltip;
+        }
+        if (opts.PopupMenu)
+        {
+            windowFlags |= Sdl.WindowPopupMenu;
+        }
         if (opts.KeyboardGrabbed)
         {
             windowFlags |= Sdl.WindowKeyboardGrabbed;
+        }
+        if (opts.FillDocument)
+        {
+            windowFlags |= Sdl.WindowFillDocument;
         }
         if (opts.VulkanReady)
         {
@@ -109,6 +157,14 @@ public sealed class Window : IDisposable
         if (opts.MetalReady)
         {
             windowFlags |= Sdl.WindowMetal;
+        }
+        if (opts.Transparent)
+        {
+            windowFlags |= Sdl.WindowTransparent;
+        }
+        if (opts.NotFocusable)
+        {
+            windowFlags |= Sdl.WindowNotFocusable;
         }
         return windowFlags;
     }
