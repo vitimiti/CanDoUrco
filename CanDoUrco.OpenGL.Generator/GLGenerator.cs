@@ -121,22 +121,6 @@ public sealed class GLGenerator : IIncrementalGenerator
             }
         }
 
-        if (loaderMethod is null)
-        {
-            var glfw = ctx.SemanticModel.Compilation.GetTypeByMetadataName(
-                "CanDoUrco.Glfw.Utilities.GlfwContextUtilities"
-            );
-
-            if (
-                glfw is { DeclaredAccessibility: Accessibility.Public }
-                && glfw.GetMembers("GetProcAddress").OfType<IMethodSymbol>().Any(m => m.IsStatic)
-            )
-            {
-                loaderMethod =
-                    "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress";
-            }
-        }
-
         var containers = new List<string>();
         for (var parent = symbol.ContainingType; parent is not null; parent = parent.ContainingType)
         {

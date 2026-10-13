@@ -80,8 +80,13 @@ internal static class GLAttributes
                     public OpenGLProfile Profile { get; set; } = OpenGLProfile.Core;
 
                     /// <summary>
-                    /// Gets or sets the name of the method used to load the OpenGL functions.
+                    /// Gets or sets the fully qualified name of a static method with signature nint (string)
+                    /// used when an OpenGL function is not exported by the native library.
                     /// </summary>
+                    /// <remarks>
+                    /// Defaults to null. No windowing library loader is selected automatically.
+                    /// If no per-class or global loader resolves the function, loading throws EntryPointNotFoundException.
+                    /// </remarks>
                     public string? LoaderMethod { get; set; }
                 }
 

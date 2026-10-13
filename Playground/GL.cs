@@ -18,5 +18,10 @@ using CanDoUrco.OpenGL.Generator;
 
 namespace Playground;
 
-[OpenGL(major: 3, minor: 3, Profile = OpenGLProfile.Core)]
+[OpenGL(
+    major: 3,
+    minor: 3,
+    Profile = OpenGLProfile.Core,
+    LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress"
+)]
 internal static partial class GL;

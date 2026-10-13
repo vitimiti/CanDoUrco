@@ -24,7 +24,7 @@ internal static unsafe partial class Glfw
 {
     [LibraryImport(DllName, EntryPoint = "glfwInit")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool Init();
 
     [LibraryImport(DllName, EntryPoint = "glfwTerminate")]
@@ -61,7 +61,7 @@ internal static unsafe partial class Glfw
 
     [LibraryImport(DllName, EntryPoint = "glfwPlatformSupported")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool PlatformSupported(int platform);
 
     [LibraryImport(DllName, EntryPoint = "glfwGetMonitors")]
@@ -168,7 +168,7 @@ internal static unsafe partial class Glfw
 
     [LibraryImport(DllName, EntryPoint = "glfwWindowShouldClose")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool WindowShouldClose(Window* window);
 
     [LibraryImport(DllName, EntryPoint = "glfwSetWindowShouldClose")]
@@ -409,7 +409,7 @@ internal static unsafe partial class Glfw
 
     [LibraryImport(DllName, EntryPoint = "glfwRawMouseMotionSupported")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool RawMouseMotionSupported();
 
     [LibraryImport(DllName, EntryPoint = "glfwGetKeyName")]
@@ -529,7 +529,7 @@ internal static unsafe partial class Glfw
 
     [LibraryImport(DllName, EntryPoint = "glfwJoystickPresent")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool JoystickPresent(int jid);
 
     [LibraryImport(DllName, EntryPoint = "glfwGetJoystickAxes")]
@@ -554,7 +554,7 @@ internal static unsafe partial class Glfw
 
     [LibraryImport(DllName, EntryPoint = "glfwJoystickIsGamepad")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool JoystickIsGamepad(int jid);
 
     [LibraryImport(DllName, EntryPoint = "glfwSetJoystickCallback")]
@@ -569,7 +569,7 @@ internal static unsafe partial class Glfw
         StringMarshalling = StringMarshalling.Utf8
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool UpdateGamepadMappings(string? @string);
 
     [LibraryImport(DllName, EntryPoint = "glfwGetGamepadName")]
@@ -578,7 +578,7 @@ internal static unsafe partial class Glfw
 
     [LibraryImport(DllName, EntryPoint = "glfwGetGamepadState")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool GetGamepadState(int jid, out GamepadState state);
 
     [LibraryImport(
@@ -631,7 +631,7 @@ internal static unsafe partial class Glfw
         StringMarshalling = StringMarshalling.Utf8
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool ExtensionSupported(string extension);
 
     [LibraryImport(
@@ -644,7 +644,7 @@ internal static unsafe partial class Glfw
 
     [LibraryImport(DllName, EntryPoint = "glfwVulkanSupported")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool VulkanSupported();
 
     [LibraryImport(DllName, EntryPoint = "glfwGetRequiredInstanceExtensions")]

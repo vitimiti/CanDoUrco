@@ -23,9 +23,23 @@ internal static partial class Sdl
 {
     public const uint InitVideo = 0x0000_0020U;
 
+    [LibraryImport(DllName, EntryPoint = "SDL_IsMainThread")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [return: MarshalAs(UnmanagedType.I1)]
+    public static partial bool IsMainThread();
+
+    [LibraryImport(DllName, EntryPoint = "SDL_RunOnMainThread")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [return: MarshalAs(UnmanagedType.I1)]
+    public static unsafe partial bool RunOnMainThread(
+        delegate* unmanaged[Cdecl]<nint, void> callback,
+        nint userdata,
+        [MarshalAs(UnmanagedType.I1)] bool waitComplete
+    );
+
     [LibraryImport(DllName, EntryPoint = "SDL_Init")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I4)]
+    [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool Init(uint flags);
 
     [LibraryImport(DllName, EntryPoint = "SDL_QuitSubSystem")]
