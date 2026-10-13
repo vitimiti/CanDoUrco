@@ -31,6 +31,7 @@ internal static class SdlMainThreadCleanup
         Timeout.Infinite,
         Timeout.Infinite
     );
+
     private static int _scheduled;
 
     internal static void Enqueue(Action cleanup)
@@ -79,17 +80,14 @@ internal static class SdlMainThreadCleanup
                 catch (Exception error)
                 {
                     Pending.Enqueue(cleanup);
-                    Trace.TraceError(
-                        "SDL resource cleanup failed; retained for retry: {0}",
-                        error
-                    );
+                    Trace.TraceError("SDL resource cleanup failed; retained for retry: {0}", error);
                 }
             }
         }
         catch (Exception error)
         {
             // Exceptions cannot cross SDL's native callback boundary.
-            Trace.TraceError("SDL cleanup callback failed: {0}", error);
+            Trace.TraceError($"SDL cleanup callback failed: {error}");
         }
         finally
         {

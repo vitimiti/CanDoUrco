@@ -20,10 +20,8 @@ internal sealed class SdlSubsystemLease : IDisposable
 {
     private readonly ReleaseState _state;
 
-    private SdlSubsystemLease(SdlSubsystem subsystems, Action? releaseResource)
-    {
+    private SdlSubsystemLease(SdlSubsystem subsystems, Action? releaseResource) =>
         _state = new ReleaseState(subsystems, releaseResource);
-    }
 
     public static SdlSubsystemLease Acquire(SdlSubsystem subsystems, Action? releaseResource = null)
     {

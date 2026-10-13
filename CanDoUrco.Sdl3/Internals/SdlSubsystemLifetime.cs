@@ -92,9 +92,8 @@ internal static class SdlSubsystemLifetime
         if (initialize != 0 && !Sdl.Init((uint)initialize))
         {
             // SDL rolls back the subsystems acquired by a failed initialization.
-            var error = new Sdl3Exception($"Failed to initialize SDL subsystems '{initialize}'");
             QuitIfUnused();
-            throw error;
+            throw new Sdl3Exception($"Failed to initialize SDL subsystems '{initialize}'");
         }
 
         for (var i = 0; i < Subsystems.Length; i++)
