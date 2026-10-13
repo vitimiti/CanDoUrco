@@ -17,6 +17,47 @@ This readme is to be completed.
 - [CanDoUrco.OpenGL.Generator](#candourcoopenglgenerator): A source generator that creates safe OpenGL bindings from the Khronos `gl.xml`
 - [CanDoUrco.Utilities](#candourcoutilities): Shared utilities, such as crash reporting
 
+### SDL3 video resource lifetime
+
+Create, use, and dispose SDL3 windows and OpenGL contexts on SDL's main thread.
+On non-Apple platforms, SDL establishes this thread when video is first initialized;
+create your first window on the application's main thread.
+Each successful window or context creation owns one video-subsystem reference.
+Failed creation releases its reference immediately, and SDL manages implied subsystem
+dependencies such as events automatically.
+
+Dispose all contexts created by a window before disposing that window:
+
+```csharp
+using CanDoUrco.Sdl3.Video;
+
+using var window = new Window(
+    "OpenGL",
+    new System.Drawing.Size(640, 480),
+    options => options.OpenGLReady = true
+);
+using var context = window.CreateGLContext();
+window.MakeGLContextCurrent(context);
+```
+
+Window disposal throws `InvalidOperationException` while its contexts remain alive.
+Context destruction failures throw `Sdl3Exception` and leave the context and its
+subsystem reference intact so disposal can be retried. Moving a context to a compatible
+window does not change which window owns its lifetime.
+
+Finalizers never destroy SDL resources directly. They enqueue independent cleanup
+records and use `SDL_RunOnMainThread` to schedule cleanup internally. Ordinary SDL
+event processing executes that cleanup automatically; no separate cleanup pump is
+required. Windows wait for their contexts, and failed cleanup or dispatch is logged
+through `System.Diagnostics.Trace` and automatically scheduled for retry.
+Exceptions never propagate through SDL's native callback.
+Finalization is only a best-effort fallback: it cannot clean up resources after the
+main thread stops processing SDL events, so use explicit disposal before shutdown.
+
+Video lifetime operations must be serialized on the main thread. These wrappers call
+`SDL_Quit` when no initialized subsystems remain, so coordinate global SDL shutdown
+with any other SDL users in the application.
+
 ### CanDoUrco.Glfw
 
 This library imports GLFW v3.5.1 and makes it safer.
@@ -189,18 +230,33 @@ GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit);
 
 #### Loading functions
 
-Functions are first looked up in the exports of the native OpenGL library. If that fails (on Windows, anything newer than OpenGL 1.1), a "proc address" loader is used as the fallback. If your project references `CanDoUrco.Glfw` and you set nothing, `GlfwContextUtilities.GetProcAddress` is the default fallback. You can provide the loader in two ways:
+Functions are first looked up in the exports of the native OpenGL library. If that fails (on Windows, anything newer than OpenGL 1.1), an explicitly configured "proc address" loader is used as the fallback. No loader is selected by default, even if your project references `CanDoUrco.Glfw` or `CanDoUrco.Sdl3`. If neither the native exports nor a configured loader resolves the function, its first call throws `EntryPointNotFoundException`.
+
+To use the SDL3 loader, reference `CanDoUrco.Sdl3` in your consuming project and configure it in one of two ways:
 
 ```csharp
 // Per class: a static method `nint (string)`. Use a fully qualified name, since the generated code does not see your usings.
-[OpenGL(3, 3, Profile = OpenGLProfile.Core, LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress")]
+[OpenGL(3, 3, Profile = OpenGLProfile.Core, LoaderMethod = "global::CanDoUrco.Sdl3.Video.OpenGL.GLContext.GetProcessAddress")]
 internal static partial class GL;
 
 // Or globally, before the first OpenGL call:
-OpenGLLibraryLoader.ProcAddressLoader = GlfwContextUtilities.GetProcAddress;
+OpenGLLibraryLoader.ProcAddressLoader =
+    CanDoUrco.Sdl3.Video.OpenGL.GLContext.GetProcessAddress;
 ```
 
-Remember that a context must be current (for GLFW, `window.MakeContextCurrent()`) before the first call to an OpenGL function.
+The per-class loader takes precedence over the global loader. `OpenGLLibraryLoader` is generated into the consuming assembly in the `CanDoUrco.OpenGL.Generator` namespace. Functions are cached after their first successful load, so configure the loader before using the bindings.
+
+Remember that a context must be current before the first call to an OpenGL function. For an SDL3 window created with `WindowOptions.OpenGLReady = true`:
+
+```csharp
+using var context = window.CreateGLContext();
+window.MakeGLContextCurrent(context);
+
+// Configure the global loader here if not using LoaderMethod.
+GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit);
+```
+
+For GLFW, make the context current with `window.MakeContextCurrent()` and explicitly configure `LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress"` or assign that method to `OpenGLLibraryLoader.ProcAddressLoader`.
 
 ### CanDoUrco.Utilities
 
