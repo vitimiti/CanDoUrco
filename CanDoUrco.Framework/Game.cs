@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using CanDoUrco.Framework.Native.SDL3;
 using CanDoUrco.Framework.Options;
 using CanDoUrco.Framework.Time;
 using CanDoUrco.NativeLibraryLoaderConfigurer;
@@ -27,6 +28,7 @@ public sealed class Game : IDisposable
     public event Action<GameTime>? UpdateEnd;
     public event Action<GameTime>? DrawStart;
     public event Action<GameTime>? DrawEnd;
+    public event Action<GameTime>? Quit;
 
     private readonly GameTime _gameTime = new();
 
@@ -62,21 +64,37 @@ public sealed class Game : IDisposable
         {
             Update(_gameTime);
             Draw(_gameTime);
+
+            ProcessEvents();
             _gameTime.Update();
         }
     }
 
     private void Update(GameTime gameTime)
     {
-        ObjectDisposedException.ThrowIf(_disposedValue, this);
         UpdateStart?.Invoke(gameTime);
         UpdateEnd?.Invoke(gameTime);
     }
 
     private void Draw(GameTime gameTime)
     {
-        ObjectDisposedException.ThrowIf(_disposedValue, this);
         DrawStart?.Invoke(gameTime);
         DrawEnd?.Invoke(gameTime);
+    }
+
+    private void ProcessEvents()
+    {
+        while (Sdl.PollEvent(out var ev))
+        {
+            switch (ev.Type)
+            {
+                case Sdl.EventType.Quit:
+                    _running = false;
+                    Quit?.Invoke(_gameTime);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace CanDoUrco.Framework.Native.SDL3;
 
 internal static unsafe partial class Sdl
 {
+    [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_GetProcAddress")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void* GLGetProcAddress(byte* proc);
