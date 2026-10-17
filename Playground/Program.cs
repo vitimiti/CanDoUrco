@@ -16,4 +16,6 @@
 
 // Following https://www.opengl-tutorial.org/
 
-Console.WriteLine("Hello, CanDoUrco!");
+using Playground;
+
+using var game = new PlaygroundGame();
