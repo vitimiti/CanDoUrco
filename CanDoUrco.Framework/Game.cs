@@ -14,46 +14,69 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using CanDoUrco.Framework.Options;
+using CanDoUrco.Framework.Time;
 using CanDoUrco.NativeLibraryLoaderConfigurer;
 
 namespace CanDoUrco.Framework;
 
-public abstract class Game : IDisposable
+public sealed class Game : IDisposable
 {
+    public event Action? Initialized;
+    public event Action<GameTime>? UpdateStart;
+    public event Action<GameTime>? UpdateEnd;
+    public event Action<GameTime>? DrawStart;
+    public event Action<GameTime>? DrawEnd;
+
+    private readonly GameTime _gameTime = new();
+
+    private bool _running = true;
     private bool _disposedValue;
 
-    public Game()
+    public Game(Action<GameOptions>? options = null)
     {
         CommonNativeLibraryLoader.Set();
-    }
+        var gameOptions = new GameOptions();
+        options?.Invoke(gameOptions);
 
-    ~Game()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: false);
+        _gameTime.TargetFramesPerSecond = gameOptions.TimeOptions.FrameRate;
+        Initialized?.Invoke();
     }
 
     public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
     {
         if (_disposedValue)
         {
             return;
         }
 
-        if (disposing)
-        {
-            // TODO: dispose managed state (managed objects)
-        }
-
-        // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-        // TODO: set large fields to null
         _disposedValue = true;
+    }
+
+    public void Run()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+
+        _gameTime.Start();
+        while (_running)
+        {
+            Update(_gameTime);
+            Draw(_gameTime);
+            _gameTime.Update();
+        }
+    }
+
+    private void Update(GameTime gameTime)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        UpdateStart?.Invoke(gameTime);
+        UpdateEnd?.Invoke(gameTime);
+    }
+
+    private void Draw(GameTime gameTime)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        DrawStart?.Invoke(gameTime);
+        DrawEnd?.Invoke(gameTime);
     }
 }

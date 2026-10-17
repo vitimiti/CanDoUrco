@@ -16,6 +16,7 @@
 
 // Following https://www.opengl-tutorial.org/
 
-using Playground;
+using CanDoUrco.Framework;
 
-using var game = new PlaygroundGame();
+using var game = new Game();
+game.Run();

@@ -1,4 +1,4 @@
-// This is a small testing ground for CanDoUrco.
+// A common framework for the projects and engines of Can Do Urco
 // Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,10 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// Following https://www.opengl-tutorial.org/
+namespace CanDoUrco.Framework.Options;
 
-using CanDoUrco.Framework;
-
-namespace Playground;
-
-internal sealed class PlaygroundGame : Game;
+public sealed class TimeOptions
+{
+    public int? FrameRate { get; set; }
+}
