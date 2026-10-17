@@ -19,4 +19,5 @@ namespace CanDoUrco.Framework.Options;
 public sealed class GameOptions
 {
     public TimeOptions TimeOptions { get; set; } = new();
+    public WindowOptions WindowOptions { get; set; } = new();
 }

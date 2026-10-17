@@ -14,9 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Framework.Native.SDL3;
 using CanDoUrco.Framework.Options;
 using CanDoUrco.Framework.Time;
+using CanDoUrco.Framework.Video;
 using CanDoUrco.NativeLibraryLoaderConfigurer;
 
 namespace CanDoUrco.Framework;
@@ -35,14 +37,33 @@ public sealed class Game : IDisposable
     private bool _running = true;
     private bool _disposedValue;
 
-    public Game(Action<GameOptions>? options = null)
+    public Window Window { get; private set; }
+
+    public unsafe Game(Action<GameOptions>? options = null)
     {
         CommonNativeLibraryLoader.Set();
         var gameOptions = new GameOptions();
         options?.Invoke(gameOptions);
 
         _gameTime.TargetFramesPerSecond = gameOptions.TimeOptions.FrameRate;
-        Initialized?.Invoke();
+
+        try
+        {
+            if (!Sdl.Init(Sdl.InitVideo))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to initialize SDL: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+
+            Window = new Window(gameOptions.WindowOptions);
+
+            Initialized?.Invoke();
+        }
+        finally
+        {
+            GC.KeepAlive(this);
+        }
     }
 
     public void Dispose()
@@ -52,6 +73,7 @@ public sealed class Game : IDisposable
             return;
         }
 
+        Window.Dispose();
         _disposedValue = true;
     }
 
@@ -79,6 +101,10 @@ public sealed class Game : IDisposable
     private void Draw(GameTime gameTime)
     {
         DrawStart?.Invoke(gameTime);
+
+        Window.StartFrame();
+        Window.EndFrame();
+
         DrawEnd?.Invoke(gameTime);
     }
 
