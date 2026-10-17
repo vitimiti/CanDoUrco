@@ -28,6 +28,35 @@ public sealed class Window : IDisposable
 
     private bool _disposedValue;
 
+    public unsafe string Title
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(_disposedValue, this);
+            return Utf8StringMarshaller.ConvertToManaged(Sdl.GetWindowTitle(_window))
+                ?? string.Empty;
+        }
+        set
+        {
+            ObjectDisposedException.ThrowIf(_disposedValue, this);
+            var marshaller = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+            try
+            {
+                marshaller.FromManaged(
+                    value,
+                    new byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]
+                );
+
+                Sdl.SetWindowTitle(_window, marshaller.ToUnmanaged());
+            }
+            finally
+            {
+                marshaller.Free();
+                GC.KeepAlive(this);
+            }
+        }
+    }
+
     internal unsafe Window(WindowOptions options)
     {
         var flags = GetWindowFlags(options);
@@ -121,20 +150,106 @@ public sealed class Window : IDisposable
         _disposedValue = true;
     }
 
+    public unsafe void GrabMouse()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        try
+        {
+            if (!Sdl.SetWindowMouseGrab(_window, true))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to grab mouse: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            GC.KeepAlive(this);
+        }
+    }
+
+    public unsafe void ReleaseMouse()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        try
+        {
+            if (!Sdl.SetWindowMouseGrab(_window, false))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to release mouse: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            GC.KeepAlive(this);
+        }
+    }
+
+    public unsafe void Flash()
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        try
+        {
+            if (!Sdl.FlashWindow(_window, Sdl.FlashOperation.UntilFocused))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to flash window: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            GC.KeepAlive(this);
+        }
+    }
+
+    public unsafe void SetProgressState(WindowProgressState state)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        try
+        {
+            if (!Sdl.SetWindowProgressState(_window, state))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to set window progress state: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            GC.KeepAlive(this);
+        }
+    }
+
+    public unsafe void SetProgressValue(float value)
+    {
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        try
+        {
+            if (!Sdl.SetWindowProgressValue(_window, value))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to set window progress value: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            GC.KeepAlive(this);
+        }
+    }
+
     internal unsafe void StartFrame()
     {
-        if (_window is not null)
-        {
-            GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit | GL.ClearBufferMaskEnum.DepthBufferBit);
-        }
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit | GL.ClearBufferMaskEnum.DepthBufferBit);
     }
 
     internal unsafe void EndFrame()
     {
-        if (_window is not null)
-        {
-            Sdl.GLSwapWindow(_window);
-        }
+        ObjectDisposedException.ThrowIf(_disposedValue, this);
+        Sdl.GLSwapWindow(_window);
     }
 
     private static ulong GetWindowFlags(WindowOptions options)

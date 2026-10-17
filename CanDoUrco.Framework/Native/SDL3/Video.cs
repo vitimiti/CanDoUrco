@@ -16,6 +16,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using CanDoUrco.Framework.Video;
 using CanDoUrco.NativeLibraryLoaderConfigurer;
 
 namespace CanDoUrco.Framework.Native.SDL3;
@@ -45,15 +46,6 @@ internal static unsafe partial class Sdl
     public enum FlashOperation
     {
         UntilFocused = 2,
-    }
-
-    public enum ProgressState
-    {
-        None,
-        Indeterminate,
-        Normal,
-        Paused,
-        Error,
     }
 
     public const uint GLContextProfileCore = 0x0001U;
@@ -93,7 +85,7 @@ internal static unsafe partial class Sdl
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_SetWindowProgressState")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SetWindowProgressState(Window* window, ProgressState state);
+    public static partial bool SetWindowProgressState(Window* window, WindowProgressState state);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_SetWindowProgressValue")]
