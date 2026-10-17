@@ -24,7 +24,7 @@ namespace CanDoUrco.Framework.Native.OpenGL;
     major: 3,
     minor: 3,
     Profile = OpenGLProfile.Core,
-    LoaderMethod = "global::CanDoUrco.Framework.Native.GL.GetProcAddress"
+    LoaderMethod = nameof(GetProcAddress)
 )]
 internal static partial class GL
 {
