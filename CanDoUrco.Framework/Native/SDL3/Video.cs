@@ -1,4 +1,4 @@
-// This is a small testing ground for CanDoUrco.
+// A common framework for the projects and engines of Can Do Urco
 // Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,14 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using CanDoUrco.OpenGL.Generator;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using CanDoUrco.NativeLibraryLoaderConfigurer;
 
-namespace Playground;
+namespace CanDoUrco.Framework.Native.SDL3;
 
-[OpenGL(
-    major: 3,
-    minor: 3,
-    Profile = OpenGLProfile.Core,
-    LoaderMethod = "global::CanDoUrco.Glfw.Utilities.GlfwContextUtilities.GetProcAddress"
-)]
-internal static partial class GL;
+internal static unsafe partial class Sdl
+{
+    [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_GetProcAddress")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void* GLGetProcAddress(byte* proc);
+}
