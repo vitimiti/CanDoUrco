@@ -17,10 +17,17 @@
 // Following https://www.opengl-tutorial.org/
 
 using CanDoUrco.Framework;
+using CanDoUrco.Framework.Utilities;
 
 const string windowTitle = "CanDoUrco Playground";
 
-using var game = new Game(opts => opts.WindowOptions.Title = windowTitle);
-game.UpdateEnd += gameState => game.Window.Title = $"{windowTitle} - {1D / gameState.Delta:F0}FPS";
+ErrorReporter.RunWithErrorReporting(() =>
+{
+    using var game = new Game(opts => opts.WindowOptions.Title = windowTitle);
+    game.UpdateEnd += gameState =>
+        game.Window.Title = $"{windowTitle} - {1D / gameState.Delta:F0}FPS";
 
-game.Run();
+    game.Run();
+
+    throw new Exception("Test exception");
+});
