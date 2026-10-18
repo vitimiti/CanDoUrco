@@ -1,6 +1,4 @@
 <Solution>
-  <Project Path="CanDoUrco.Framework/CanDoUrco.Framework.csproj" />
-  <Project Path="CanDoUrco.NativeLibraryLoaderConfigurer/CanDoUrco.NativeLibraryLoaderConfigurer.csproj" />
-  <Project Path="CanDoUrco.OpenGL.Generator/CanDoUrco.OpenGL.Generator.csproj" />
+  <Project Path="CanDoUrco.Sdl3/CanDoUrco.Sdl3.csproj" />
   <Project Path="Playground/Playground.csproj" />
 </Solution>
