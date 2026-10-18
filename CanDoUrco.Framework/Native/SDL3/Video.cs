@@ -22,13 +22,35 @@ using CanDoUrco.NativeLibraryLoaderConfigurer;
 
 namespace CanDoUrco.Framework.Native.SDL3;
 
-internal static unsafe partial class Sdl
+internal static partial class Sdl
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Window;
+    public sealed class WindowHandle : SafeHandle
+    {
+        public override bool IsInvalid => handle == 0;
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct GLContext;
+        public WindowHandle()
+            : base(invalidHandleValue: 0, ownsHandle: true) => SetHandle(0);
+
+        protected override bool ReleaseHandle()
+        {
+            Sdl.DestroyWindow(handle);
+            return true;
+        }
+    }
+
+    public sealed class GLContextHandle : SafeHandle
+    {
+        public override bool IsInvalid => handle == 0;
+
+        public GLContextHandle()
+            : base(invalidHandleValue: 0, ownsHandle: true) => SetHandle(0);
+
+        protected override bool ReleaseHandle()
+        {
+            Sdl.GLDestroyContext(handle);
+            return true;
+        }
+    }
 
     public const ulong WindowFullscreen = 0x0000_0000_0000_0001UL;
     public const ulong WindowOpengl = 0x0000_0000_0000_0002UL;
@@ -58,7 +80,7 @@ internal static unsafe partial class Sdl
         StringMarshalling = StringMarshalling.Utf8
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial Window* CreateWindow(string title, int w, int h, ulong flags);
+    public static partial WindowHandle CreateWindow(string title, int w, int h, ulong flags);
 
     [SuppressGCTransition]
     [LibraryImport(
@@ -68,7 +90,7 @@ internal static unsafe partial class Sdl
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SetWindowTitle(Window* window, string title);
+    public static partial bool SetWindowTitle(WindowHandle window, string title);
 
     [SuppressGCTransition]
     [LibraryImport(
@@ -78,14 +100,14 @@ internal static unsafe partial class Sdl
         StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial string? GetWindowTitle(Window* window);
+    public static partial string? GetWindowTitle(WindowHandle window);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_SetWindowMouseGrab")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool SetWindowMouseGrab(
-        Window* window,
+        WindowHandle window,
         [MarshalAs(UnmanagedType.I1)] bool grabbed
     );
 
@@ -93,24 +115,27 @@ internal static unsafe partial class Sdl
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_FlashWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool FlashWindow(Window* window, FlashOperation operation);
+    public static partial bool FlashWindow(WindowHandle window, FlashOperation operation);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_SetWindowProgressState")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SetWindowProgressState(Window* window, WindowProgressState state);
+    public static partial bool SetWindowProgressState(
+        WindowHandle window,
+        WindowProgressState state
+    );
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_SetWindowProgressValue")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SetWindowProgressValue(Window* window, float value);
+    public static partial bool SetWindowProgressValue(WindowHandle window, float value);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_DestroyWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void DestroyWindow(Window* window);
+    public static partial void DestroyWindow(nint window);
 
     [SuppressGCTransition]
     [LibraryImport(
@@ -119,7 +144,7 @@ internal static unsafe partial class Sdl
         StringMarshalling = StringMarshalling.Utf8
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void* GLGetProcAddress(string proc);
+    public static partial nint GLGetProcAddress(string proc);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_SetAttribute")]
@@ -130,13 +155,13 @@ internal static unsafe partial class Sdl
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_CreateContext")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial GLContext* GLCreateContext(Window* window);
+    public static partial GLContextHandle GLCreateContext(WindowHandle window);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_MakeCurrent")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool GLMakeCurrent(Window* window, GLContext* context);
+    public static partial bool GLMakeCurrent(WindowHandle window, GLContextHandle context);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_SetSwapInterval")]
@@ -147,11 +172,11 @@ internal static unsafe partial class Sdl
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_SwapWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void GLSwapWindow(Window* window);
+    public static partial void GLSwapWindow(WindowHandle window);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_DestroyContext")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool GLDestroyContext(GLContext* context);
+    public static partial bool GLDestroyContext(nint context);
 }

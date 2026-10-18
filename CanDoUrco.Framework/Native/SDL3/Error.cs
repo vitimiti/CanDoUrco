@@ -21,7 +21,7 @@ using CanDoUrco.NativeLibraryLoaderConfigurer;
 
 namespace CanDoUrco.Framework.Native.SDL3;
 
-internal static unsafe partial class Sdl
+internal static partial class Sdl
 {
     [SuppressGCTransition]
     [LibraryImport(

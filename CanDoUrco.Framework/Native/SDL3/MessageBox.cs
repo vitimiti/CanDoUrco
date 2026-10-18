@@ -35,6 +35,6 @@ internal static unsafe partial class Sdl
         uint flags,
         string title,
         string message,
-        Window* window
+        nint window
     );
 }

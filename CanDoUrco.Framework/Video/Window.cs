@@ -22,12 +22,12 @@ namespace CanDoUrco.Framework.Video;
 
 public sealed class Window : IDisposable
 {
-    private unsafe Sdl.Window* _window;
-    private unsafe Sdl.GLContext* _glContext;
+    private readonly Sdl.WindowHandle _window;
+    private readonly Sdl.GLContextHandle _glContext;
 
     private bool _disposedValue;
 
-    public unsafe string Title
+    public string Title
     {
         get
         {
@@ -41,7 +41,7 @@ public sealed class Window : IDisposable
         }
     }
 
-    internal unsafe Window(WindowOptions options)
+    internal Window(WindowOptions options)
     {
         var flags = GetWindowFlags(options);
         try
@@ -53,7 +53,7 @@ public sealed class Window : IDisposable
                 flags
             );
 
-            if (_window is null)
+            if (_window.IsInvalid)
             {
                 throw new InvalidOperationException(
                     $"Failed to create SDL window: {Sdl.GetError()}."
@@ -72,7 +72,7 @@ public sealed class Window : IDisposable
             }
 
             _glContext = Sdl.GLCreateContext(_window);
-            if (_glContext is null)
+            if (_glContext.IsInvalid)
             {
                 throw new InvalidOperationException(
                     $"Failed to create SDL GL context: {Sdl.GetError()}."
@@ -106,28 +106,20 @@ public sealed class Window : IDisposable
         }
     }
 
-    public unsafe void Dispose()
+    public void Dispose()
     {
         if (_disposedValue)
         {
             return;
         }
-        if (_glContext is not null)
-        {
-            Sdl.GLDestroyContext(_glContext);
-            _glContext = null;
-        }
 
-        if (_window is not null)
-        {
-            Sdl.DestroyWindow(_window);
-            _window = null;
-        }
+        _glContext.Dispose();
+        _window.Dispose();
 
         _disposedValue = true;
     }
 
-    public unsafe void GrabMouse()
+    public void GrabMouse()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         try
@@ -143,7 +135,7 @@ public sealed class Window : IDisposable
         }
     }
 
-    public unsafe void ReleaseMouse()
+    public void ReleaseMouse()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         try
@@ -159,7 +151,7 @@ public sealed class Window : IDisposable
         }
     }
 
-    public unsafe void Flash()
+    public void Flash()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         try
@@ -175,7 +167,7 @@ public sealed class Window : IDisposable
         }
     }
 
-    public unsafe void SetProgressState(WindowProgressState state)
+    public void SetProgressState(WindowProgressState state)
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         try
@@ -193,7 +185,7 @@ public sealed class Window : IDisposable
         }
     }
 
-    public unsafe void SetProgressValue(float value)
+    public void SetProgressValue(float value)
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         try
@@ -211,13 +203,13 @@ public sealed class Window : IDisposable
         }
     }
 
-    internal unsafe void StartFrame()
+    internal void StartFrame()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         GL.Clear(GL.ClearBufferMaskEnum.ColorBufferBit | GL.ClearBufferMaskEnum.DepthBufferBit);
     }
 
-    internal unsafe void EndFrame()
+    internal void EndFrame()
     {
         ObjectDisposedException.ThrowIf(_disposedValue, this);
         Sdl.GLSwapWindow(_window);

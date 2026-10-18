@@ -135,11 +135,11 @@ public static class ErrorReporter
         }
     }
 
-    private static unsafe void ShowErrorDialog(string message)
+    private static void ShowErrorDialog(string message)
     {
         try
         {
-            if (!Sdl.ShowSimpleMessageBox(Sdl.MessageBoxError, "CDU - Error", message, null))
+            if (!Sdl.ShowSimpleMessageBox(Sdl.MessageBoxError, "CDU - Error", message, 0))
             {
                 Console.Error.WriteLine($"Failed to display the fatal error dialog: {message}");
             }
