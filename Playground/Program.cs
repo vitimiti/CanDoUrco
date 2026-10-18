@@ -21,6 +21,6 @@ using CanDoUrco.Framework;
 const string windowTitle = "CanDoUrco Playground";
 
 using var game = new Game(opts => opts.WindowOptions.Title = windowTitle);
-game.UpdateEnd += gameState => game.Window.Title = $"{windowTitle} - {1D / gameState.Delta:F2}FPS";
+game.UpdateEnd += gameState => game.Window.Title = $"{windowTitle} - {1D / gameState.Delta:F0}FPS";
 
 game.Run();
