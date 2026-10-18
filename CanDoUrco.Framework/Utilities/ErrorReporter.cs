@@ -17,13 +17,20 @@
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using CanDoUrco.Framework.Native.SDL3;
+using CanDoUrco.Framework.Options;
 
 namespace CanDoUrco.Framework.Utilities;
 
 public static class ErrorReporter
 {
-    public static int RunWithErrorReporting(Action action, string? contactDetails = null)
+    public static int RunWithErrorReporting(
+        Action action,
+        Action<ErrorReporterOptions>? configureOptions = null
+    )
     {
+        var options = new ErrorReporterOptions();
+        configureOptions?.Invoke(options);
+
         try
         {
             action();
@@ -36,7 +43,7 @@ public static class ErrorReporter
             List<string> logDirectories;
             try
             {
-                logDirectories = GetErrorLogDirectories();
+                logDirectories = GetErrorLogDirectories(options);
             }
             catch (Exception reportingException)
             {
@@ -47,7 +54,7 @@ public static class ErrorReporter
             var usedFallback = false;
             foreach (var logDirectory in logDirectories)
             {
-                var candidatePath = Path.Combine(logDirectory, "CanDoUrco.Error.log");
+                var candidatePath = Path.Combine(logDirectory, "Error.log");
                 try
                 {
                     Directory.CreateDirectory(logDirectory);
@@ -65,7 +72,7 @@ public static class ErrorReporter
                         errorLogFile.WriteLine(errorLogMessage.ToString());
                     }
 
-                    TrimErrorLog(candidatePath);
+                    TrimErrorLog(candidatePath, options);
                     errorLogFilePath = candidatePath;
                     break;
                 }
@@ -110,17 +117,17 @@ public static class ErrorReporter
                 );
 
                 popupErrorMessage.AppendLine(
-                    string.IsNullOrWhiteSpace(contactDetails)
+                    string.IsNullOrWhiteSpace(options.ContactDetails)
                         ? "Please send the error log to the developers."
-                        : $"Please send the error log to the developers. Contact details: {contactDetails}"
+                        : $"Please send the error log to the developers. Contact details: {options.ContactDetails}"
                 );
             }
             else
             {
                 popupErrorMessage.AppendLine("Please report this error to the developers.");
-                if (!string.IsNullOrWhiteSpace(contactDetails))
+                if (!string.IsNullOrWhiteSpace(options.ContactDetails))
                 {
-                    popupErrorMessage.AppendLine($"Contact details: {contactDetails}");
+                    popupErrorMessage.AppendLine($"Contact details: {options.ContactDetails}");
                 }
             }
 
@@ -170,14 +177,15 @@ public static class ErrorReporter
         }
     }
 
-    private static List<string> GetErrorLogDirectories()
+    private static List<string> GetErrorLogDirectories(ErrorReporterOptions options)
     {
+        const string fallbackDirectoryName = "CanDoUrco";
         string? preferredDirectory = null;
         if (OperatingSystem.IsWindows())
         {
             preferredDirectory = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "CanDoUrco",
+                options.LogDirectoryName ?? fallbackDirectoryName,
                 "Logs"
             );
         }
@@ -187,7 +195,7 @@ public static class ErrorReporter
                 Environment.GetFolderPath(Environment.SpecialFolder.Personal),
                 "Library",
                 "Logs",
-                "CanDoUrco"
+                options.LogDirectoryName ?? fallbackDirectoryName
             );
         }
         else if (OperatingSystem.IsLinux())
@@ -202,7 +210,11 @@ public static class ErrorReporter
                 );
             }
 
-            preferredDirectory = Path.Combine(xdgStateHome, "CanDoUrco", "Logs");
+            preferredDirectory = Path.Combine(
+                xdgStateHome,
+                options.LogDirectoryName ?? fallbackDirectoryName,
+                "Logs"
+            );
         }
 
         var directories = new List<string>();
@@ -211,7 +223,11 @@ public static class ErrorReporter
             directories.Add(preferredDirectory);
         }
 
-        var fallbackDirectory = Path.Combine(Path.GetTempPath(), "CanDoUrco", "Logs");
+        var fallbackDirectory = Path.Combine(
+            Path.GetTempPath(),
+            options.LogDirectoryName ?? fallbackDirectoryName,
+            "Logs"
+        );
         if (
             Path.IsPathRooted(fallbackDirectory)
             && !directories.Contains(fallbackDirectory, StringComparer.Ordinal)
@@ -223,14 +239,14 @@ public static class ErrorReporter
         return directories;
     }
 
-    private static void TrimErrorLog(string errorLogFilePath)
+    private static void TrimErrorLog(string errorLogFilePath, ErrorReporterOptions options)
     {
-        var lines = new Queue<string>(10000);
+        var lines = new Queue<string>(options.MaxLogLines);
         var exceededLineLimit = false;
         foreach (var line in File.ReadLines(errorLogFilePath))
         {
             lines.Enqueue(line);
-            if (lines.Count > 10000)
+            if (lines.Count > options.MaxLogLines)
             {
                 lines.Dequeue();
                 exceededLineLimit = true;
