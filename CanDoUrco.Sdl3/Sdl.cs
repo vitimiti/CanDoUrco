@@ -14,11 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace CanDoUrco.Sdl3;
 
+[SuppressMessage(
+    "Interoperability",
+    "CA1401:P/Invokes should not be visible",
+    Justification = "SDL3 P/Invokes are intentionally public for interop purposes. Another library should consume this code."
+)]
 public static partial class Sdl
 {
     private const string DllName = "SDL3";
