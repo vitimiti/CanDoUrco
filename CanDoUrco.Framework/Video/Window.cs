@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Framework.Native.OpenGL;
 using CanDoUrco.Framework.Native.SDL3;
 using CanDoUrco.Framework.Options;
@@ -33,43 +32,22 @@ public sealed class Window : IDisposable
         get
         {
             ObjectDisposedException.ThrowIf(_disposedValue, this);
-            return Utf8StringMarshaller.ConvertToManaged(Sdl.GetWindowTitle(_window))
-                ?? string.Empty;
+            return Sdl.GetWindowTitle(_window) ?? string.Empty;
         }
         set
         {
             ObjectDisposedException.ThrowIf(_disposedValue, this);
-            var marshaller = new Utf8StringMarshaller.ManagedToUnmanagedIn();
-            try
-            {
-                marshaller.FromManaged(
-                    value,
-                    new byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]
-                );
-
-                Sdl.SetWindowTitle(_window, marshaller.ToUnmanaged());
-            }
-            finally
-            {
-                marshaller.Free();
-                GC.KeepAlive(this);
-            }
+            Sdl.SetWindowTitle(_window, value);
         }
     }
 
     internal unsafe Window(WindowOptions options)
     {
         var flags = GetWindowFlags(options);
-        var marshaller = new Utf8StringMarshaller.ManagedToUnmanagedIn();
         try
         {
-            marshaller.FromManaged(
-                options.Title,
-                new byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]
-            );
-
             _window = Sdl.CreateWindow(
-                marshaller.ToUnmanaged(),
+                options.Title,
                 options.Size.Width,
                 options.Size.Height,
                 flags
@@ -78,7 +56,7 @@ public sealed class Window : IDisposable
             if (_window is null)
             {
                 throw new InvalidOperationException(
-                    $"Failed to create SDL window: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    $"Failed to create SDL window: {Sdl.GetError()}."
                 );
             }
 
@@ -89,7 +67,7 @@ public sealed class Window : IDisposable
             )
             {
                 throw new InvalidOperationException(
-                    $"Failed to set SDL GL attributes: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    $"Failed to set SDL GL attributes: {Sdl.GetError()}."
                 );
             }
 
@@ -97,21 +75,21 @@ public sealed class Window : IDisposable
             if (_glContext is null)
             {
                 throw new InvalidOperationException(
-                    $"Failed to create SDL GL context: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    $"Failed to create SDL GL context: {Sdl.GetError()}."
                 );
             }
 
             if (!Sdl.GLMakeCurrent(_window, _glContext))
             {
                 throw new InvalidOperationException(
-                    $"Failed to make SDL GL context current: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    $"Failed to make SDL GL context current: {Sdl.GetError()}."
                 );
             }
 
             if (!Sdl.GLSetSwapInterval((int)options.SwapInterval))
             {
                 throw new InvalidOperationException(
-                    $"Failed to set SDL GL swap interval: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    $"Failed to set SDL GL swap interval: {Sdl.GetError()}."
                 );
             }
 
@@ -124,7 +102,6 @@ public sealed class Window : IDisposable
         }
         finally
         {
-            marshaller.Free();
             GC.KeepAlive(this);
         }
     }
@@ -157,9 +134,7 @@ public sealed class Window : IDisposable
         {
             if (!Sdl.SetWindowMouseGrab(_window, true))
             {
-                throw new InvalidOperationException(
-                    $"Failed to grab mouse: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
-                );
+                throw new InvalidOperationException($"Failed to grab mouse: {Sdl.GetError()}.");
             }
         }
         finally
@@ -175,9 +150,7 @@ public sealed class Window : IDisposable
         {
             if (!Sdl.SetWindowMouseGrab(_window, false))
             {
-                throw new InvalidOperationException(
-                    $"Failed to release mouse: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
-                );
+                throw new InvalidOperationException($"Failed to release mouse: {Sdl.GetError()}.");
             }
         }
         finally
@@ -193,9 +166,7 @@ public sealed class Window : IDisposable
         {
             if (!Sdl.FlashWindow(_window, Sdl.FlashOperation.UntilFocused))
             {
-                throw new InvalidOperationException(
-                    $"Failed to flash window: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
-                );
+                throw new InvalidOperationException($"Failed to flash window: {Sdl.GetError()}.");
             }
         }
         finally
@@ -212,7 +183,7 @@ public sealed class Window : IDisposable
             if (!Sdl.SetWindowProgressState(_window, state))
             {
                 throw new InvalidOperationException(
-                    $"Failed to set window progress state: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    $"Failed to set window progress state: {Sdl.GetError()}."
                 );
             }
         }
@@ -230,7 +201,7 @@ public sealed class Window : IDisposable
             if (!Sdl.SetWindowProgressValue(_window, value))
             {
                 throw new InvalidOperationException(
-                    $"Failed to set window progress value: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    $"Failed to set window progress value: {Sdl.GetError()}."
                 );
             }
         }

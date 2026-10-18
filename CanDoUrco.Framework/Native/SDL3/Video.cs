@@ -16,6 +16,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using CanDoUrco.Framework.Native.CustomMarshallers;
 using CanDoUrco.Framework.Video;
 using CanDoUrco.NativeLibraryLoaderConfigurer;
 
@@ -51,20 +52,33 @@ internal static unsafe partial class Sdl
     public const uint GLContextProfileCore = 0x0001U;
 
     [SuppressGCTransition]
-    [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_CreateWindow")]
+    [LibraryImport(
+        CommonNativeLibraryLoader.Sdl3,
+        EntryPoint = "SDL_CreateWindow",
+        StringMarshalling = StringMarshalling.Utf8
+    )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial Window* CreateWindow(byte* title, int w, int h, ulong flags);
+    public static partial Window* CreateWindow(string title, int w, int h, ulong flags);
 
     [SuppressGCTransition]
-    [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_SetWindowTitle")]
+    [LibraryImport(
+        CommonNativeLibraryLoader.Sdl3,
+        EntryPoint = "SDL_SetWindowTitle",
+        StringMarshalling = StringMarshalling.Utf8
+    )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SetWindowTitle(Window* window, byte* title);
+    public static partial bool SetWindowTitle(Window* window, string title);
 
     [SuppressGCTransition]
-    [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GetWindowTitle")]
+    [LibraryImport(
+        CommonNativeLibraryLoader.Sdl3,
+        EntryPoint = "SDL_GetWindowTitle",
+        StringMarshalling = StringMarshalling.Custom,
+        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
+    )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial byte* GetWindowTitle(Window* window);
+    public static partial string? GetWindowTitle(Window* window);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_SetWindowMouseGrab")]
@@ -99,9 +113,13 @@ internal static unsafe partial class Sdl
     public static partial void DestroyWindow(Window* window);
 
     [SuppressGCTransition]
-    [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_GetProcAddress")]
+    [LibraryImport(
+        CommonNativeLibraryLoader.Sdl3,
+        EntryPoint = "SDL_GL_GetProcAddress",
+        StringMarshalling = StringMarshalling.Utf8
+    )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial void* GLGetProcAddress(byte* proc);
+    public static partial void* GLGetProcAddress(string proc);
 
     [SuppressGCTransition]
     [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GL_SetAttribute")]

@@ -29,8 +29,6 @@ ErrorReporter.RunWithErrorReporting(
             game.Window.Title = $"{windowTitle} - {1D / gameState.Delta:F0}FPS";
 
         game.Run();
-
-        throw new Exception("Test exception");
     },
     opts => opts.LogDirectoryName = "Playground"
 );

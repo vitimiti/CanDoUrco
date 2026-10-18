@@ -16,6 +16,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using CanDoUrco.Framework.Native.CustomMarshallers;
 using CanDoUrco.NativeLibraryLoaderConfigurer;
 
 namespace CanDoUrco.Framework.Native.SDL3;
@@ -23,7 +24,12 @@ namespace CanDoUrco.Framework.Native.SDL3;
 internal static unsafe partial class Sdl
 {
     [SuppressGCTransition]
-    [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_GetError")]
+    [LibraryImport(
+        CommonNativeLibraryLoader.Sdl3,
+        EntryPoint = "SDL_GetError",
+        StringMarshalling = StringMarshalling.Custom,
+        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
+    )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    public static partial byte* GetError();
+    public static partial string GetError();
 }

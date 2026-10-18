@@ -24,13 +24,17 @@ internal static unsafe partial class Sdl
 {
     public const uint MessageBoxError = 0x0000_0010U;
 
-    [LibraryImport(CommonNativeLibraryLoader.Sdl3, EntryPoint = "SDL_ShowSimpleMessageBox")]
+    [LibraryImport(
+        CommonNativeLibraryLoader.Sdl3,
+        EntryPoint = "SDL_ShowSimpleMessageBox",
+        StringMarshalling = StringMarshalling.Utf8
+    )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool ShowSimpleMessageBox(
         uint flags,
-        byte* title,
-        byte* message,
+        string title,
+        string message,
         Window* window
     );
 }

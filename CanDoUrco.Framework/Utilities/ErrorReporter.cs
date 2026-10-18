@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using CanDoUrco.Framework.Native.SDL3;
 using CanDoUrco.Framework.Options;
@@ -138,28 +137,9 @@ public static class ErrorReporter
 
     private static unsafe void ShowErrorDialog(string message)
     {
-        var titleMarshaller = new Utf8StringMarshaller.ManagedToUnmanagedIn();
-        var messageMarshaller = new Utf8StringMarshaller.ManagedToUnmanagedIn();
         try
         {
-            titleMarshaller.FromManaged(
-                "CDU - Error",
-                new byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]
-            );
-
-            messageMarshaller.FromManaged(
-                message,
-                new byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize]
-            );
-
-            if (
-                !Sdl.ShowSimpleMessageBox(
-                    Sdl.MessageBoxError,
-                    titleMarshaller.ToUnmanaged(),
-                    messageMarshaller.ToUnmanaged(),
-                    null
-                )
-            )
+            if (!Sdl.ShowSimpleMessageBox(Sdl.MessageBoxError, "CDU - Error", message, null))
             {
                 Console.Error.WriteLine($"Failed to display the fatal error dialog: {message}");
             }
@@ -169,11 +149,6 @@ public static class ErrorReporter
             Console.Error.WriteLine(
                 $"Failed to display the fatal error dialog: {reportingException}"
             );
-        }
-        finally
-        {
-            titleMarshaller.Free();
-            messageMarshaller.Free();
         }
     }
 

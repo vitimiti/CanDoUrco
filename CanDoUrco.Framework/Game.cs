@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Framework.Native.SDL3;
 using CanDoUrco.Framework.Options;
 using CanDoUrco.Framework.Time;
@@ -51,9 +50,7 @@ public sealed class Game : IDisposable
         {
             if (!Sdl.Init(Sdl.InitVideo))
             {
-                throw new InvalidOperationException(
-                    $"Failed to initialize SDL: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
-                );
+                throw new InvalidOperationException($"Failed to initialize SDL: {Sdl.GetError()}.");
             }
 
             Window = new Window(gameOptions.WindowOptions);

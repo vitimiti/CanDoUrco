@@ -14,29 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Text;
 using CanDoUrco.Framework.Native.SDL3;
 using CanDoUrco.OpenGL.Generator;
 
 namespace CanDoUrco.Framework.Native.OpenGL;
 
-[OpenGL(
-    major: 3,
-    minor: 3,
-    Profile = OpenGLProfile.Core,
-    LoaderMethod = nameof(GetProcAddress)
-)]
+[OpenGL(major: 3, minor: 3, Profile = OpenGLProfile.Core, LoaderMethod = nameof(GetProcAddress))]
 internal static partial class GL
 {
-    private static unsafe nint GetProcAddress(string procName)
-    {
-        // 256 bytes should be enough for the procedure name
-        // This is still safe thanks to Span ensuring we don't write out of bounds
-        var buffer = stackalloc byte[256];
-        var bytesWritten = Encoding.UTF8.GetBytes(procName, new Span<byte>(buffer, 255));
-
-        // The slot 256 is never written, so we can write the null terminator safely
-        buffer[bytesWritten] = 0;
-        return (nint)Sdl.GLGetProcAddress(buffer);
-    }
+    private static unsafe nint GetProcAddress(string procName) =>
+        (nint)Sdl.GLGetProcAddress(procName);
 }
