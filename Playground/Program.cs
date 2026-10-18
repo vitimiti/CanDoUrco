@@ -16,19 +16,4 @@
 
 // Following https://www.opengl-tutorial.org/
 
-using CanDoUrco.Framework;
-using CanDoUrco.Framework.Utilities;
-
-const string windowTitle = "CanDoUrco Playground";
-
-ErrorReporter.RunWithErrorReporting(
-    () =>
-    {
-        using var game = new Game(opts => opts.WindowOptions.Title = windowTitle);
-        game.UpdateEnd += gameState =>
-            game.Window.Title = $"{windowTitle} - {1D / gameState.Delta:F0}FPS";
-
-        game.Run();
-    },
-    opts => opts.LogDirectoryName = "Playground"
-);
+Console.WriteLine("Hello, CanDoUrco Playground!");
