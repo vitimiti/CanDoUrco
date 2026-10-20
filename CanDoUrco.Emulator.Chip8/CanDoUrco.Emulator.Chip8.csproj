@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CanDoUrco.Emulator.Abstractions\CanDoUrco.Emulator.Abstractions.csproj" />
+  </ItemGroup>
 </Project>
