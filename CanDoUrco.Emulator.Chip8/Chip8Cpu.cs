@@ -26,6 +26,7 @@ public struct Chip8Cpu
     public ushort ProgramCounter;
     public ushort I;
     public Chip8Stack Stack;
+    public byte StackPointer;
     public byte DelayTimer;
     public byte SoundTimer;
     public Chip8Register V;
