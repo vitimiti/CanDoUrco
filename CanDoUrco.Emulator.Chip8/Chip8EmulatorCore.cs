@@ -19,7 +19,7 @@ using CanDoUrco.Emulator.Abstractions;
 
 namespace CanDoUrco.Emulator.Chip8;
 
-public sealed class Chip8EmulatorCore : IEmulatorCore
+public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 {
     // csharpier-ignore
     private static readonly byte[] Fonts =
@@ -42,13 +42,24 @@ public sealed class Chip8EmulatorCore : IEmulatorCore
         0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     ];
 
+    private readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] _primaryTable;
+    private readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] _mathSubTable;
+    private readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] _miscSubTable;
+
     private Chip8Cpu _cpu;
 
     public Chip8EmulatorCore(Chip8Options options)
     {
         _cpu = new Chip8Cpu();
+
         var ramSpan = MemoryMarshal.CreateSpan(ref _cpu.Ram[0], 0x1000);
         Fonts.CopyTo(ramSpan);
+
+        _primaryTable = new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
+        _mathSubTable = new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
+        _miscSubTable = new delegate* unmanaged<Chip8Cpu, ushort, void>[0xFF];
+        InitializeTables();
+
         _cpu.ProgramCounter = 0x0200;
     }
 
@@ -56,4 +67,34 @@ public sealed class Chip8EmulatorCore : IEmulatorCore
     {
         throw new NotImplementedException();
     }
+
+    private void InitializeTables()
+    {
+        // Fill in what's not used with the UnknownOpCode handler
+        for (var i = 0; i < 0x10; i++)
+        {
+            if (_primaryTable[i] is null)
+            {
+                _primaryTable[i] = &UnknownOpCode;
+            }
+
+            if (_mathSubTable[i] is null)
+            {
+                _mathSubTable[i] = &UnknownOpCode;
+            }
+        }
+
+        // Fill in what's not used with the UnknownOpCode handler
+        for (var i = 0; i < 0xFF; i++)
+        {
+            if (_miscSubTable[i] is null)
+            {
+                _miscSubTable[i] = &UnknownOpCode;
+            }
+        }
+    }
+
+    [UnmanagedCallersOnly]
+    private static void UnknownOpCode(Chip8Cpu cpu, ushort opcode) =>
+        throw new NotImplementedException($"Unknown opcode: 0x{opcode:X4}");
 }
