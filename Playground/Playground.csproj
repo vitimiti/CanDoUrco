@@ -5,7 +5,4 @@
     <PublishTrimmed>true</PublishTrimmed>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="../CanDoUrco.Sdl3/CanDoUrco.Sdl3.csproj" />
-  </ItemGroup>
 </Project>
