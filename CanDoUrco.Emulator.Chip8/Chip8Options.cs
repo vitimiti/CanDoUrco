@@ -21,6 +21,8 @@ namespace CanDoUrco.Emulator.Chip8;
 public sealed class Chip8Options
 {
     public bool LargeScreen { get; set; }
-    public Color BackgroundColor { get; set; }
-    public Color ForegroundColor { get; set; }
+    public Color BackgroundColor { get; set; } = Color.Black;
+    public Color ForegroundColor { get; set; } = Color.White;
+    public uint InstructionsHertz { get; set; } = 500;
+    public uint DisplayHertz { get; set; } = 60;
 }
