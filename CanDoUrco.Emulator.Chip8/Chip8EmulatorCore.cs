@@ -14,9 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using CanDoUrco.Emulator.Abstractions;
+
 namespace CanDoUrco.Emulator.Chip8;
 
-public class Chip8EmulatorCore : CanDoUrco.Emulator.Abstractions.IEmulatorCore
+public class Chip8EmulatorCore : IEmulatorCore
 {
     public void TickFrame(long currentTimestamp)
     {
