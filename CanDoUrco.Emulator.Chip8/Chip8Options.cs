@@ -25,4 +25,5 @@ public sealed class Chip8Options
     public Color ForegroundColor { get; set; } = Color.White;
     public uint InstructionsHertz { get; set; } = 500;
     public uint DisplayHertz { get; set; } = 60;
+    public bool BitShiftQuirks { get; set; }
 }

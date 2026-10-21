@@ -58,7 +58,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
     public Chip8EmulatorCore(Chip8Options options)
     {
-        _cpu = new Chip8Cpu();
+        _cpu = new Chip8Cpu { BitShiftQuirks = options.BitShiftQuirks };
 
         var ramSpan = MemoryMarshal.CreateSpan(ref _cpu.Ram[0], 0x1000);
         Fonts.CopyTo(ramSpan);
@@ -121,7 +121,9 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         MathSubTable[0x3] = &Opcode8XY3XorRegisters;
         MathSubTable[0x4] = &Opcode8XY4AddRegisters;
         MathSubTable[0x5] = &Opcode8XY5SubRegisters;
+        MathSubTable[0x6] = &Opcode8XY6ShiftRight;
         MathSubTable[0x7] = &Opcode8XY7SubRegisters;
+        MathSubTable[0xE] = &Opcode8XYEShiftLeft;
 
         PrimaryTable[0x9] = &Opcode9XY0SkipIfRegistersNotEqual;
 
@@ -334,8 +336,19 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     {
         var x = GetX(opcode);
         var y = GetY(opcode);
-        cpu.V[0xF] = (byte)(cpu.V[x] > cpu.V[y] ? 1 : 0);
+        cpu.V[0xF] = (byte)(cpu.V[x] >= cpu.V[y] ? 1 : 0);
         cpu.V[x] -= cpu.V[y];
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode8XY6ShiftRight(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var source = cpu.BitShiftQuirks ? x : GetY(opcode);
+        var shiftedValue = cpu.V[source];
+        var shiftedOutBit = (byte)(shiftedValue & 0x1);
+        cpu.V[x] = (byte)(shiftedValue >>> 1);
+        cpu.V[0xF] = shiftedOutBit;
     }
 
     [UnmanagedCallersOnly]
@@ -345,5 +358,16 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var y = GetY(opcode);
         cpu.V[0xF] = (byte)(cpu.V[y] > cpu.V[x] ? 1 : 0);
         cpu.V[x] = (byte)(cpu.V[y] - cpu.V[x]);
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode8XYEShiftLeft(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var source = cpu.BitShiftQuirks ? x : GetY(opcode);
+        var shiftedValue = cpu.V[source];
+        var shiftedOutBit = (byte)((shiftedValue & 0x80) >> 7);
+        cpu.V[x] = (byte)(shiftedValue << 1);
+        cpu.V[0xF] = shiftedOutBit;
     }
 }
