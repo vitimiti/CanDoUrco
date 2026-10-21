@@ -42,9 +42,17 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     ];
 
-    private readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] _primaryTable;
-    private readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] _mathSubTable;
-    private readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] _miscSubTable;
+    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] PrimaryTable =
+        new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
+
+    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] ZeroTable =
+        new delegate* unmanaged<Chip8Cpu, ushort, void>[0xEE];
+
+    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] MathSubTable =
+        new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
+
+    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] MiscSubTable =
+        new delegate* unmanaged<Chip8Cpu, ushort, void>[0xFF];
 
     private Chip8Cpu _cpu;
 
@@ -55,9 +63,6 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var ramSpan = MemoryMarshal.CreateSpan(ref _cpu.Ram[0], 0x1000);
         Fonts.CopyTo(ramSpan);
 
-        _primaryTable = new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
-        _mathSubTable = new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
-        _miscSubTable = new delegate* unmanaged<Chip8Cpu, ushort, void>[0xFF];
         InitializeTables();
 
         _cpu.ProgramCounter = 0x0200;
@@ -94,31 +99,39 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
             { "VF", _cpu.V[0xF] },
         };
 
-    private void InitializeTables()
+    private static void InitializeTables()
     {
-        _primaryTable[0x0] = &Opcode00E0ClearScreen;
-        _primaryTable[0x1] = &Opcode1NNNJump;
+        PrimaryTable[0x0] = &RerouteOpcode0;
+        ZeroTable[0xE0] = &Opcode00E0ClearScreen;
+        PrimaryTable[0x1] = &Opcode1NNNJump;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
         {
-            if (_primaryTable[i] is null)
+            if (PrimaryTable[i] is null)
             {
-                _primaryTable[i] = &UnknownOpCode;
+                PrimaryTable[i] = &UnknownOpCode;
             }
 
-            if (_mathSubTable[i] is null)
+            if (MathSubTable[i] is null)
             {
-                _mathSubTable[i] = &UnknownOpCode;
+                MathSubTable[i] = &UnknownOpCode;
             }
         }
 
-        // Fill in what's not used with the UnknownOpCode handler
+        for (var i = 0; i < 0xEE; i++)
+        {
+            if (ZeroTable[i] is null)
+            {
+                ZeroTable[i] = &UnknownOpCode;
+            }
+        }
+
         for (var i = 0; i < 0xFF; i++)
         {
-            if (_miscSubTable[i] is null)
+            if (MiscSubTable[i] is null)
             {
-                _miscSubTable[i] = &UnknownOpCode;
+                MiscSubTable[i] = &UnknownOpCode;
             }
         }
     }
@@ -126,6 +139,13 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     [UnmanagedCallersOnly]
     private static void UnknownOpCode(Chip8Cpu cpu, ushort opcode) =>
         throw new NotImplementedException($"Unknown opcode: 0x{opcode:X4}");
+
+    [UnmanagedCallersOnly]
+    private static void RerouteOpcode0(Chip8Cpu cpu, ushort opcode)
+    {
+        var innerCode = (ushort)(opcode & 0x00FF);
+        ZeroTable[innerCode](cpu, opcode);
+    }
 
     [UnmanagedCallersOnly]
     private static void Opcode00E0ClearScreen(Chip8Cpu cpu, ushort opcode)
