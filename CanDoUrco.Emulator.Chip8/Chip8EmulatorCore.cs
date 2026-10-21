@@ -110,6 +110,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         PrimaryTable[0x3] = &Opcode3XNNSkipIfEqual;
         PrimaryTable[0x4] = &Opcode4XNNSkipIfNotEqual;
         PrimaryTable[0x5] = &Opcode5XY0SkipIfRegistersEqual;
+        PrimaryTable[0x9] = &Opcode9XY0SkipIfRegistersNotEqual;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -227,6 +228,17 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var x = GetX(opcode);
         var y = GetY(opcode);
         if (cpu.V[x] == cpu.V[y])
+        {
+            cpu.ProgramCounter += 2;
+        }
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode9XY0SkipIfRegistersNotEqual(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var y = GetY(opcode);
+        if (cpu.V[x] != cpu.V[y])
         {
             cpu.ProgramCounter += 2;
         }
