@@ -46,10 +46,10 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
 
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] ZeroTable =
-        new delegate* unmanaged<Chip8Cpu, ushort, void>[0xEE];
+        new delegate* unmanaged<Chip8Cpu, ushort, void>[0xEF];
 
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] MathSubTable =
-        new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
+        new delegate* unmanaged<Chip8Cpu, ushort, void>[0xF];
 
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] MiscSubTable =
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0xFF];
@@ -134,18 +134,21 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
             {
                 PrimaryTable[i] = &UnknownOpCode;
             }
-
-            if (MathSubTable[i] is null)
-            {
-                MathSubTable[i] = &UnknownOpCode;
-            }
         }
 
-        for (var i = 0; i < 0xEE; i++)
+        for (var i = 0; i < 0xEF; i++)
         {
             if (ZeroTable[i] is null)
             {
                 ZeroTable[i] = &UnknownOpCode;
+            }
+        }
+
+        for (var i = 0; i < 0xF; i++)
+        {
+            if (MathSubTable[i] is null)
+            {
+                MathSubTable[i] = &UnknownOpCode;
             }
         }
 
