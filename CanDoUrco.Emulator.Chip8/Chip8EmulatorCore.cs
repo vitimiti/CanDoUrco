@@ -117,6 +117,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
         MathSubTable[0x0] = &Opcode8XY0SetRegister;
         MathSubTable[0x1] = &Opcode8XY1OrRegisters;
+        MathSubTable[0x2] = &Opcode8XY2AndRegisters;
 
         PrimaryTable[0x9] = &Opcode9XY0SkipIfRegistersNotEqual;
 
@@ -296,5 +297,13 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var x = GetX(opcode);
         var y = GetY(opcode);
         cpu.V[x] |= cpu.V[y];
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode8XY2AndRegisters(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var y = GetY(opcode);
+        cpu.V[x] &= cpu.V[y];
     }
 }
