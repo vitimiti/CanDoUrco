@@ -106,6 +106,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         ZeroTable[0xEE] = &Opcode00EEReturn;
 
         PrimaryTable[0x1] = &Opcode1NNNJump;
+        PrimaryTable[0x2] = &Opcode2NNNCall;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -138,6 +139,10 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         }
     }
 
+    private static ushort GetNNN(ushort opcode) => (ushort)(opcode & 0x0FFF);
+
+    private static ushort GetNN(ushort opcode) => (ushort)(opcode & 0x00FF);
+
     [UnmanagedCallersOnly]
     private static void UnknownOpCode(Chip8Cpu cpu, ushort opcode) =>
         throw new NotImplementedException($"Unknown opcode: 0x{opcode:X4}");
@@ -145,8 +150,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     [UnmanagedCallersOnly]
     private static void RerouteOpcode0(Chip8Cpu cpu, ushort opcode)
     {
-        var innerCode = (ushort)(opcode & 0x00FF);
-        ZeroTable[innerCode](cpu, opcode);
+        var nn = GetNN(opcode);
+        ZeroTable[nn](cpu, opcode);
     }
 
     [UnmanagedCallersOnly]
@@ -165,14 +170,26 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
             throw new InvalidOperationException("Stack underflow");
         }
 
-        cpu.ProgramCounter = cpu.Stack[cpu.StackPointer];
-        cpu.StackPointer--;
+        cpu.ProgramCounter = cpu.Stack[--cpu.StackPointer];
     }
 
     [UnmanagedCallersOnly]
     private static void Opcode1NNNJump(Chip8Cpu cpu, ushort opcode)
     {
-        var nnn = (ushort)(opcode & 0x0FFF);
+        var nnn = GetNNN(opcode);
+        cpu.ProgramCounter = nnn;
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode2NNNCall(Chip8Cpu cpu, ushort opcode)
+    {
+        if (cpu.StackPointer == 0xF)
+        {
+            throw new InvalidOperationException("Stack overflow");
+        }
+
+        var nnn = GetNNN(opcode);
+        cpu.Stack[++cpu.StackPointer] = cpu.ProgramCounter;
         cpu.ProgramCounter = nnn;
     }
 }
