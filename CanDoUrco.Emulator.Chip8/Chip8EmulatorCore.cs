@@ -102,6 +102,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     private static void InitializeTables()
     {
         PrimaryTable[0x0] = &RerouteOpcode0;
+
         ZeroTable[0xE0] = &Opcode00E0ClearScreen;
         ZeroTable[0xEE] = &Opcode00EEReturn;
 
@@ -111,6 +112,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         PrimaryTable[0x4] = &Opcode4XNNSkipIfNotEqual;
         PrimaryTable[0x5] = &Opcode5XY0SkipIfRegistersEqual;
         PrimaryTable[0x6] = &Opcode6XNNSetRegister;
+        PrimaryTable[0x7] = &Opcode7XNNAddToRegister;
         PrimaryTable[0x9] = &Opcode9XY0SkipIfRegistersNotEqual;
 
         // Fill in what's not used with the UnknownOpCode handler
@@ -253,5 +255,16 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var x = GetX(opcode);
         var nn = GetNNByte(opcode);
         cpu.V[x] = nn;
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode7XNNAddToRegister(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var nn = GetNNByte(opcode);
+        unchecked
+        {
+            cpu.V[x] += nn;
+        }
     }
 }
