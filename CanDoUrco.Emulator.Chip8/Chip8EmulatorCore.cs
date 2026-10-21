@@ -96,7 +96,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
     private void InitializeTables()
     {
-        _primaryTable[0x00E0] = &Opcode00E0ClearScreen;
+        _primaryTable[0x0] = &Opcode00E0ClearScreen;
+        _primaryTable[0x1] = &Opcode1NNNJump;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -132,5 +133,12 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var displaySpan = MemoryMarshal.CreateSpan(ref cpu.Display[0], 128 * 64);
         displaySpan.Clear();
         cpu.ProgramCounter += 2;
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode1NNNJump(Chip8Cpu cpu, ushort opcode)
+    {
+        var nnn = (ushort)(opcode & 0x0FFF);
+        cpu.ProgramCounter = nnn;
     }
 }
