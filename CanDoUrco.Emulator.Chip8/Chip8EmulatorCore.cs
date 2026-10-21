@@ -107,6 +107,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
         PrimaryTable[0x1] = &Opcode1NNNJump;
         PrimaryTable[0x2] = &Opcode2NNNCall;
+        PrimaryTable[0x3] = &Opcode3XNNSkipIfEqual;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -143,6 +144,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
     private static ushort GetNN(ushort opcode) => (ushort)(opcode & 0x00FF);
 
+    private static byte GetX(ushort opcode) => (byte)((opcode & 0x0F00) >> 8);
+
     [UnmanagedCallersOnly]
     private static void UnknownOpCode(Chip8Cpu cpu, ushort opcode) =>
         throw new NotImplementedException($"Unknown opcode: 0x{opcode:X4}");
@@ -159,7 +162,6 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     {
         var displaySpan = MemoryMarshal.CreateSpan(ref cpu.Display[0], 128 * 64);
         displaySpan.Clear();
-        cpu.ProgramCounter += 2;
     }
 
     [UnmanagedCallersOnly]
@@ -191,5 +193,16 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var nnn = GetNNN(opcode);
         cpu.Stack[++cpu.StackPointer] = cpu.ProgramCounter;
         cpu.ProgramCounter = nnn;
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode3XNNSkipIfEqual(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var nn = GetNN(opcode);
+        if (cpu.V[x] == nn)
+        {
+            cpu.ProgramCounter += 2;
+        }
     }
 }
