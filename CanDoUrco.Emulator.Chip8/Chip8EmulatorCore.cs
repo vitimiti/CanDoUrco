@@ -113,6 +113,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         PrimaryTable[0x5] = &Opcode5XY0SkipIfRegistersEqual;
         PrimaryTable[0x6] = &Opcode6XNNSetRegister;
         PrimaryTable[0x7] = &Opcode7XNNAddToRegister;
+        PrimaryTable[0x8] = &RerouteOpcode8;
+
         PrimaryTable[0x9] = &Opcode9XY0SkipIfRegistersNotEqual;
 
         // Fill in what's not used with the UnknownOpCode handler
@@ -151,6 +153,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     private static ushort GetNN(ushort opcode) => (ushort)(opcode & 0x00FF);
 
     private static byte GetNNByte(ushort opcode) => (byte)(opcode & 0x00FF);
+
+    private static byte GetN(ushort opcode) => (byte)(opcode & 0x000F);
 
     private static byte GetX(ushort opcode) => (byte)((opcode & 0x0F00) >> 8);
 
@@ -266,5 +270,12 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         {
             cpu.V[x] += nn;
         }
+    }
+
+    [UnmanagedCallersOnly]
+    private static void RerouteOpcode8(Chip8Cpu cpu, ushort opcode)
+    {
+        var n = GetN(opcode);
+        MathSubTable[n](cpu, opcode);
     }
 }
