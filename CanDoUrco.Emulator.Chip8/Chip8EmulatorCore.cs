@@ -68,8 +68,36 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         throw new NotImplementedException();
     }
 
+    public IReadOnlyDictionary<string, int> GetCpuState() =>
+        new Dictionary<string, int>
+        {
+            { "ProgramCounter", _cpu.ProgramCounter },
+            { "I", _cpu.I },
+            { "StackPointer", _cpu.StackPointer },
+            { "DelayTimer", _cpu.DelayTimer },
+            { "SoundTimer", _cpu.SoundTimer },
+            { "V0", _cpu.V[0] },
+            { "V1", _cpu.V[1] },
+            { "V2", _cpu.V[2] },
+            { "V3", _cpu.V[3] },
+            { "V4", _cpu.V[4] },
+            { "V5", _cpu.V[5] },
+            { "V6", _cpu.V[6] },
+            { "V7", _cpu.V[7] },
+            { "V8", _cpu.V[8] },
+            { "V9", _cpu.V[9] },
+            { "VA", _cpu.V[0xA] },
+            { "VB", _cpu.V[0xB] },
+            { "VC", _cpu.V[0xC] },
+            { "VD", _cpu.V[0xD] },
+            { "VE", _cpu.V[0xE] },
+            { "VF", _cpu.V[0xF] },
+        };
+
     private void InitializeTables()
     {
+        _primaryTable[0x00E0] = &Opcode00E0ClearScreen;
+
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
         {
@@ -97,4 +125,12 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     [UnmanagedCallersOnly]
     private static void UnknownOpCode(Chip8Cpu cpu, ushort opcode) =>
         throw new NotImplementedException($"Unknown opcode: 0x{opcode:X4}");
+
+    [UnmanagedCallersOnly]
+    private static void Opcode00E0ClearScreen(Chip8Cpu cpu, ushort opcode)
+    {
+        var displaySpan = MemoryMarshal.CreateSpan(ref cpu.Display[0], 128 * 64);
+        displaySpan.Clear();
+        cpu.ProgramCounter += 2;
+    }
 }

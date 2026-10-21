@@ -18,7 +18,7 @@ using System.Runtime.CompilerServices;
 
 namespace CanDoUrco.Emulator.Chip8;
 
-[InlineArray(0x10)]
+[InlineArray(Chip8Cpu.RegisterCount)]
 public struct Chip8Register
 {
     private byte _element0;

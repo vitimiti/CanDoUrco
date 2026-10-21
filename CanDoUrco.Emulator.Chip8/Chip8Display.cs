@@ -18,7 +18,7 @@ using System.Runtime.CompilerServices;
 
 namespace CanDoUrco.Emulator.Chip8;
 
-[InlineArray(128 * 64)] // Make it the largest screen
+[InlineArray(Chip8Cpu.DisplaySize)]
 public struct Chip8Display
 {
     private byte _element0;

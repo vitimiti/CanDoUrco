@@ -18,7 +18,7 @@ using System.Runtime.CompilerServices;
 
 namespace CanDoUrco.Emulator.Chip8;
 
-[InlineArray(0x1000)]
+[InlineArray(Chip8Cpu.RamLength)]
 public struct Chip8Ram
 {
     private byte _element0;

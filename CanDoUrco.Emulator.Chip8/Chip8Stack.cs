@@ -18,7 +18,7 @@ using System.Runtime.CompilerServices;
 
 namespace CanDoUrco.Emulator.Chip8;
 
-[InlineArray(0x10)]
+[InlineArray(Chip8Cpu.StackSize)]
 public struct Chip8Stack
 {
     private ushort _element0;
