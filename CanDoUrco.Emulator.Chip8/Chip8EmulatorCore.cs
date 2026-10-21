@@ -73,30 +73,31 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         throw new NotImplementedException();
     }
 
-    public IReadOnlyDictionary<string, int> GetCpuState() =>
-        new Dictionary<string, int>
+    public IReadOnlyDictionary<string, string> GetCpuState() =>
+        new Dictionary<string, string>
         {
-            { "ProgramCounter", _cpu.ProgramCounter },
-            { "I", _cpu.I },
-            { "StackPointer", _cpu.StackPointer },
-            { "DelayTimer", _cpu.DelayTimer },
-            { "SoundTimer", _cpu.SoundTimer },
-            { "V0", _cpu.V[0] },
-            { "V1", _cpu.V[1] },
-            { "V2", _cpu.V[2] },
-            { "V3", _cpu.V[3] },
-            { "V4", _cpu.V[4] },
-            { "V5", _cpu.V[5] },
-            { "V6", _cpu.V[6] },
-            { "V7", _cpu.V[7] },
-            { "V8", _cpu.V[8] },
-            { "V9", _cpu.V[9] },
-            { "VA", _cpu.V[0xA] },
-            { "VB", _cpu.V[0xB] },
-            { "VC", _cpu.V[0xC] },
-            { "VD", _cpu.V[0xD] },
-            { "VE", _cpu.V[0xE] },
-            { "VF", _cpu.V[0xF] },
+            { "ProgramCounter", _cpu.ProgramCounter.ToString() },
+            { "I", _cpu.I.ToString() },
+            { "StackPointer", _cpu.StackPointer.ToString() },
+            { "DelayTimer", _cpu.DelayTimer.ToString() },
+            { "SoundTimer", _cpu.SoundTimer.ToString() },
+            { "V0", _cpu.V[0].ToString() },
+            { "V1", _cpu.V[1].ToString() },
+            { "V2", _cpu.V[2].ToString() },
+            { "V3", _cpu.V[3].ToString() },
+            { "V4", _cpu.V[4].ToString() },
+            { "V5", _cpu.V[5].ToString() },
+            { "V6", _cpu.V[6].ToString() },
+            { "V7", _cpu.V[7].ToString() },
+            { "V8", _cpu.V[8].ToString() },
+            { "V9", _cpu.V[9].ToString() },
+            { "VA", _cpu.V[0xA].ToString() },
+            { "VB", _cpu.V[0xB].ToString() },
+            { "VC", _cpu.V[0xC].ToString() },
+            { "VD", _cpu.V[0xD].ToString() },
+            { "VE", _cpu.V[0xE].ToString() },
+            { "VF", _cpu.V[0xF].ToString() },
+            { "BitShiftQuirks", _cpu.BitShiftQuirks.ToString() },
         };
 
     private static void InitializeTables()

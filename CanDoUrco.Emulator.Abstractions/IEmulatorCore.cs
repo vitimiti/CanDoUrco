@@ -20,5 +20,5 @@ public interface IEmulatorCore
 {
     void TickFrame(long currentTimestamp);
 
-    IReadOnlyDictionary<string, int> GetCpuState();
+    IReadOnlyDictionary<string, string> GetCpuState();
 }
