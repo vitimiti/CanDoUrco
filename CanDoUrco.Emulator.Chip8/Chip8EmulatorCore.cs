@@ -148,6 +148,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
     private static ushort GetNN(ushort opcode) => (ushort)(opcode & 0x00FF);
 
+    private static byte GetNNByte(ushort opcode) => (byte)(opcode & 0x00FF);
+
     private static byte GetX(ushort opcode) => (byte)((opcode & 0x0F00) >> 8);
 
     private static byte GetY(ushort opcode) => (byte)((opcode & 0x00F0) >> 4);
@@ -249,7 +251,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     private static void Opcode6XNNSetRegister(Chip8Cpu cpu, ushort opcode)
     {
         var x = GetX(opcode);
-        var nn = GetNN(opcode);
-        cpu.V[x] = unchecked((byte)nn);
+        var nn = GetNNByte(opcode);
+        cpu.V[x] = nn;
     }
 }
