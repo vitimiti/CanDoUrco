@@ -103,6 +103,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     {
         PrimaryTable[0x0] = &RerouteOpcode0;
         ZeroTable[0xE0] = &Opcode00E0ClearScreen;
+        ZeroTable[0xEE] = &Opcode00EEReturn;
+
         PrimaryTable[0x1] = &Opcode1NNNJump;
 
         // Fill in what's not used with the UnknownOpCode handler
@@ -153,6 +155,18 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var displaySpan = MemoryMarshal.CreateSpan(ref cpu.Display[0], 128 * 64);
         displaySpan.Clear();
         cpu.ProgramCounter += 2;
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Opcode00EEReturn(Chip8Cpu cpu, ushort opcode)
+    {
+        if (cpu.StackPointer == 0)
+        {
+            throw new InvalidOperationException("Stack underflow");
+        }
+
+        cpu.ProgramCounter = cpu.Stack[cpu.StackPointer];
+        cpu.StackPointer--;
     }
 
     [UnmanagedCallersOnly]
