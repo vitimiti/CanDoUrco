@@ -127,6 +127,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         MathSubTable[0xE] = &Opcode8XYEShiftLeft;
 
         PrimaryTable[0x9] = &Opcode9XY0SkipIfRegistersNotEqual;
+        PrimaryTable[0xA] = &OpcodeANNNSetI;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -374,4 +375,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         cpu.V[x] = (byte)(shiftedValue << 1);
         cpu.V[0xF] = shiftedOutBit;
     }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeANNNSetI(Chip8Cpu cpu, ushort opcode) =>
+        cpu.I = (ushort)(opcode & 0x0FFF);
 }
