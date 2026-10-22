@@ -127,6 +127,7 @@ public unsafe struct Chip8Cpu
         MiscSubTable[0x07] = &OpcodeFX07GetDelayTimer;
         MiscSubTable[0x15] = &OpcodeFX15SetDelayTimer;
         MiscSubTable[0x18] = &OpcodeFX18SetSoundTimer;
+        MiscSubTable[0x1E] = &OpcodeFX1EAddToI;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
