@@ -30,13 +30,13 @@ public unsafe struct Chip8Cpu
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] PrimaryTable =
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
 
-    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] ZeroTable =
+    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] ZeroSubTable =
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0xEF];
 
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] MathSubTable =
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0xF];
 
-    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] SkipTable =
+    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] SkipSubTable =
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0xA2];
 
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] MiscSubTable =
@@ -88,8 +88,8 @@ public unsafe struct Chip8Cpu
     {
         PrimaryTable[0x0] = &RerouteOpcode0;
 
-        ZeroTable[0xE0] = &Opcode00E0ClearScreen;
-        ZeroTable[0xEE] = &Opcode00EEReturn;
+        ZeroSubTable[0xE0] = &Opcode00E0ClearScreen;
+        ZeroSubTable[0xEE] = &Opcode00EEReturn;
 
         PrimaryTable[0x1] = &Opcode1NNNJump;
         PrimaryTable[0x2] = &Opcode2NNNCall;
@@ -117,8 +117,8 @@ public unsafe struct Chip8Cpu
         PrimaryTable[0xD] = &OpcodeDXYNDraw;
         PrimaryTable[0xE] = &RerouteOpcodeE;
 
-        SkipTable[0x9E] = &OpcodeEX9ESkipIfKey;
-        SkipTable[0xA1] = &OpcodeEXA1SkipIfNotKey;
+        SkipSubTable[0x9E] = &OpcodeEX9ESkipIfKey;
+        SkipSubTable[0xA1] = &OpcodeEXA1SkipIfNotKey;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -131,9 +131,9 @@ public unsafe struct Chip8Cpu
 
         for (var i = 0; i < 0xEF; i++)
         {
-            if (ZeroTable[i] is null)
+            if (ZeroSubTable[i] is null)
             {
-                ZeroTable[i] = &UnknownOpCode;
+                ZeroSubTable[i] = &UnknownOpCode;
             }
         }
 
@@ -147,9 +147,9 @@ public unsafe struct Chip8Cpu
 
         for (var i = 0; i < 0xA2; i++)
         {
-            if (SkipTable[i] is null)
+            if (SkipSubTable[i] is null)
             {
-                SkipTable[i] = &UnknownOpCode;
+                SkipSubTable[i] = &UnknownOpCode;
             }
         }
 
@@ -182,7 +182,7 @@ public unsafe struct Chip8Cpu
     private static void RerouteOpcode0(Chip8Cpu cpu, ushort opcode)
     {
         var nn = GetNN(opcode);
-        ZeroTable[nn](cpu, opcode);
+        ZeroSubTable[nn](cpu, opcode);
     }
 
     [UnmanagedCallersOnly]
@@ -447,7 +447,7 @@ public unsafe struct Chip8Cpu
     private static void RerouteOpcodeE(Chip8Cpu cpu, ushort opcode)
     {
         var subOpcode = GetNN(opcode);
-        SkipTable[subOpcode](cpu, opcode);
+        SkipSubTable[subOpcode](cpu, opcode);
     }
 
     [UnmanagedCallersOnly]
