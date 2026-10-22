@@ -18,6 +18,8 @@ namespace CanDoUrco.Emulator.Abstractions;
 
 public interface IEmulatorCore
 {
+    void Reset();
+
     void TickFrame(long currentTimestamp);
 
     IReadOnlyDictionary<string, string> GetCpuState();
