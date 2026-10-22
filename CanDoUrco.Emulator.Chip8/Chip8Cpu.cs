@@ -120,6 +120,12 @@ public unsafe struct Chip8Cpu
         SkipSubTable[0x9E] = &OpcodeEX9ESkipIfKey;
         SkipSubTable[0xA1] = &OpcodeEXA1SkipIfNotKey;
 
+        PrimaryTable[0xF] = &RerouteOpcodeF;
+
+        MiscSubTable[0x07] = &OpcodeFX07GetDelayTimer;
+        MiscSubTable[0x15] = &OpcodeFX15SetDelayTimer;
+        MiscSubTable[0x18] = &OpcodeFX18SetSoundTimer;
+
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
         {
@@ -470,5 +476,33 @@ public unsafe struct Chip8Cpu
         {
             cpu.PC += 2;
         }
+    }
+
+    [UnmanagedCallersOnly]
+    private static void RerouteOpcodeF(Chip8Cpu cpu, ushort opcode)
+    {
+        var subOpcode = GetNN(opcode);
+        MiscSubTable[subOpcode](cpu, opcode);
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeFX07GetDelayTimer(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        cpu.V[x] = cpu.DT;
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeFX15SetDelayTimer(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        cpu.DT = cpu.V[x];
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeFX18SetSoundTimer(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        cpu.ST = cpu.V[x];
     }
 }
