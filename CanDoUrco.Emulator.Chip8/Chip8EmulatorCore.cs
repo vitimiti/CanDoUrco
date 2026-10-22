@@ -134,6 +134,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         PrimaryTable[0x9] = &Opcode9XY0SkipIfRegistersNotEqual;
         PrimaryTable[0xA] = &OpcodeANNNSetI;
         PrimaryTable[0xB] = &OpcodeBNNNJump;
+        PrimaryTable[0xC] = &OpcodeCXNNRandom;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -393,5 +394,13 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
             ? GetNN(opcode) + cpu.V[GetX(opcode)]
             : GetNNN(opcode) + cpu.V[0];
         cpu.ProgramCounter = (ushort)address;
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeCXNNRandom(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var nn = GetNN(opcode);
+        cpu.V[x] = (byte)(new Random().Next(0, 256) & nn);
     }
 }
