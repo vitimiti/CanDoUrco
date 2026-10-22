@@ -51,6 +51,9 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] MathSubTable =
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0xF];
 
+    private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] SkipTable =
+        new delegate* unmanaged<Chip8Cpu, ushort, void>[0xA2];
+
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] MiscSubTable =
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0xFF];
 
@@ -140,6 +143,10 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         PrimaryTable[0xB] = &OpcodeBNNNJump;
         PrimaryTable[0xC] = &OpcodeCXNNRandom;
         PrimaryTable[0xD] = &OpcodeDXYNDraw;
+        PrimaryTable[0xE] = &RerouteOpcodeE;
+
+        SkipTable[0x9E] = &OpcodeEX9ESkipIfKey;
+        SkipTable[0xA1] = &OpcodeEXA1SkipIfNotKey;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -163,6 +170,14 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
             if (MathSubTable[i] is null)
             {
                 MathSubTable[i] = &UnknownOpCode;
+            }
+        }
+
+        for (var i = 0; i < 0xA2; i++)
+        {
+            if (SkipTable[i] is null)
+            {
+                SkipTable[i] = &UnknownOpCode;
             }
         }
 
@@ -454,5 +469,39 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
                 }
             }
         }
+    }
+
+    [UnmanagedCallersOnly]
+    private static void RerouteOpcodeE(Chip8Cpu cpu, ushort opcode)
+    {
+        var subOpcode = GetNN(opcode);
+        SkipTable[subOpcode](cpu, opcode);
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeEX9ESkipIfKey(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var key = cpu.V[x];
+        if (IsKeyPressed(key))
+        {
+            cpu.PC += 2;
+        }
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeEXA1SkipIfNotKey(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var key = cpu.V[x];
+        if (!IsKeyPressed(key))
+        {
+            cpu.PC += 2;
+        }
+    }
+
+    private static bool IsKeyPressed(byte key)
+    {
+        throw new NotImplementedException();
     }
 }
