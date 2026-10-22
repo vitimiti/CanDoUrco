@@ -60,10 +60,10 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     {
         _cpu = new Chip8Cpu
         {
-            BitShiftQuirks = options.BitShiftQuirks,
-            JumpWithOffsetQuirks = options.JumpWithOffsetQuirks,
+            ShiftUsesVX = options.ShiftUsesVX,
+            JumpUsesVXOffset = options.JumpUsesVXOffset,
             LargeScreen = options.LargeScreen,
-            SpriteClipQuirks = options.SpriteClipQuirks,
+            SpriteClipping = options.SpriteClipping,
         };
 
         var ramSpan = MemoryMarshal.CreateSpan(ref _cpu.Ram[0], 0x1000);
@@ -71,7 +71,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
         InitializeTables();
 
-        _cpu.ProgramCounter = 0x0200;
+        _cpu.PC = 0x0200;
     }
 
     public void TickFrame(long currentTimestamp)
@@ -82,11 +82,11 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     public IReadOnlyDictionary<string, string> GetCpuState() =>
         new Dictionary<string, string>
         {
-            { "ProgramCounter", _cpu.ProgramCounter.ToString() },
+            { "PC", _cpu.PC.ToString() },
             { "I", _cpu.I.ToString() },
-            { "StackPointer", _cpu.StackPointer.ToString() },
-            { "DelayTimer", _cpu.DelayTimer.ToString() },
-            { "SoundTimer", _cpu.SoundTimer.ToString() },
+            { "SP", _cpu.SP.ToString() },
+            { "DT", _cpu.DT.ToString() },
+            { "ST", _cpu.ST.ToString() },
             { "V0", _cpu.V[0].ToString() },
             { "V1", _cpu.V[1].ToString() },
             { "V2", _cpu.V[2].ToString() },
@@ -103,10 +103,10 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
             { "VD", _cpu.V[0xD].ToString() },
             { "VE", _cpu.V[0xE].ToString() },
             { "VF", _cpu.V[0xF].ToString() },
-            { "BitShiftQuirks", _cpu.BitShiftQuirks.ToString() },
-            { "JumpWithOffsetQuirks", _cpu.JumpWithOffsetQuirks.ToString() },
             { "LargeScreen", _cpu.LargeScreen.ToString() },
-            { "SpriteClipQuirks", _cpu.SpriteClipQuirks.ToString() },
+            { "ShiftUsesVX", _cpu.ShiftUsesVX.ToString() },
+            { "JumpUsesVXOffset", _cpu.JumpUsesVXOffset.ToString() },
+            { "SpriteClipping", _cpu.SpriteClipping.ToString() },
         };
 
     private static void InitializeTables()
@@ -208,32 +208,32 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     [UnmanagedCallersOnly]
     private static void Opcode00EEReturn(Chip8Cpu cpu, ushort opcode)
     {
-        if (cpu.StackPointer == 0)
+        if (cpu.SP == 0)
         {
             throw new InvalidOperationException("Stack underflow");
         }
 
-        cpu.ProgramCounter = cpu.Stack[--cpu.StackPointer];
+        cpu.PC = cpu.Stack[--cpu.SP];
     }
 
     [UnmanagedCallersOnly]
     private static void Opcode1NNNJump(Chip8Cpu cpu, ushort opcode)
     {
         var nnn = GetNNN(opcode);
-        cpu.ProgramCounter = nnn;
+        cpu.PC = nnn;
     }
 
     [UnmanagedCallersOnly]
     private static void Opcode2NNNCall(Chip8Cpu cpu, ushort opcode)
     {
-        if (cpu.StackPointer == 0xF)
+        if (cpu.SP == 0xF)
         {
             throw new InvalidOperationException("Stack overflow");
         }
 
         var nnn = GetNNN(opcode);
-        cpu.Stack[++cpu.StackPointer] = cpu.ProgramCounter;
-        cpu.ProgramCounter = nnn;
+        cpu.Stack[++cpu.SP] = cpu.PC;
+        cpu.PC = nnn;
     }
 
     [UnmanagedCallersOnly]
@@ -243,7 +243,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var nn = GetNN(opcode);
         if (cpu.V[x] == nn)
         {
-            cpu.ProgramCounter += 2;
+            cpu.PC += 2;
         }
     }
 
@@ -254,7 +254,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var nn = GetNN(opcode);
         if (cpu.V[x] != nn)
         {
-            cpu.ProgramCounter += 2;
+            cpu.PC += 2;
         }
     }
 
@@ -265,7 +265,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var y = GetY(opcode);
         if (cpu.V[x] == cpu.V[y])
         {
-            cpu.ProgramCounter += 2;
+            cpu.PC += 2;
         }
     }
 
@@ -276,7 +276,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var y = GetY(opcode);
         if (cpu.V[x] != cpu.V[y])
         {
-            cpu.ProgramCounter += 2;
+            cpu.PC += 2;
         }
     }
 
@@ -361,7 +361,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     private static void Opcode8XY6ShiftRight(Chip8Cpu cpu, ushort opcode)
     {
         var x = GetX(opcode);
-        var source = cpu.BitShiftQuirks ? x : GetY(opcode);
+        var source = cpu.ShiftUsesVX ? x : GetY(opcode);
         var shiftedValue = cpu.V[source];
         var shiftedOutBit = (byte)(shiftedValue & 0x1);
         cpu.V[x] = (byte)(shiftedValue >>> 1);
@@ -381,7 +381,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     private static void Opcode8XYEShiftLeft(Chip8Cpu cpu, ushort opcode)
     {
         var x = GetX(opcode);
-        var source = cpu.BitShiftQuirks ? x : GetY(opcode);
+        var source = cpu.ShiftUsesVX ? x : GetY(opcode);
         var shiftedValue = cpu.V[source];
         var shiftedOutBit = (byte)((shiftedValue & 0x80) >> 7);
         cpu.V[x] = (byte)(shiftedValue << 1);
@@ -395,10 +395,10 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     [UnmanagedCallersOnly]
     private static void OpcodeBNNNJump(Chip8Cpu cpu, ushort opcode)
     {
-        var address = cpu.JumpWithOffsetQuirks
+        var address = cpu.JumpUsesVXOffset
             ? GetNN(opcode) + cpu.V[GetX(opcode)]
             : GetNNN(opcode) + cpu.V[0];
-        cpu.ProgramCounter = (ushort)address;
+        cpu.PC = (ushort)address;
     }
 
     [UnmanagedCallersOnly]
@@ -432,7 +432,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
                 var spritePixel = (spriteByte >> (7 - col)) & 0x1;
                 var screenX = xCoord + col;
                 var screenY = yCoord + row;
-                if (cpu.SpriteClipQuirks)
+                if (cpu.SpriteClipping)
                 {
                     if (screenX >= screenWidth || screenY >= screenHeight)
                     {

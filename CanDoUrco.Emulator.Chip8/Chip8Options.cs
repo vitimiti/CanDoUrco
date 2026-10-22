@@ -25,7 +25,7 @@ public sealed class Chip8Options
     public Color ForegroundColor { get; set; } = Color.White;
     public uint InstructionsHertz { get; set; } = 500;
     public uint DisplayHertz { get; set; } = 60;
-    public bool BitShiftQuirks { get; set; }
-    public bool JumpWithOffsetQuirks { get; set; }
-    public bool SpriteClipQuirks { get; set; }
+    public bool ShiftUsesVX { get; set; }
+    public bool JumpUsesVXOffset { get; set; }
+    public bool SpriteClipping { get; set; }
 }

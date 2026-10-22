@@ -23,17 +23,17 @@ public struct Chip8Cpu
 {
     public Chip8Ram Ram;
     public Chip8Display Display;
-    public ushort ProgramCounter;
+    public ushort PC;
     public ushort I;
     public Chip8Stack Stack;
-    public byte StackPointer;
-    public byte DelayTimer;
-    public byte SoundTimer;
+    public byte SP;
+    public byte DT;
+    public byte ST;
     public Chip8Register V;
-    public bool BitShiftQuirks;
-    public bool JumpWithOffsetQuirks;
     public bool LargeScreen;
-    public bool SpriteClipQuirks;
+    public bool ShiftUsesVX;
+    public bool JumpUsesVXOffset;
+    public bool SpriteClipping;
 
     public const int RamLength = 0x1000;
     public const int DisplaySize = 128 * 64; // Make it the largest screen
