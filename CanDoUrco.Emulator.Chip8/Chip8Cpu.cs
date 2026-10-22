@@ -21,6 +21,11 @@ namespace CanDoUrco.Emulator.Chip8;
 [StructLayout(LayoutKind.Sequential)]
 public struct Chip8Cpu
 {
+    public const int RamLength = 0x1000;
+    public const int DisplaySize = 128 * 64; // Make it the largest screen
+    public const int StackSize = 0x10;
+    public const int RegisterCount = 0x10;
+
     public Chip8Ram Ram;
     public Chip8Display Display;
     public ushort PC;
@@ -34,9 +39,4 @@ public struct Chip8Cpu
     public bool ShiftUsesVX;
     public bool JumpUsesVXOffset;
     public bool SpriteClipping;
-
-    public const int RamLength = 0x1000;
-    public const int DisplaySize = 128 * 64; // Make it the largest screen
-    public const int StackSize = 0x10;
-    public const int RegisterCount = 0x10;
 }
