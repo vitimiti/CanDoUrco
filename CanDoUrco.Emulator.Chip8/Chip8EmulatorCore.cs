@@ -58,7 +58,11 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
     public Chip8EmulatorCore(Chip8Options options)
     {
-        _cpu = new Chip8Cpu { BitShiftQuirks = options.BitShiftQuirks };
+        _cpu = new Chip8Cpu
+        {
+            BitShiftQuirks = options.BitShiftQuirks,
+            JumpWithOffsetQuirks = options.JumpWithOffsetQuirks,
+        };
 
         var ramSpan = MemoryMarshal.CreateSpan(ref _cpu.Ram[0], 0x1000);
         Fonts.CopyTo(ramSpan);
@@ -98,6 +102,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
             { "VE", _cpu.V[0xE].ToString() },
             { "VF", _cpu.V[0xF].ToString() },
             { "BitShiftQuirks", _cpu.BitShiftQuirks.ToString() },
+            { "JumpWithOffsetQuirks", _cpu.JumpWithOffsetQuirks.ToString() },
         };
 
     private static void InitializeTables()
@@ -128,6 +133,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
 
         PrimaryTable[0x9] = &Opcode9XY0SkipIfRegistersNotEqual;
         PrimaryTable[0xA] = &OpcodeANNNSetI;
+        PrimaryTable[0xB] = &OpcodeBNNNJump;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -379,4 +385,13 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
     [UnmanagedCallersOnly]
     private static void OpcodeANNNSetI(Chip8Cpu cpu, ushort opcode) =>
         cpu.I = (ushort)(opcode & 0x0FFF);
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeBNNNJump(Chip8Cpu cpu, ushort opcode)
+    {
+        var address = cpu.JumpWithOffsetQuirks
+            ? GetNN(opcode) + cpu.V[GetX(opcode)]
+            : GetNNN(opcode) + cpu.V[0];
+        cpu.ProgramCounter = (ushort)address;
+    }
 }

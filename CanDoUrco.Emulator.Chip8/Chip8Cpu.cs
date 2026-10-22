@@ -31,6 +31,7 @@ public struct Chip8Cpu
     public byte SoundTimer;
     public Chip8Register V;
     public bool BitShiftQuirks;
+    public bool JumpWithOffsetQuirks;
 
     public const int RamLength = 0x1000;
     public const int DisplaySize = 128 * 64; // Make it the largest screen
