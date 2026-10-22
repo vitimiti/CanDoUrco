@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 
 namespace CanDoUrco.Emulator.Chip8;
@@ -84,6 +85,28 @@ public unsafe struct Chip8Cpu
         keypadSpan.Clear();
 
         InitializeTables();
+    }
+
+    public void Execute()
+    {
+        var opcode = Fetch();
+        var handler = Decode(opcode);
+        handler(this, opcode);
+    }
+
+    private ushort Fetch()
+    {
+        ReadOnlySpan<byte> ramSpan = MemoryMarshal.CreateSpan(ref Ram[0], RamLength);
+        var opcodeBytes = ramSpan.Slice(PC, 2);
+        var opcode = BinaryPrimitives.ReadUInt16BigEndian(opcodeBytes);
+        PC += 2;
+        return opcode;
+    }
+
+    private delegate* unmanaged<Chip8Cpu, ushort, void> Decode(ushort opcode)
+    {
+        var primary = (opcode & 0xF000) >> 12;
+        return PrimaryTable[primary];
     }
 
     private static void InitializeTables()

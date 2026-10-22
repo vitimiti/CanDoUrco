@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 using CanDoUrco.Emulator.Abstractions;
 
@@ -21,6 +22,8 @@ namespace CanDoUrco.Emulator.Chip8;
 
 public sealed class Chip8EmulatorCore : IEmulatorCore
 {
+    private const double TimerFrequency = 60D;
+
     // csharpier-ignore
     private static readonly byte[] Fonts =
     [
@@ -45,6 +48,9 @@ public sealed class Chip8EmulatorCore : IEmulatorCore
     private readonly Chip8Options _options;
 
     private Chip8Cpu _cpu;
+    private long _lastTimestamp;
+    private double _cpuAccumulator;
+    private double _timerAccumulator;
 
     public Chip8EmulatorCore(Action<Chip8Options>? options = null)
     {
@@ -65,7 +71,28 @@ public sealed class Chip8EmulatorCore : IEmulatorCore
 
     public void TickFrame(long currentTimestamp)
     {
-        throw new NotImplementedException();
+        var deltaTime = currentTimestamp - (double)_lastTimestamp;
+        _lastTimestamp = currentTimestamp;
+
+        if (deltaTime > .1D)
+            deltaTime = .016D;
+
+        _cpuAccumulator += deltaTime;
+        _timerAccumulator += deltaTime;
+
+        var cpuPeriod = 1D / _options.CpuFrequency;
+        while (_cpuAccumulator >= cpuPeriod)
+        {
+            _cpu.Execute();
+            _cpuAccumulator -= cpuPeriod;
+        }
+
+        var timerPeriod = 1D / TimerFrequency;
+        while (_timerAccumulator >= timerPeriod)
+        {
+            StepTimer();
+            _timerAccumulator -= timerPeriod;
+        }
     }
 
     public IReadOnlyDictionary<string, string> GetCpuState() =>
@@ -112,5 +139,18 @@ public sealed class Chip8EmulatorCore : IEmulatorCore
         }
 
         return string.Join("|", result);
+    }
+
+    private void StepTimer()
+    {
+        if (_cpu.DT > 0)
+        {
+            _cpu.DT--;
+        }
+
+        if (_cpu.ST > 0)
+        {
+            _cpu.ST--;
+        }
     }
 }

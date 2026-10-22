@@ -23,8 +23,7 @@ public sealed class Chip8Options
     public bool LargeScreen { get; set; }
     public Color BackgroundColor { get; set; } = Color.Black;
     public Color ForegroundColor { get; set; } = Color.White;
-    public uint InstructionsHertz { get; set; } = 500;
-    public uint DisplayHertz { get; set; } = 60;
+    public double CpuFrequency { get; set; } = 500D;
     public bool ShiftUsesVX { get; set; }
     public bool JumpUsesVXOffset { get; set; }
     public bool SpriteClipping { get; set; }
