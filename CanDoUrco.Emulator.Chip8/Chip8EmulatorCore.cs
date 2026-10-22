@@ -97,6 +97,7 @@ public sealed class Chip8EmulatorCore : IEmulatorCore
             { "ShiftUsesVX", _cpu.ShiftUsesVX.ToString() },
             { "JumpUsesVXOffset", _cpu.JumpUsesVXOffset.ToString() },
             { "SpriteClipping", _cpu.SpriteClipping.ToString() },
+            { "SetVFOnIOverflow", _cpu.SetVFOnIOverflow.ToString() },
         };
 
     private static string KeypadToString(ReadOnlySpan<byte> keypad)

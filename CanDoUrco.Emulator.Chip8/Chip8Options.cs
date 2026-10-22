@@ -28,4 +28,5 @@ public sealed class Chip8Options
     public bool ShiftUsesVX { get; set; }
     public bool JumpUsesVXOffset { get; set; }
     public bool SpriteClipping { get; set; }
+    public bool SetVFOnIOverflow { get; set; }
 }

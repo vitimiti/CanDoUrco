@@ -56,6 +56,7 @@ public unsafe struct Chip8Cpu
     public bool ShiftUsesVX;
     public bool JumpUsesVXOffset;
     public bool SpriteClipping;
+    public bool SetVFOnIOverflow;
 
     public void Reset(Chip8Options options)
     {
@@ -68,6 +69,7 @@ public unsafe struct Chip8Cpu
         ShiftUsesVX = options.ShiftUsesVX;
         JumpUsesVXOffset = options.JumpUsesVXOffset;
         SpriteClipping = options.SpriteClipping;
+        SetVFOnIOverflow = options.SetVFOnIOverflow;
 
         var ramSpan = MemoryMarshal.CreateSpan(ref Ram[0], RamLength);
         var displaySpan = MemoryMarshal.CreateSpan(ref Display[0], DisplaySize);
@@ -504,5 +506,18 @@ public unsafe struct Chip8Cpu
     {
         var x = GetX(opcode);
         cpu.ST = cpu.V[x];
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeFX1EAddToI(Chip8Cpu cpu, ushort opcode)
+    {
+        var x = GetX(opcode);
+        var sum = cpu.I + cpu.V[x];
+        if (sum > 0xFFF && cpu.SetVFOnIOverflow)
+        {
+            cpu.V[0xF] = 1;
+        }
+
+        cpu.I = (ushort)(sum & 0xFFF);
     }
 }
