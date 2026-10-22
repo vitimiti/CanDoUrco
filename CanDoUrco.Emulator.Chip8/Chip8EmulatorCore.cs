@@ -92,9 +92,24 @@ public sealed class Chip8EmulatorCore : IEmulatorCore
             { "VD", _cpu.V[0xD].ToString() },
             { "VE", _cpu.V[0xE].ToString() },
             { "VF", _cpu.V[0xF].ToString() },
+            { "Keypad", KeypadToString(_cpu.Keypad) },
             { "LargeScreen", _cpu.LargeScreen.ToString() },
             { "ShiftUsesVX", _cpu.ShiftUsesVX.ToString() },
             { "JumpUsesVXOffset", _cpu.JumpUsesVXOffset.ToString() },
             { "SpriteClipping", _cpu.SpriteClipping.ToString() },
         };
+
+    private static string KeypadToString(ReadOnlySpan<byte> keypad)
+    {
+        // Show them as KEY:ON or KEY:OFF such as 0:ON, 1:OFF, A:ON, etc
+        var result = new List<string>();
+        for (int i = 0; i < keypad.Length; i++)
+        {
+            var key = i < 10 ? i.ToString() : ((char)('A' + i - 10)).ToString();
+            var state = keypad[i] != 0 ? "ON" : "OFF";
+            result.Add($"{key}:{state}");
+        }
+
+        return string.Join("|", result);
+    }
 }

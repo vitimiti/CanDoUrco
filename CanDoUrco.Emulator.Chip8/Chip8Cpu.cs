@@ -25,6 +25,7 @@ public unsafe struct Chip8Cpu
     public const int DisplaySize = 128 * 64; // Make it the largest screen
     public const int StackSize = 0x10;
     public const int RegisterCount = 0x10;
+    public const int KeypadSize = 0x10;
 
     private static readonly delegate* unmanaged<Chip8Cpu, ushort, void>[] PrimaryTable =
         new delegate* unmanaged<Chip8Cpu, ushort, void>[0x10];
@@ -50,6 +51,7 @@ public unsafe struct Chip8Cpu
     public byte DT;
     public byte ST;
     public Chip8Register V;
+    public Chip8Keypad Keypad;
     public bool LargeScreen;
     public bool ShiftUsesVX;
     public bool JumpUsesVXOffset;
@@ -71,11 +73,13 @@ public unsafe struct Chip8Cpu
         var displaySpan = MemoryMarshal.CreateSpan(ref Display[0], DisplaySize);
         var stackSpan = MemoryMarshal.CreateSpan(ref Stack[0], StackSize);
         var registerSpan = MemoryMarshal.CreateSpan(ref V[0], RegisterCount);
+        var keypadSpan = MemoryMarshal.CreateSpan(ref Keypad[0], KeypadSize);
 
         ramSpan.Clear();
         displaySpan.Clear();
         stackSpan.Clear();
         registerSpan.Clear();
+        keypadSpan.Clear();
 
         InitializeTables();
     }
@@ -451,7 +455,7 @@ public unsafe struct Chip8Cpu
     {
         var x = GetX(opcode);
         var key = cpu.V[x];
-        if (IsKeyPressed(key))
+        if (cpu.Keypad[key] != 0)
         {
             cpu.PC += 2;
         }
@@ -462,14 +466,9 @@ public unsafe struct Chip8Cpu
     {
         var x = GetX(opcode);
         var key = cpu.V[x];
-        if (!IsKeyPressed(key))
+        if (cpu.Keypad[key] == 0)
         {
             cpu.PC += 2;
         }
-    }
-
-    private static bool IsKeyPressed(byte key)
-    {
-        throw new NotImplementedException();
     }
 }
