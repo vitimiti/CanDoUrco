@@ -62,6 +62,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         {
             BitShiftQuirks = options.BitShiftQuirks,
             JumpWithOffsetQuirks = options.JumpWithOffsetQuirks,
+            LargeScreen = options.LargeScreen,
+            SpriteClipQuirks = options.SpriteClipQuirks,
         };
 
         var ramSpan = MemoryMarshal.CreateSpan(ref _cpu.Ram[0], 0x1000);
@@ -103,6 +105,8 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
             { "VF", _cpu.V[0xF].ToString() },
             { "BitShiftQuirks", _cpu.BitShiftQuirks.ToString() },
             { "JumpWithOffsetQuirks", _cpu.JumpWithOffsetQuirks.ToString() },
+            { "LargeScreen", _cpu.LargeScreen.ToString() },
+            { "SpriteClipQuirks", _cpu.SpriteClipQuirks.ToString() },
         };
 
     private static void InitializeTables()
@@ -135,6 +139,7 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         PrimaryTable[0xA] = &OpcodeANNNSetI;
         PrimaryTable[0xB] = &OpcodeBNNNJump;
         PrimaryTable[0xC] = &OpcodeCXNNRandom;
+        PrimaryTable[0xD] = &OpcodeDXYNDraw;
 
         // Fill in what's not used with the UnknownOpCode handler
         for (var i = 0; i < 0x10; i++)
@@ -402,5 +407,52 @@ public sealed unsafe class Chip8EmulatorCore : IEmulatorCore
         var x = GetX(opcode);
         var nn = GetNN(opcode);
         cpu.V[x] = (byte)(new Random().Next(0, 256) & nn);
+    }
+
+    [UnmanagedCallersOnly]
+    private static void OpcodeDXYNDraw(Chip8Cpu cpu, ushort opcode)
+    {
+        var displaySpan = MemoryMarshal.CreateSpan(ref cpu.Display[0], Chip8Cpu.DisplaySize);
+        var x = GetX(opcode);
+        var y = GetY(opcode);
+        var n = GetN(opcode);
+
+        var screenWidth = cpu.LargeScreen ? 128 : 64;
+        var screenHeight = cpu.LargeScreen ? 64 : 32;
+
+        var xCoord = cpu.V[x] % screenWidth;
+        var yCoord = cpu.V[y] % screenHeight;
+
+        cpu.V[0xF] = 0;
+        for (var row = 0; row < n; row++)
+        {
+            var spriteByte = cpu.Ram[cpu.I + row];
+            for (var col = 0; col < 8; col++)
+            {
+                var spritePixel = (spriteByte >> (7 - col)) & 0x1;
+                var screenX = xCoord + col;
+                var screenY = yCoord + row;
+                if (cpu.SpriteClipQuirks)
+                {
+                    if (screenX >= screenWidth || screenY >= screenHeight)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    screenX %= screenWidth;
+                    screenY %= screenHeight;
+                }
+
+                var screenIndex = screenY * screenWidth + screenX;
+                var screenPixel = displaySpan[screenIndex];
+                displaySpan[screenIndex] ^= (byte)spritePixel;
+                if (screenPixel == 1 && displaySpan[screenIndex] == 0)
+                {
+                    cpu.V[0xF] = 1;
+                }
+            }
+        }
     }
 }
