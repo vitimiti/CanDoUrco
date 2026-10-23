@@ -3,5 +3,8 @@
     <Project Path="CanDoUrco.Emulator.Abstractions/CanDoUrco.Emulator.Abstractions.csproj" />
     <Project Path="CanDoUrco.Emulator.Chip8/CanDoUrco.Emulator.Chip8.csproj" />
   </Folder>
+  <Folder Name="/Native/">
+    <Project Path="CanDoUrco.Native.Sdl3/CanDoUrco.Native.Sdl3.csproj" />
+  </Folder>
   <Project Path="Playground/Playground.csproj" />
 </Solution>
