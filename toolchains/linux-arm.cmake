@@ -1,0 +1,7 @@
+set(NATIVE_TARGET_RID linux-arm)
+set(NATIVE_TARGET_SYSTEM Linux)
+set(NATIVE_TARGET_PROCESSOR armv7)
+set(NATIVE_HOST_PROCESSORS "^(armv7.*|armv8l)$")
+set(NATIVE_TRIPLE arm-linux-gnueabihf)
+set(NATIVE_COMPILERS arm-linux-gnueabihf-gcc)
+include("${CMAKE_CURRENT_LIST_DIR}/cross.cmake")

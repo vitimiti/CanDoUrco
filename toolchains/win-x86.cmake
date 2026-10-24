@@ -1,0 +1,7 @@
+set(NATIVE_TARGET_RID win-x86)
+set(NATIVE_TARGET_SYSTEM Windows)
+set(NATIVE_TARGET_PROCESSOR x86)
+set(NATIVE_HOST_PROCESSORS "^(x86|i[3-6]86)$")
+set(NATIVE_TRIPLE i686-w64-mingw32)
+set(NATIVE_COMPILERS i686-w64-mingw32-gcc i686-w64-mingw32-clang)
+include("${CMAKE_CURRENT_LIST_DIR}/cross.cmake")

@@ -10,14 +10,15 @@
     <NativeRid Condition="'$(NativeRid)' == '' and '$(RuntimeIdentifier)' != ''"
       >$(RuntimeIdentifier)</NativeRid>
     <NativeRid Condition="'$(NativeRid)' == ''">$(NETCoreSdkRuntimeIdentifier)</NativeRid>
+    <_SdlRid>$(NativeRid.Trim())</_SdlRid>
   </PropertyGroup>
 
   <PropertyGroup>
     <SdlSourceDir Condition="'$(SdlSourceDir)' == ''"
       >$(MSBuildThisFileDirectory)../vendor/SDL</SdlSourceDir>
     <SdlToolchainFile Condition="'$(SdlToolchainFile)' == ''"
-      >$(MSBuildThisFileDirectory)../toolchains/sdl/$(NativeRid).cmake</SdlToolchainFile>
-    <SdlNativeRoot>$(MSBuildThisFileDirectory)/obj/native/$(NativeRid)/$(Configuration)/$(TargetFramework)</SdlNativeRoot>
+      >$(MSBuildThisFileDirectory)../toolchains/$(_SdlRid).cmake</SdlToolchainFile>
+    <SdlNativeRoot>$(MSBuildThisFileDirectory)/obj/native/$(_SdlRid)/$(Configuration)/$(TargetFramework)</SdlNativeRoot>
     <SdlBuildDir>$(SdlNativeRoot)/build</SdlBuildDir>
     <SdlInstallDir>$(SdlNativeRoot)/install</SdlInstallDir>
   </PropertyGroup>
@@ -28,14 +29,20 @@
     Condition="'$(DesignTimeBuild)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"
   >
     <Error
+      Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(_SdlRid)', '^[a-z0-9]+(-[a-z0-9]+)+$'))"
+      Text="Invalid native RID '$(NativeRid)'. Specify a RID such as linux-x64 or win-x64."
+    />
+    <Error
       Condition="!Exists('$(SdlSourceDir)/CMakeLists.txt')"
       Text="SDL sources are missing. Initialize the SDL submodule."
     />
 
     <MakeDir Directories="$(SdlBuildDir);$(SdlInstallDir)" />
     <PropertyGroup>
+      <_SdlCompilerArgs>-DNATIVE_REQUIRE_CXX=OFF -DNATIVE_REQUIRE_RC=OFF</_SdlCompilerArgs>
+      <_SdlCompilerArgs Condition="$(_SdlRid.StartsWith('win-'))">-DNATIVE_REQUIRE_CXX=ON -DNATIVE_REQUIRE_RC=ON</_SdlCompilerArgs>
       <_SdlCompilerArgs Condition="'$(SdlCCompiler)' != ''"
-        >-DCMAKE_C_COMPILER=&quot;$(SdlCCompiler)&quot;</_SdlCompilerArgs>
+        >$(_SdlCompilerArgs) -DCMAKE_C_COMPILER=&quot;$(SdlCCompiler)&quot;</_SdlCompilerArgs>
 
       <_SdlCompilerArgs Condition="'$(SdlCxxCompiler)' != ''"
         >$(_SdlCompilerArgs) -DCMAKE_CXX_COMPILER=&quot;$(SdlCxxCompiler)&quot;</_SdlCompilerArgs>
@@ -53,7 +60,7 @@
         >$(_SdlCompilerArgs) -DCMAKE_SYSROOT=&quot;$(SdlSysroot)&quot;</_SdlCompilerArgs>
     </PropertyGroup>
 
-    <Exec Command="cmake $(_SdlCompilerArgs) -DSDL_TOOLCHAIN_FILE=&quot;$(SdlToolchainFile)&quot; -DSDL_PROBE_RESULT=&quot;$(SdlNativeRoot)/available.txt&quot; -P &quot;$(MSBuildThisFileDirectory)../toolchains/sdl/probe.cmake&quot;" />
+    <Exec Command="cmake $(_SdlCompilerArgs) -DNATIVE_TOOLCHAIN_FILE=&quot;$(SdlToolchainFile)&quot; -DNATIVE_PROBE_RESULT=&quot;$(SdlNativeRoot)/available.txt&quot; -P &quot;$(MSBuildThisFileDirectory)../toolchains/probe.cmake&quot;" />
 
     <ReadLinesFromFile File="$(SdlNativeRoot)/available.txt">
       <Output TaskParameter="Lines" PropertyName="_SdlToolchainAvailable" />

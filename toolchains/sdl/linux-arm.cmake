@@ -1,7 +1,0 @@
-set(SDL_TARGET_RID linux-arm)
-set(SDL_TARGET_SYSTEM Linux)
-set(SDL_TARGET_PROCESSOR armv7)
-set(SDL_HOST_PROCESSORS "^(armv7.*|armv8l)$")
-set(SDL_TRIPLE arm-linux-gnueabihf)
-set(SDL_COMPILERS arm-linux-gnueabihf-gcc)
-include("${CMAKE_CURRENT_LIST_DIR}/cross.cmake")
