@@ -5,4 +5,56 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <NativeRid Condition="'$(NativeRid)' == '' and '$(RuntimeIdentifier)' != ''">
+      $(RuntimeIdentifier)
+    </NativeRid>
+    <NativeRid Condition="'$(NativeRid)' == ''">$(NETCoreSdkRuntimeIdentifier)</NativeRid>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SdlSourceDir>$(MSBuildThisFileDirectory)../vendor/SDL</SdlSourceDir>
+    <SdlToolchainFile>$(MSBuildThisFileDirectory)../toolchains/sdl/$(NativeRid).cmake</SdlToolchainFile>
+    <SdlNativeRoot>$(MSBuildThisFileDirectory)/obj/native/$(NativeRid)/$(Configuration)/$(TargetFramework)</SdlNativeRoot>
+    <SdlBuildDir>$(SdlNativeRoot)/build</SdlBuildDir>
+    <SdlInstallDir>$(SdlNativeRoot)/install</SdlInstallDir>
+  </PropertyGroup>
+
+  <Target
+    Name="BuildSdlNative"
+    BeforeTargets="PrepareForBuild"
+    Condition="'$(DesignTimeBuild)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"
+  >
+    <Error
+      Condition="!Exists('$(SdlSourceDir)/CMakeLists.txt')"
+      Text="SDL sources are missing. Initialize the SDL submodule."
+    />
+
+    <Error
+      Condition="!Exists('$(SdlToolchainFile)')"
+      Text="No SDL toolchain configured for $(NativeRid): $(SdlToolchainFile)"
+    />
+
+    <MakeDir Directories="$(SdlBuildDir);$(SdlInstallDir)" />
+
+    <Exec Command="cmake -S &quot;$(SdlSourceDir)&quot; -B &quot;$(SdlBuildDir)&quot; -DCMAKE_TOOLCHAIN_FILE=&quot;$(SdlToolchainFile)&quot; -DCMAKE_INSTALL_PREFIX=&quot;$(SdlInstallDir)&quot; -DCMAKE_BUILD_TYPE=$(Configuration) -DCMAKE_INSTALL_LIBDIR=lib -DSDL_SHARED=ON -DSDL_STATIC=OFF -DSDL_FRAMEWORK=OFF -DSDL_INSTALL=ON -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF" />
+
+    <Exec Command="cmake --build &quot;$(SdlBuildDir)&quot; --config $(Configuration)" />
+
+    <Exec Command="cmake --install &quot;$(SdlBuildDir)&quot; --config $(Configuration)" />
+
+    <ItemGroup>
+      <_SdlNativeLibrary Include="$(SdlInstallDir)/bin/*.dll;$(SdlInstallDir)/lib/*.so;$(SdlInstallDir)/lib/*.so.*;$(SdlInstallDir)/lib/*.dylib" />
+      <Content
+        Include="@(_SdlNativeLibrary)"
+        Condition="!$([System.IO.File]::GetAttributes('%(_SdlNativeLibrary.FullPath)').ToString().Contains('ReparsePoint'))"
+      >
+        <Link>runtimes/$(NativeRid)/%(_SdlNativeLibrary.Filename)%(_SdlNativeLibrary.Extension)</Link>
+        <TargetPath>runtimes/$(NativeRid)/%(_SdlNativeLibrary.Filename)%(_SdlNativeLibrary.Extension)</TargetPath>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+  </Target>
 </Project>
