@@ -68,4 +68,19 @@ public static partial class Sdl
             )
             : NativeLibrary.Load(libraryPath);
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public readonly struct SdlBoolean
+    {
+        private readonly int _value;
+
+        public static readonly SdlBoolean False = new(0);
+        public static readonly SdlBoolean True = new(1);
+
+        private SdlBoolean(int value) => _value = value;
+
+        public static implicit operator bool(SdlBoolean value) => value._value != 0;
+
+        public static implicit operator SdlBoolean(bool value) => value ? True : False;
+    }
 }
