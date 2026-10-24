@@ -36,8 +36,38 @@ public static partial class Sdl
             return 0;
         }
 
-        var rid = RuntimeInformation.RuntimeIdentifier;
-        var path = Path.Combine("runtimes", rid, "native", DllName);
-        return NativeLibrary.TryLoad(path, out var handle) ? handle : 0;
+        var pattern = OperatingSystem.IsWindows() ? "SDL3.dll"
+            : OperatingSystem.IsLinux() ? "libSDL3.so*"
+            : OperatingSystem.IsMacOS() ? "libSDL3*.dylib"
+            : throw new PlatformNotSupportedException("SDL3 native loading is not configured for this OS.");
+
+        string? libraryPath = null;
+        foreach (var path in Directory.EnumerateFiles(AppContext.BaseDirectory, pattern))
+        {
+            if ((File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0)
+            {
+                continue;
+            }
+
+            if (libraryPath is not null)
+            {
+                throw new DllNotFoundException(
+                    $"Multiple SDL3 libraries found in '{AppContext.BaseDirectory}'. "
+                    + "Clean the output directory so it contains only the intended SDL3 library."
+                );
+            }
+
+            libraryPath = path;
+        }
+
+        if (libraryPath is null)
+        {
+            throw new DllNotFoundException(
+                $"No SDL3 library matching '{pattern}' found in '{AppContext.BaseDirectory}'. "
+                + "Build SDL3 for the host or the selected RuntimeIdentifier."
+            );
+        }
+
+        return NativeLibrary.Load(libraryPath);
     }
 }

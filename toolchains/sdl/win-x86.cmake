@@ -1,0 +1,7 @@
+set(SDL_TARGET_RID win-x86)
+set(SDL_TARGET_SYSTEM Windows)
+set(SDL_TARGET_PROCESSOR x86)
+set(SDL_HOST_PROCESSORS "^(x86|i[3-6]86)$")
+set(SDL_TRIPLE i686-w64-mingw32)
+set(SDL_COMPILERS i686-w64-mingw32-gcc i686-w64-mingw32-clang)
+include("${CMAKE_CURRENT_LIST_DIR}/cross.cmake")

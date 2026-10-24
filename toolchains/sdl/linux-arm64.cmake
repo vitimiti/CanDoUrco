@@ -1,0 +1,7 @@
+set(SDL_TARGET_RID linux-arm64)
+set(SDL_TARGET_SYSTEM Linux)
+set(SDL_TARGET_PROCESSOR aarch64)
+set(SDL_HOST_PROCESSORS "^(aarch64|arm64|ARM64)$")
+set(SDL_TRIPLE aarch64-linux-gnu)
+set(SDL_COMPILERS aarch64-linux-gnu-gcc)
+include("${CMAKE_CURRENT_LIST_DIR}/cross.cmake")

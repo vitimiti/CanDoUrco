@@ -8,6 +8,7 @@
   <PropertyGroup Condition="'$(OutputType)' != 'WinExe' and '$(OutputType)' != 'Exe'">
     <IsAotCompatible>true</IsAotCompatible>
     <IsTrimmable>true</IsTrimmable>
+    <IsRidAgnostic>false</IsRidAgnostic>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

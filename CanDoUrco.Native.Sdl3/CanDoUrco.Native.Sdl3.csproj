@@ -7,22 +7,23 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NativeRid Condition="'$(NativeRid)' == '' and '$(RuntimeIdentifier)' != ''">
-      $(RuntimeIdentifier)
-    </NativeRid>
+    <NativeRid Condition="'$(NativeRid)' == '' and '$(RuntimeIdentifier)' != ''"
+      >$(RuntimeIdentifier)</NativeRid>
     <NativeRid Condition="'$(NativeRid)' == ''">$(NETCoreSdkRuntimeIdentifier)</NativeRid>
   </PropertyGroup>
 
   <PropertyGroup>
-    <SdlSourceDir>$(MSBuildThisFileDirectory)../vendor/SDL</SdlSourceDir>
-    <SdlToolchainFile>$(MSBuildThisFileDirectory)../toolchains/sdl/$(NativeRid).cmake</SdlToolchainFile>
+    <SdlSourceDir Condition="'$(SdlSourceDir)' == ''"
+      >$(MSBuildThisFileDirectory)../vendor/SDL</SdlSourceDir>
+    <SdlToolchainFile Condition="'$(SdlToolchainFile)' == ''"
+      >$(MSBuildThisFileDirectory)../toolchains/sdl/$(NativeRid).cmake</SdlToolchainFile>
     <SdlNativeRoot>$(MSBuildThisFileDirectory)/obj/native/$(NativeRid)/$(Configuration)/$(TargetFramework)</SdlNativeRoot>
     <SdlBuildDir>$(SdlNativeRoot)/build</SdlBuildDir>
     <SdlInstallDir>$(SdlNativeRoot)/install</SdlInstallDir>
   </PropertyGroup>
 
   <Target
-    Name="BuildSdlNative"
+    Name="ProbeSdlNative"
     BeforeTargets="PrepareForBuild"
     Condition="'$(DesignTimeBuild)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"
   >
@@ -31,15 +32,45 @@
       Text="SDL sources are missing. Initialize the SDL submodule."
     />
 
-    <Error
-      Condition="!Exists('$(SdlToolchainFile)')"
-      Text="No SDL toolchain configured for $(NativeRid): $(SdlToolchainFile)"
-    />
-
     <MakeDir Directories="$(SdlBuildDir);$(SdlInstallDir)" />
+    <PropertyGroup>
+      <_SdlCompilerArgs Condition="'$(SdlCCompiler)' != ''"
+        >-DCMAKE_C_COMPILER=&quot;$(SdlCCompiler)&quot;</_SdlCompilerArgs>
 
-    <Exec Command="cmake -S &quot;$(SdlSourceDir)&quot; -B &quot;$(SdlBuildDir)&quot; -DCMAKE_TOOLCHAIN_FILE=&quot;$(SdlToolchainFile)&quot; -DCMAKE_INSTALL_PREFIX=&quot;$(SdlInstallDir)&quot; -DCMAKE_BUILD_TYPE=$(Configuration) -DCMAKE_INSTALL_LIBDIR=lib -DSDL_SHARED=ON -DSDL_STATIC=OFF -DSDL_FRAMEWORK=OFF -DSDL_INSTALL=ON -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF" />
+      <_SdlCompilerArgs Condition="'$(SdlCxxCompiler)' != ''"
+        >$(_SdlCompilerArgs) -DCMAKE_CXX_COMPILER=&quot;$(SdlCxxCompiler)&quot;</_SdlCompilerArgs>
 
+      <_SdlCompilerArgs Condition="'$(SdlCompilerTarget)' != ''"
+        >$(_SdlCompilerArgs) -DCMAKE_C_COMPILER_TARGET=&quot;$(SdlCompilerTarget)&quot;</_SdlCompilerArgs>
+
+      <_SdlCompilerArgs Condition="'$(SdlCompilerTarget)' != ''"
+        >$(_SdlCompilerArgs) -DCMAKE_CXX_COMPILER_TARGET=&quot;$(SdlCompilerTarget)&quot;</_SdlCompilerArgs>
+
+      <_SdlCompilerArgs Condition="'$(SdlResourceCompiler)' != ''"
+        >$(_SdlCompilerArgs) -DCMAKE_RC_COMPILER=&quot;$(SdlResourceCompiler)&quot;</_SdlCompilerArgs>
+
+      <_SdlCompilerArgs Condition="'$(SdlSysroot)' != ''"
+        >$(_SdlCompilerArgs) -DCMAKE_SYSROOT=&quot;$(SdlSysroot)&quot;</_SdlCompilerArgs>
+    </PropertyGroup>
+
+    <Exec Command="cmake $(_SdlCompilerArgs) -DSDL_TOOLCHAIN_FILE=&quot;$(SdlToolchainFile)&quot; -DSDL_PROBE_RESULT=&quot;$(SdlNativeRoot)/available.txt&quot; -P &quot;$(MSBuildThisFileDirectory)../toolchains/sdl/probe.cmake&quot;" />
+
+    <ReadLinesFromFile File="$(SdlNativeRoot)/available.txt">
+      <Output TaskParameter="Lines" PropertyName="_SdlToolchainAvailable" />
+    </ReadLinesFromFile>
+
+    <Warning
+      Condition="'$(_SdlToolchainAvailable)' != 'TRUE'"
+      Text="SDL native build skipped for $(NativeRid). See the CMake diagnostic above for the required compiler and SDK. Install the target toolchain on PATH or set SdlCCompiler, SdlCompilerTarget and SdlSysroot as needed. No native runtime library will be copied."
+    />
+  </Target>
+
+  <Target
+    Name="BuildSdlNative"
+    AfterTargets="ProbeSdlNative"
+    Condition="'$(_SdlToolchainAvailable)' == 'TRUE' and '$(DesignTimeBuild)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"
+  >
+    <Exec Command="cmake $(_SdlCompilerArgs) -S &quot;$(SdlSourceDir)&quot; -B &quot;$(SdlBuildDir)&quot; -DCMAKE_TOOLCHAIN_FILE=&quot;$(SdlToolchainFile)&quot; -DCMAKE_INSTALL_PREFIX=&quot;$(SdlInstallDir)&quot; -DCMAKE_BUILD_TYPE=$(Configuration) -DCMAKE_INSTALL_LIBDIR=lib -DSDL_SHARED=ON -DSDL_STATIC=OFF -DSDL_FRAMEWORK=OFF -DSDL_INSTALL=ON -DSDL_TESTS=OFF -DSDL_TEST_LIBRARY=OFF -DSDL_EXAMPLES=OFF" />
     <Exec Command="cmake --build &quot;$(SdlBuildDir)&quot; --config $(Configuration)" />
 
     <Exec Command="cmake --install &quot;$(SdlBuildDir)&quot; --config $(Configuration)" />
@@ -50,8 +81,8 @@
         Include="@(_SdlNativeLibrary)"
         Condition="!$([System.IO.File]::GetAttributes('%(_SdlNativeLibrary.FullPath)').ToString().Contains('ReparsePoint'))"
       >
-        <Link>runtimes/$(NativeRid)/%(_SdlNativeLibrary.Filename)%(_SdlNativeLibrary.Extension)</Link>
-        <TargetPath>runtimes/$(NativeRid)/%(_SdlNativeLibrary.Filename)%(_SdlNativeLibrary.Extension)</TargetPath>
+        <Link>%(_SdlNativeLibrary.Filename)%(_SdlNativeLibrary.Extension)</Link>
+        <TargetPath>%(_SdlNativeLibrary.Filename)%(_SdlNativeLibrary.Extension)</TargetPath>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </Content>
