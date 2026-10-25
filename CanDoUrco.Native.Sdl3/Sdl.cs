@@ -14,11 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace CanDoUrco.Native.Sdl3;
 
+[SuppressMessage(
+    "Interoperability",
+    "CA1401:P/Invokes should not be visible",
+    Justification = "Native SDL3 functions are intentionally exposed as public for direct binding."
+)]
 public static partial class Sdl
 {
     private const string DllName = "SDL3";
@@ -70,17 +76,17 @@ public static partial class Sdl
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public readonly struct SdlBoolean
+    public readonly struct Boolean
     {
         private readonly int _value;
 
-        public static readonly SdlBoolean False = new(0);
-        public static readonly SdlBoolean True = new(1);
+        public static readonly Boolean False = new(0);
+        public static readonly Boolean True = new(1);
 
-        private SdlBoolean(int value) => _value = value;
+        private Boolean(int value) => _value = value;
 
-        public static implicit operator bool(SdlBoolean value) => value._value != 0;
+        public static implicit operator bool(Boolean value) => value._value != 0;
 
-        public static implicit operator SdlBoolean(bool value) => value ? True : False;
+        public static implicit operator Boolean(bool value) => value ? True : False;
     }
 }
