@@ -2,7 +2,6 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <VerifyReferenceTrimCompatibility>true</VerifyReferenceTrimCompatibility>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(OutputType)' != 'WinExe' and '$(OutputType)' != 'Exe'">

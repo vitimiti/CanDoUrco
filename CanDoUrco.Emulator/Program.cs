@@ -1,5 +1,5 @@
-// An unsafe, direct binding to SDL3 without any marshalling.
-// Copyright (C) <year>  <name of author>
+﻿// A game program that includes all emulators in one.
+// Copyright (C) 2026  Can Do Urco (Victor Matia-Cheng)
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,16 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.InteropServices;
+using Silk.NET.Maths;
+using Silk.NET.Windowing;
 
-namespace CanDoUrco.Native.Sdl3;
+namespace CanDoUrco.Emulator;
 
-public static unsafe partial class Sdl
+internal static class Program
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct FPoint
+    private static IWindow? _window;
+
+    public static void Main(string[] args)
     {
-        public float X;
-        public float Y;
+        var options = WindowOptions.Default with
+        {
+            Size = new Vector2D<int>(800, 600),
+            Title = "Can Do Urco Emulator",
+        };
+
+        _window = Window.Create(options);
+        _window.Run();
+        _window.Dispose();
     }
 }
