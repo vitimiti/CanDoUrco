@@ -4,5 +4,6 @@
     <Project Path="CanDoUrco.Emulator.Abstractions/CanDoUrco.Emulator.Abstractions.csproj" />
     <Project Path="CanDoUrco.Emulator.Chip8/CanDoUrco.Emulator.Chip8.csproj" />
   </Folder>
+  <Project Path="CanDoUrco.Engine/CanDoUrco.Engine.csproj" />
   <Project Path="Playground/Playground.csproj" />
 </Solution>
