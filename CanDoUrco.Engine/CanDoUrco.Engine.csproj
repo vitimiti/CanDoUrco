@@ -6,4 +6,7 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../CanDoUrco.Native.Sdl3/CanDoUrco.Native.Sdl3.csproj" />
+  </ItemGroup>
 </Project>
