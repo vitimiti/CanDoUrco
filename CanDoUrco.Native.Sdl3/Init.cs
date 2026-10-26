@@ -21,10 +21,27 @@ namespace CanDoUrco.Native.Sdl3;
 
 public static unsafe partial class Sdl
 {
+    public const uint InitVideo = 0x0000_0020U;
+
+    [SuppressGCTransition]
+    [LibraryImport(DllName, EntryPoint = "SDL_Init")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial Boolean Init(uint flags);
+
+    [SuppressGCTransition]
+    [LibraryImport(DllName, EntryPoint = "SDL_WasInit")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial uint WasInit(uint flags);
+
     [SuppressGCTransition]
     [LibraryImport(DllName, EntryPoint = "SDL_Quit")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void Quit();
+
+    [SuppressGCTransition]
+    [LibraryImport(DllName, EntryPoint = "SDL_IsMainThread")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial Boolean IsMainThread();
 
     [SuppressGCTransition]
     [LibraryImport(DllName, EntryPoint = "SDL_SetAppMetadataProperty")]
