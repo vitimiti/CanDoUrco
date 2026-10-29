@@ -14,18 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using CanDoUrco.Engine.Options;
+using CanDoUrco.Engine.Plugins;
 using CanDoUrco.Native.Sdl3;
 
 namespace CanDoUrco.Engine;
 
 public sealed class App : IDisposable
 {
+    private readonly Dictionary<Type, IPlugin> _pluginMap = [];
+
+    private LoggingPlugin? _loggingPlugin;
     private bool _disposedValue;
 
-    public App(AppOptions? options)
+    public App(AppOptions? options = null)
     {
         if (options is not null)
         {
@@ -98,6 +103,46 @@ public sealed class App : IDisposable
 
         _disposedValue = true;
     }
+
+    public App AddPlugin(IPlugin plugin)
+    {
+        _pluginMap[plugin.GetType()] = plugin;
+        if (plugin is LoggingPlugin loggingPlugin)
+        {
+            _loggingPlugin = loggingPlugin;
+        }
+
+        plugin.Build(this);
+        return this;
+    }
+
+    public App AddPlugins(IEnumerable<IPlugin> plugins)
+    {
+        foreach (var plugin in plugins)
+        {
+            AddPlugin(plugin);
+        }
+
+        return this;
+    }
+
+    public T GetPlugin<T>()
+        where T : class, IPlugin =>
+        _pluginMap.TryGetValue(typeof(T), out var p)
+            ? (T)p
+            : throw new InvalidOperationException(
+                $"{typeof(T).Name} is required but has not been added to the App."
+            );
+
+    public bool TryGetPlugin<T>([NotNullWhen(true)] out T? plugin)
+        where T : class, IPlugin
+    {
+        plugin = _pluginMap.TryGetValue(typeof(T), out var p) ? (T)p : null;
+        return plugin is not null;
+    }
+
+    internal void Log(Sdl.LogCategory category, Sdl.LogPriority priority, string message) =>
+        _loggingPlugin?.Log(category, priority, message);
 
     private static unsafe void SetAppMetadataProperty(
         ReadOnlySpan<byte> name,

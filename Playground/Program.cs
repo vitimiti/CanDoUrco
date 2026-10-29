@@ -16,4 +16,7 @@
 
 // Following https://www.opengl-tutorial.org/
 
-Console.WriteLine("Hello, CanDoUrco Playground!");
+using CanDoUrco.Engine;
+using CanDoUrco.Engine.Plugins;
+
+using var _ = new App().AddPlugins(new DefaultPlugins());
