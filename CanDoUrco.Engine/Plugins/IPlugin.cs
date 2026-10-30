@@ -18,9 +18,5 @@ namespace CanDoUrco.Engine.Plugins;
 
 public interface IPlugin
 {
-    /// <summary>
-    /// Called by <see cref="App"/> when the plugin is registered. All initialisation that
-    /// depends on the application (or SDL) must happen here, not in the constructor.
-    /// </summary>
     void Build(App app);
 }
