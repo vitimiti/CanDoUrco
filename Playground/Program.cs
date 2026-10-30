@@ -19,4 +19,5 @@
 using CanDoUrco.Engine;
 using CanDoUrco.Engine.Plugins;
 
-using var _ = new App().AddPlugins(new DefaultPlugins());
+using var app = new App().AddPlugins(new DefaultPlugins());
+app.Run();

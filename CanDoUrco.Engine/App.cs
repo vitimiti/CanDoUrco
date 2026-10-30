@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -28,6 +29,7 @@ public sealed class App : IDisposable
     private readonly Dictionary<Type, IPlugin> _pluginMap = [];
 
     private LoggingPlugin? _loggingPlugin;
+    private bool _isRunning;
     private bool _disposedValue;
 
     public App(AppOptions? options = null)
@@ -112,7 +114,6 @@ public sealed class App : IDisposable
             _loggingPlugin = loggingPlugin;
         }
 
-        plugin.Build(this);
         return this;
     }
 
@@ -139,6 +140,23 @@ public sealed class App : IDisposable
     {
         plugin = _pluginMap.TryGetValue(typeof(T), out var p) ? (T)p : null;
         return plugin is not null;
+    }
+
+    public void Run()
+    {
+        foreach (var plugin in _pluginMap.Values)
+        {
+            plugin.Build(this);
+        }
+
+        _isRunning = true;
+        double deltaTime;
+        var startTime = Stopwatch.GetTimestamp();
+        while (_isRunning)
+        {
+            var currentTime = Stopwatch.GetTimestamp();
+            deltaTime = (currentTime - startTime) / (double)Stopwatch.Frequency;
+        }
     }
 
     internal void Log(Sdl.LogCategory category, Sdl.LogPriority priority, string message) =>
