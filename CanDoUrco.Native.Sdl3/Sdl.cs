@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 
 namespace CanDoUrco.Native.Sdl3;
 
-public partial class Sdl
+public static partial class Sdl
 {
     private const string DllName = "SDL3";
 
@@ -94,5 +94,16 @@ public partial class Sdl
         {
             throw new PlatformNotSupportedException();
         }
+    }
+
+    private readonly struct Bool
+    {
+        private readonly int _value;
+
+        private Bool(int value) => _value = value;
+
+        public static implicit operator bool(Bool value) => value._value != 0;
+
+        public static implicit operator Bool(bool value) => new(value ? 1 : 0);
     }
 }
