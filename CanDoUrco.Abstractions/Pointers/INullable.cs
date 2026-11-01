@@ -1,4 +1,4 @@
-// IArithmeticOperators.cs - Defines arithmetic operator interfaces for CanDoUrco.Abstractions
+// INullable.cs - Defines the INullable interface for CanDoUrco.Abstractions
 // Copyright (C) <year>  <name of author>
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,13 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Numerics;
+namespace CanDoUrco.Abstractions.Numerics;
 
-namespace CanDoUrco.Abstractions;
-
-public interface IArithmeticOperators<TSelf, TOther, TResult>
-    : IAdditionOperators<TSelf, TOther, TResult>,
-        ISubtractionOperators<TSelf, TOther, TResult>,
-        IMultiplyOperators<TSelf, TOther, TResult>,
-        IDivisionOperators<TSelf, TOther, TResult>
-    where TSelf : IArithmeticOperators<TSelf, TOther, TResult>;
+public interface INullable
+{
+    bool IsNull { get; }
+}
