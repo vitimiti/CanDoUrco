@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Emulators/" />
   <Folder Name="/Native/" />
+  <Project Path="CanDoUrco.Abstractions/CanDoUrco.Abstractions.csproj" />
   <Project Path="CanDoUrco.Pointers/CanDoUrco.Pointers.csproj" />
 </Solution>
