@@ -7,5 +7,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../CanDoUrco.Abstractions/CanDoUrco.Abstractions.csproj" />
+    <ProjectReference Include="../CanDoUrco.Types/CanDoUrco.Types.csproj" />
   </ItemGroup>
 </Project>
