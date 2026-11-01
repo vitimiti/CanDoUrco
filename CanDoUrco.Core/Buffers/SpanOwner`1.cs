@@ -22,7 +22,7 @@ using CanDoUrco.Core.Extensions;
 namespace CanDoUrco.Core.Buffers;
 
 [DebuggerDisplay("{ToString(),raw}")]
-public readonly ref struct SpanOwner<T>
+public readonly ref struct SpanOwner<T> : IDisposable
 {
     private readonly ArrayPool<T> _pool;
     private readonly T[] _array;
