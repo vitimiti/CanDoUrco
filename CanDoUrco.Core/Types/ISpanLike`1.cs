@@ -1,4 +1,4 @@
-// INullable.cs - Defines the INullable interface for CanDoUrco.Abstractions
+// ISpanLike`1 - Represents a span-like structure for the CanDoUrco framework.
 // Copyright (C) <year>  <name of author>
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,9 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace CanDoUrco.Abstractions.Numerics;
+using CanDoUrco.Core.Pointers;
 
-public interface INullable
+namespace CanDoUrco.Core.Types;
+
+public interface ISpanLike<T> : ISpanLike
+    where T : unmanaged
 {
-    bool IsNull { get; }
+    public new Pointer<T> Ptr { get; }
+
+    public Span<T> AsSpan();
 }

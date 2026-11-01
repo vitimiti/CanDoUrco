@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace CanDoUrco.Abstractions.Numerics;
+namespace CanDoUrco.Core.Numerics;
 
 public interface IAssociativeArithmeticOperators<TSelf, TOther, TResult>
     : IArithmeticOperators<TSelf, TOther, TResult>

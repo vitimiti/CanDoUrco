@@ -1,4 +1,4 @@
-// IArithmeticOperators.cs - Defines arithmetic operator interfaces for CanDoUrco.Abstractions
+// SpanExtensions.cs - Defines extension methods for Span and ReadOnlySpan types in CanDoUrco.Core
 // Copyright (C) <year>  <name of author>
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,13 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-namespace CanDoUrco.Abstractions.Numerics;
+namespace CanDoUrco.Core.Extensions;
 
-public interface IArithmeticOperators<TSelf, TOther, TResult>
-    : IAdditionOperators<TSelf, TOther, TResult>,
-        ISubtractionOperators<TSelf, TOther, TResult>,
-        IMultiplyOperators<TSelf, TOther, TResult>,
-        IDivisionOperators<TSelf, TOther, TResult>
-    where TSelf : IArithmeticOperators<TSelf, TOther, TResult>;
+public static unsafe class SpanExtensions
+{
+    extension<T>(Span<T> span)
+        where T : unmanaged
+    {
+        public T* AsPtr() => (T*)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
+    }
+
+    extension<T>(ReadOnlySpan<T> span)
+        where T : unmanaged
+    {
+        public T* AsPtr() => (T*)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span));
+    }
+}
