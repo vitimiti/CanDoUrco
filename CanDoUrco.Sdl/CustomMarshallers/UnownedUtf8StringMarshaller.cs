@@ -16,13 +16,38 @@
 
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using System.Text;
 using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl.CustomMarshallers;
 
+[CustomMarshaller(typeof(string), MarshalMode.Default, typeof(UnownedUtf8StringMarshaller))]
 [CustomMarshaller(typeof(string), MarshalMode.ManagedToUnmanagedOut, typeof(ManagedToUnmanagedOut))]
 internal static class UnownedUtf8StringMarshaller
 {
+    public static unsafe byte* ConvertToUnmanaged(string? managed)
+    {
+        LogCategory.MakeOrGet(Sdl.CustomLogCategory).Trace();
+        if (managed is null)
+        {
+            return null;
+        }
+
+        int exactByteCount = checked(Encoding.UTF8.GetByteCount(managed) + 1);
+        byte* mem = (byte*)Marshal.AllocCoTaskMem(exactByteCount);
+        Span<byte> buffer = new(mem, exactByteCount);
+
+        int byteCount = Encoding.UTF8.GetBytes(managed, buffer);
+        buffer[byteCount] = 0;
+        return mem;
+    }
+
+    public static unsafe string? ConvertToManaged(byte* unmanaged) =>
+        Marshal.PtrToStringUTF8((nint)unmanaged);
+
+    public static unsafe void Free(byte* unmanaged) =>
+        LogCategory.MakeOrGet(Sdl.CustomLogCategory).Trace();
+
     public ref struct ManagedToUnmanagedOut
     {
         private string? _value;
