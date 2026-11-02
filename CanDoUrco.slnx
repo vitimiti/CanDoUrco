@@ -2,4 +2,5 @@
   <Folder Name="/Emulators/" />
   <Folder Name="/Native/" />
   <Project Path="CanDoUrco.Logging/CanDoUrco.Logging.csproj" />
+  <Project Path="CanDoUrco.Sdl/CanDoUrco.Sdl.csproj" />
 </Solution>
