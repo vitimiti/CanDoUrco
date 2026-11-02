@@ -69,7 +69,7 @@ public sealed class LogCategory
         {
             Logger.Log(
                 logLevel,
-                "{Message} {SourceMemberName} (in {SourceFilePath}:{SourceLineNumber})",
+                "{Message} [{SourceMemberName} (in {SourceFilePath}:{SourceLineNumber})]",
                 messageString,
                 sourceMemberName,
                 sourceFilePath,
