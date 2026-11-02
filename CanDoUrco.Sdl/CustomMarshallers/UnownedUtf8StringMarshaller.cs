@@ -29,16 +29,16 @@ internal static class UnownedUtf8StringMarshaller
 
         public unsafe void FromUnmanaged(byte* unmanaged)
         {
-            LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+            LogCategory.MakeOrGet(Sdl.CustomLogCategory).Trace();
             _value = Marshal.PtrToStringUTF8((nint)unmanaged);
         }
 
         public readonly string? ToManaged()
         {
-            LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+            LogCategory.MakeOrGet(Sdl.CustomLogCategory).Trace();
             return _value;
         }
 
-        public readonly void Free() => LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+        public readonly void Free() => LogCategory.MakeOrGet(Sdl.CustomLogCategory).Trace();
     }
 }
