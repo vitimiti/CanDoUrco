@@ -21,6 +21,7 @@ namespace CanDoUrco.Sdl;
 public static partial class Sdl
 {
     private const string DllName = "SDL3";
+    private const string CustomLogCategory = "CanDoUrco.Sdl";
 
     static Sdl() =>
         NativeLibrary.SetDllImportResolver(

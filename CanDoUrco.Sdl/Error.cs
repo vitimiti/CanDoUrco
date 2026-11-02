@@ -53,37 +53,37 @@ public static partial class Sdl
 
     public static bool SetError(string message)
     {
-        LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetError("%s", message);
     }
 
     public static bool OutOfMemory()
     {
-        LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _OutOfMemory();
     }
 
     public static string GetError()
     {
-        LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetError() ?? string.Empty;
     }
 
     public static bool ClearError()
     {
-        LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ClearError();
     }
 
     public static bool Unsupported()
     {
-        LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return SetError("That operation is not supported");
     }
 
     public static bool InvalidParamError(string param)
     {
-        LogCategory.MakeOrGet("CanDoUrco.Sdl").Trace();
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return SetError($"Parameter '{param ?? string.Empty}' is invalid");
     }
 }
