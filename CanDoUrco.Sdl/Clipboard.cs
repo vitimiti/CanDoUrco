@@ -19,7 +19,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl.CustomMarshallers;
-using CanDoUrco.Sdl.Utilities;
 
 namespace CanDoUrco.Sdl;
 
@@ -109,18 +108,9 @@ public static partial class Sdl
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _ClearClipboardData();
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetClipboardMimeTypes",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetClipboardMimeTypes")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalUsing(
-        typeof(SdlAllocatedArrayMarshaller<string, nint>),
-        CountElementName = nameof(numMimeTypes)
-    )]
-    private static partial string?[] _GetClipboardMimeTypes(out nuint numMimeTypes);
+    private static unsafe partial byte** _GetClipboardMimeTypes(out nuint numMimeTypes);
 
     public static bool SetClipboardText(string text)
     {
@@ -179,7 +169,7 @@ public static partial class Sdl
         return _ClearClipboardData();
     }
 
-    public static unsafe SdlPointer GetClipboardData(string mimeType, out uint size)
+    public static unsafe void* GetClipboardData(string mimeType, out uint size)
     {
         ArgumentNullException.ThrowIfNull(mimeType);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
@@ -192,7 +182,7 @@ public static partial class Sdl
         return _HasClipboardData();
     }
 
-    public static string?[] GetClipboardMimeTypes(out nuint numMimeTypes)
+    public static unsafe byte** GetClipboardMimeTypes(out nuint numMimeTypes)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetClipboardMimeTypes(out numMimeTypes);
