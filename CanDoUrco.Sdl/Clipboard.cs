@@ -16,7 +16,6 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl.CustomMarshallers;
 
@@ -81,12 +80,7 @@ public static partial class Sdl
         delegate* unmanaged[Cdecl]<void*, byte*, nuint*, void*> callback,
         delegate* unmanaged[Cdecl]<void*, void> cleanup,
         void* userdata,
-        [In]
-        [MarshalUsing(
-            typeof(ArrayMarshaller<string, nint>),
-            CountElementName = nameof(numMimeTypes)
-        )]
-            string?[] mimeTypes,
+        byte** mimeTypes,
         nuint numMimeTypes
     );
 
@@ -154,7 +148,7 @@ public static partial class Sdl
         delegate* unmanaged[Cdecl]<void*, byte*, nuint*, void*> callback,
         delegate* unmanaged[Cdecl]<void*, void> cleanup,
         void* userdata,
-        string?[] mimeTypes,
+        byte** mimeTypes,
         nuint numMimeTypes
     )
     {
