@@ -41,4 +41,11 @@ public static partial class Sdl
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         _free(mem);
     }
+
+    public readonly record struct Time(long Value)
+    {
+        public static implicit operator long(Time time) => time.Value;
+
+        public static implicit operator Time(long value) => new(value);
+    }
 }

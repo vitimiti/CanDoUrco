@@ -42,10 +42,17 @@ internal static class SdlOwnedUtf8StringMarshaller
         return mem;
     }
 
-    public static unsafe string? ConvertToManaged(byte* unmanaged) =>
-        Marshal.PtrToStringUTF8((nint)unmanaged);
+    public static unsafe string? ConvertToManaged(byte* unmanaged)
+    {
+        LogCategory.MakeOrGet(Sdl.CustomLogCategory).Trace();
+        return Marshal.PtrToStringUTF8((nint)unmanaged);
+    }
 
-    public static unsafe void Free(byte* unmanaged) => Marshal.FreeCoTaskMem((nint)unmanaged);
+    public static unsafe void Free(byte* unmanaged)
+    {
+        LogCategory.MakeOrGet(Sdl.CustomLogCategory).Trace();
+        Marshal.FreeCoTaskMem((nint)unmanaged);
+    }
 
     public ref struct ManagedToUnmanagedOut
     {

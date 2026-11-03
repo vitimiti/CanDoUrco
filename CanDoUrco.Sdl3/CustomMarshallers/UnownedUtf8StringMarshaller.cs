@@ -45,8 +45,11 @@ internal static class UnownedUtf8StringMarshaller
     public static unsafe string? ConvertToManaged(byte* unmanaged) =>
         Marshal.PtrToStringUTF8((nint)unmanaged);
 
-    public static unsafe void Free(byte* unmanaged) =>
+    public static unsafe void Free(byte* unmanaged)
+    {
         LogCategory.MakeOrGet(Sdl.CustomLogCategory).Trace();
+        Marshal.FreeCoTaskMem((nint)unmanaged);
+    }
 
     public ref struct ManagedToUnmanagedOut
     {
