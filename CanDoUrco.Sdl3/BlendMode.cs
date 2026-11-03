@@ -81,6 +81,10 @@ public static partial class Sdl
             new(left.Value ^ right.Value);
 
         public static BlendMode operator ~(BlendMode value) => new(~value.Value);
+
+        public static implicit operator uint(BlendMode blendMode) => blendMode.Value;
+
+        public static implicit operator BlendMode(uint value) => new(value);
     }
 
     public enum BlendOperation

@@ -378,6 +378,10 @@ public static partial class Sdl
     public readonly record struct PropertiesID(uint Value)
     {
         public bool IsInvalid => Value == 0;
+
+        public static implicit operator uint(PropertiesID props) => props.Value;
+
+        public static implicit operator PropertiesID(uint value) => new(value);
     }
 
     public enum PropertyType

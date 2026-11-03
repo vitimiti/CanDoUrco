@@ -194,6 +194,10 @@ public static partial class Sdl
             new(left.Value ^ right.Value);
 
         public static InitFlags operator ~(InitFlags value) => new(~value.Value);
+
+        public static implicit operator uint(InitFlags initFlags) => initFlags.Value;
+
+        public static implicit operator InitFlags(uint value) => new(value);
     }
 
     public enum AppResult
