@@ -54,7 +54,7 @@ public static partial class Sdl
     public static bool SetError(string message)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        return _SetError("%s", message);
+        return _SetError("%s", message ?? string.Empty);
     }
 
     public static bool OutOfMemory()
