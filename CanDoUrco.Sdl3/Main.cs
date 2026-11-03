@@ -87,8 +87,8 @@ public static partial class Sdl
         delegate* unmanaged[Cdecl]<int, byte**, int> mainFunction
     )
     {
-        ArgumentNullException.ThrowIfNull(argv);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(argv);
         _RunApp(argc, argv, mainFunction, null);
     }
 
@@ -101,8 +101,8 @@ public static partial class Sdl
         delegate* unmanaged[Cdecl]<void*, AppResult, void> appQuit
     )
     {
-        ArgumentNullException.ThrowIfNull(argv);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(argv);
         return _EnterAppMainCallbacks(argc, argv, appInit, appIter, appEvent, appQuit);
     }
 

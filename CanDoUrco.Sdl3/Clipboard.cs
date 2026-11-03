@@ -108,8 +108,8 @@ public static partial class Sdl
 
     public static bool SetClipboardText(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(text);
         return _SetClipboardText(text);
     }
 
@@ -127,8 +127,8 @@ public static partial class Sdl
 
     public static bool SetPrimarySelectionText(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(text);
         return _SetPrimarySelectionText(text);
     }
 
@@ -152,8 +152,8 @@ public static partial class Sdl
         nuint numMimeTypes
     )
     {
-        ArgumentNullException.ThrowIfNull(mimeTypes);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(mimeTypes);
         return _SetClipboardData(callback, cleanup, userdata, mimeTypes, numMimeTypes);
     }
 
@@ -165,8 +165,8 @@ public static partial class Sdl
 
     public static unsafe void* GetClipboardData(string mimeType, out uint size)
     {
-        ArgumentNullException.ThrowIfNull(mimeType);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(mimeType);
         return _GetClipboardData(mimeType, out size);
     }
 

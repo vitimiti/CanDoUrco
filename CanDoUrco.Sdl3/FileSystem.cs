@@ -146,9 +146,9 @@ public static partial class Sdl
 
     public static string? GetPrefPath(string org, string app)
     {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(org);
         ArgumentNullException.ThrowIfNull(app);
-        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetPrefPath(org, app);
     }
 
@@ -160,8 +160,8 @@ public static partial class Sdl
 
     public static bool CreateDirectory(string path)
     {
-        ArgumentNullException.ThrowIfNull(path);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(path);
         return _CreateDirectory(path);
     }
 
@@ -171,38 +171,38 @@ public static partial class Sdl
         void* userdata
     )
     {
-        ArgumentNullException.ThrowIfNull(path);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(path);
         return _EnumerateDirectory(path, callback, userdata);
     }
 
     public static bool RemovePath(string path)
     {
-        ArgumentNullException.ThrowIfNull(path);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(path);
         return _RemovePath(path);
     }
 
     public static bool RenamePath(string oldPath, string newPath)
     {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(oldPath);
         ArgumentNullException.ThrowIfNull(newPath);
-        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RenamePath(oldPath, newPath);
     }
 
     public static bool CopyFile(string src, string dst)
     {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(src);
         ArgumentNullException.ThrowIfNull(dst);
-        LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CopyFile(src, dst);
     }
 
     public static bool GetPathInfo(string path, out PathInfo info)
     {
-        ArgumentNullException.ThrowIfNull(path);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(path);
         return _GetPathInfo(path, out info);
     }
 
@@ -213,8 +213,8 @@ public static partial class Sdl
         out int count
     )
     {
-        ArgumentNullException.ThrowIfNull(path);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(path);
         return _GlobDirectory(path, pattern, flags, out count);
     }
 

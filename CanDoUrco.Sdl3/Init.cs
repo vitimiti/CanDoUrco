@@ -170,15 +170,15 @@ public static partial class Sdl
 
     public static bool SetAppMetadataProperty(string property, string? value)
     {
-        ArgumentNullException.ThrowIfNull(property);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(property);
         return _SetAppMetadataProperty(property, value);
     }
 
     public static string? GetAppMetadataProperty(string property)
     {
-        ArgumentNullException.ThrowIfNull(property);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(property);
         return _GetAppMetadataProperty(property);
     }
 

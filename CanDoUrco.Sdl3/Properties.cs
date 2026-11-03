@@ -259,57 +259,57 @@ public static partial class Sdl
         void* userdata
     )
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _SetPointerPropertyWithCleanup(props, name, value, cleanup, userdata);
     }
 
     public static unsafe bool SetPointerProperty(PropertiesID props, string name, void* value)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _SetPointerProperty(props, name, value);
     }
 
     public static bool SetStringProperty(PropertiesID props, string name, string? value)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _SetStringProperty(props, name, value);
     }
 
     public static bool SetNumberProperty(PropertiesID props, string name, long value)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _SetNumberProperty(props, name, value);
     }
 
     public static bool SetFloatProperty(PropertiesID props, string name, float value)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _SetFloatProperty(props, name, value);
     }
 
     public static bool SetBooleanProperty(PropertiesID props, string name, bool value)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _SetBooleanProperty(props, name, value);
     }
 
     public static bool HasProperty(PropertiesID props, string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _HasProperty(props, name);
     }
 
     public static PropertyType GetPropertyType(PropertiesID props, string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _GetPropertyType(props, name);
     }
 
@@ -319,43 +319,43 @@ public static partial class Sdl
         void* defaultValue
     )
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _GetPointerProperty(props, name, defaultValue);
     }
 
     public static string? GetStringProperty(PropertiesID props, string name, string? defaultValue)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _GetStringProperty(props, name, defaultValue);
     }
 
     public static long GetNumberProperty(PropertiesID props, string name, long defaultValue)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _GetNumberProperty(props, name, defaultValue);
     }
 
     public static float GetFloatProperty(PropertiesID props, string name, float defaultValue)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _GetFloatProperty(props, name, defaultValue);
     }
 
     public static bool GetBooleanProperty(PropertiesID props, string name, bool defaultValue)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _GetBooleanProperty(props, name, defaultValue);
     }
 
     public static bool ClearProperty(PropertiesID props, string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(name);
         return _ClearProperty(props, name);
     }
 
