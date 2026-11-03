@@ -110,10 +110,10 @@ public static partial class Sdl
     [LibraryImport(
         DllName,
         EntryPoint = "SDL_GetAppMetadataProperty",
-        StringMarshalling = StringMarshalling.Utf8
+        StringMarshalling = StringMarshalling.Custom,
+        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalUsing(typeof(UnownedUtf8StringMarshaller))]
     private static partial string? _GetAppMetadataProperty(string property);
 
     public static bool Init(InitFlags flags)

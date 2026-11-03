@@ -16,7 +16,6 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl3.CustomMarshallers;
 
@@ -347,9 +346,13 @@ public static partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void _ResetHints();
 
-    [LibraryImport(DllName, EntryPoint = "SDL_GetHint", StringMarshalling = StringMarshalling.Utf8)]
+    [LibraryImport(
+        DllName,
+        EntryPoint = "SDL_GetHint",
+        StringMarshalling = StringMarshalling.Custom,
+        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
+    )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalUsing(typeof(UnownedUtf8StringMarshaller))]
     private static partial string? _GetHint(string name);
 
     [LibraryImport(
