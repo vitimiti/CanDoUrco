@@ -36,7 +36,7 @@ public static partial class Sdl
         DllName,
         EntryPoint = "SDL_GetClipboardText",
         StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(SdlOwnedUtf8StringMarshaller)
+        StringMarshallingCustomType = typeof(SdlAllocatedUtf8StringMarshaller)
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial string? _GetClipboardText();
@@ -59,7 +59,7 @@ public static partial class Sdl
         DllName,
         EntryPoint = "SDL_GetPrimarySelectionText",
         StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(SdlOwnedUtf8StringMarshaller)
+        StringMarshallingCustomType = typeof(SdlAllocatedUtf8StringMarshaller)
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial string? _GetPrimarySelectionText();

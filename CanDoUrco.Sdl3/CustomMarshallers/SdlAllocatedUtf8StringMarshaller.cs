@@ -21,9 +21,9 @@ using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl3.CustomMarshallers;
 
-[CustomMarshaller(typeof(string), MarshalMode.Default, typeof(SdlOwnedUtf8StringMarshaller))]
+[CustomMarshaller(typeof(string), MarshalMode.Default, typeof(SdlAllocatedUtf8StringMarshaller))]
 [CustomMarshaller(typeof(string), MarshalMode.ManagedToUnmanagedOut, typeof(ManagedToUnmanagedOut))]
-internal static class SdlOwnedUtf8StringMarshaller
+internal static class SdlAllocatedUtf8StringMarshaller
 {
     public static unsafe byte* ConvertToUnmanaged(string? managed)
     {

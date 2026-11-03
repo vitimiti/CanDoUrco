@@ -41,7 +41,7 @@ public static partial class Sdl
         StringMarshalling = StringMarshalling.Utf8
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalUsing(typeof(SdlOwnedUtf8StringMarshaller))]
+    [return: MarshalUsing(typeof(SdlAllocatedUtf8StringMarshaller))]
     private static partial string? _GetPrefPath(string org, string app);
 
     [LibraryImport(
@@ -133,7 +133,7 @@ public static partial class Sdl
         DllName,
         EntryPoint = "SDL_GetCurrentDirectory",
         StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(SdlOwnedUtf8StringMarshaller)
+        StringMarshallingCustomType = typeof(SdlAllocatedUtf8StringMarshaller)
     )]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial string? _GetCurrentDirectory();
