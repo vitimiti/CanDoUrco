@@ -182,6 +182,13 @@ public static partial class Sdl
         return _GetAppMetadataProperty(property);
     }
 
+    public enum AppResult
+    {
+        Continue,
+        Success,
+        Failure,
+    }
+
     public readonly record struct InitFlags(uint Value)
     {
         public static InitFlags operator |(InitFlags left, InitFlags right) =>
@@ -198,12 +205,5 @@ public static partial class Sdl
         public static implicit operator uint(InitFlags initFlags) => initFlags.Value;
 
         public static implicit operator InitFlags(uint value) => new(value);
-    }
-
-    public enum AppResult
-    {
-        Continue,
-        Success,
-        Failure,
     }
 }

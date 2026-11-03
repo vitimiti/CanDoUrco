@@ -375,15 +375,6 @@ public static partial class Sdl
         _DestroyProperties(props);
     }
 
-    public readonly record struct PropertiesID(uint Value)
-    {
-        public bool IsInvalid => Value == 0;
-
-        public static implicit operator uint(PropertiesID props) => props.Value;
-
-        public static implicit operator PropertiesID(uint value) => new(value);
-    }
-
     public enum PropertyType
     {
         Invalid,
@@ -392,5 +383,14 @@ public static partial class Sdl
         Number,
         Float,
         Boolean,
+    }
+
+    public readonly record struct PropertiesID(uint Value)
+    {
+        public bool IsInvalid => Value == 0;
+
+        public static implicit operator uint(PropertiesID props) => props.Value;
+
+        public static implicit operator PropertiesID(uint value) => new(value);
     }
 }
