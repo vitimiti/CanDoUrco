@@ -16,13 +16,29 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 
-namespace CanDoUrco.Sdl;
+namespace CanDoUrco.Sdl3;
 
 public static partial class Sdl
 {
-    [StructLayout(LayoutKind.Explicit, Size = 128)]
-    public struct Event { }
+    [LibraryImport(DllName, EntryPoint = "SDL_malloc")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe partial void* _malloc(nuint size);
+
+    [LibraryImport(DllName, EntryPoint = "SDL_free")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    private static unsafe partial void _free(void* mem);
+
+    public static unsafe void* Malloc(nuint size)
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return _malloc(size);
+    }
+
+    public static unsafe void Free(void* mem)
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        _free(mem);
+    }
 }

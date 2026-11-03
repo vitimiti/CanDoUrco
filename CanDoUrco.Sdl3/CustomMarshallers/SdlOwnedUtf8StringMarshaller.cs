@@ -19,7 +19,7 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using CanDoUrco.Logging;
 
-namespace CanDoUrco.Sdl.CustomMarshallers;
+namespace CanDoUrco.Sdl3.CustomMarshallers;
 
 [CustomMarshaller(typeof(string), MarshalMode.Default, typeof(SdlOwnedUtf8StringMarshaller))]
 [CustomMarshaller(typeof(string), MarshalMode.ManagedToUnmanagedOut, typeof(ManagedToUnmanagedOut))]

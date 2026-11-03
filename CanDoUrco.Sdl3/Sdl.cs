@@ -16,7 +16,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace CanDoUrco.Sdl;
+namespace CanDoUrco.Sdl3;
 
 public static partial class Sdl
 {

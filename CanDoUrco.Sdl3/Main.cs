@@ -20,7 +20,7 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.Versioning;
 using CanDoUrco.Logging;
 
-namespace CanDoUrco.Sdl;
+namespace CanDoUrco.Sdl3;
 
 public static partial class Sdl
 {

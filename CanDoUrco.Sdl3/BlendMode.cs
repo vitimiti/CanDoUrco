@@ -18,7 +18,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CanDoUrco.Logging;
 
-namespace CanDoUrco.Sdl;
+namespace CanDoUrco.Sdl3;
 
 public static partial class Sdl
 {

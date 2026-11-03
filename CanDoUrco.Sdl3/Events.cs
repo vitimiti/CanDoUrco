@@ -14,31 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using CanDoUrco.Logging;
 
-namespace CanDoUrco.Sdl;
+namespace CanDoUrco.Sdl3;
 
 public static partial class Sdl
 {
-    [LibraryImport(DllName, EntryPoint = "SDL_malloc")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _malloc(nuint size);
-
-    [LibraryImport(DllName, EntryPoint = "SDL_free")]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void _free(void* mem);
-
-    public static unsafe void* Malloc(nuint size)
-    {
-        LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        return _malloc(size);
-    }
-
-    public static unsafe void Free(void* mem)
-    {
-        LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        _free(mem);
-    }
+    [StructLayout(LayoutKind.Explicit, Size = 128)]
+    public struct Event { }
 }
