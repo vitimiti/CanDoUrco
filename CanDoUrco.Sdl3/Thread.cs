@@ -236,7 +236,7 @@ public static partial class Sdl
     {
         public bool IsNull => Value == 0;
 
-        public static implicit operator Thread(nint value) => new Thread(value);
+        public static implicit operator Thread(nint value) => new(value);
 
         public static implicit operator nint(Thread thread) => thread.Value;
     }
@@ -245,7 +245,7 @@ public static partial class Sdl
     {
         public bool IsInvalid => Value == 0;
 
-        public static implicit operator ThreadID(ulong value) => new ThreadID(value);
+        public static implicit operator ThreadID(ulong value) => new(value);
 
         public static implicit operator ulong(ThreadID threadID) => threadID.Value;
     }
