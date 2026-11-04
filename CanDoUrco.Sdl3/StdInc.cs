@@ -795,6 +795,16 @@ public static partial class Sdl
         }
     }
 
+    public static unsafe void InitInterface(ref StorageInterface iface)
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        fixed (StorageInterface* pIface = &iface)
+        {
+            ZeroP<StorageInterface>(pIface);
+            pIface->Version = (uint)sizeof(StorageInterface);
+        }
+    }
+
     public static unsafe void* MAlloc(nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
