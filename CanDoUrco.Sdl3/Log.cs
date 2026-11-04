@@ -7,7 +7,6 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using CduLogCategory = CanDoUrco.Logging.LogCategory;
 
 namespace CanDoUrco.Sdl3;
 
