@@ -40,7 +40,7 @@ public static class SdlAllocatedArrayMarshaller<T, TUnmanagedElement>
 
         numElements = managed.Length;
         var spaceToAllocate = int.Max(checked(sizeof(TUnmanagedElement) * numElements), 1);
-        return (TUnmanagedElement*)Sdl.Malloc((nuint)spaceToAllocate);
+        return (TUnmanagedElement*)Sdl.MAlloc((nuint)spaceToAllocate);
     }
 
     public static ReadOnlySpan<T> GetManagedValuesSource(T[]? managed)
@@ -121,7 +121,7 @@ public static class SdlAllocatedArrayMarshaller<T, TUnmanagedElement>
             {
                 int bufferSize = checked(array.Length * sizeof(TUnmanagedElement));
                 int spaceToAllocate = Math.Max(bufferSize, 1);
-                _allocatedMemory = (TUnmanagedElement*)Sdl.Malloc((nuint)spaceToAllocate);
+                _allocatedMemory = (TUnmanagedElement*)Sdl.MAlloc((nuint)spaceToAllocate);
                 _span = new Span<TUnmanagedElement>(_allocatedMemory, array.Length);
             }
         }
