@@ -44,16 +44,16 @@ public static partial class Sdl
         }
     }
 
-    public class Locale
-    {
-        public string? Language { get; set; }
-        public string? Country { get; set; }
-    }
-
     [StructLayout(LayoutKind.Sequential)]
     internal struct UnsafeLocale
     {
         public unsafe byte* Language;
         public unsafe byte* Country;
+    }
+
+    public class Locale
+    {
+        public string? Language { get; set; }
+        public string? Country { get; set; }
     }
 }

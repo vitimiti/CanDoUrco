@@ -18,13 +18,12 @@ public readonly ref struct LogString<TLevel>
 {
     private readonly StringBuilder? _sb;
     private readonly string? _message;
-    private readonly ReadOnlySpan<char> _span;
 
-    internal ReadOnlySpan<char> ReadOnlySpan => _span;
+    internal ReadOnlySpan<char> ReadOnlySpan { get; }
 
     private LogString(string message) => _message = message;
 
-    private LogString(ReadOnlySpan<char> message) => _span = message;
+    private LogString(ReadOnlySpan<char> message) => ReadOnlySpan = message;
 
     public LogString(
         int literalLength,
@@ -46,11 +45,6 @@ public readonly ref struct LogString<TLevel>
     )
         : this(literalLength, formattedCount, category, default(TLevel).Level, out shouldAppend) { }
 
-    public void AppendLiteral(string value) => _sb?.Append(value);
-
-    public void AppendFormatted(IFormatProvider? provider, string format, params object?[] args) =>
-        _sb?.AppendFormat(provider, format, args);
-
     internal string? ToStringAndClear()
     {
         if (_message is not null)
@@ -67,6 +61,11 @@ public readonly ref struct LogString<TLevel>
         _sb.Clear();
         return result;
     }
+
+    public void AppendLiteral(string value) => _sb?.Append(value);
+
+    public void AppendFormatted(IFormatProvider? provider, string format, params object?[] args) =>
+        _sb?.AppendFormat(provider, format, args);
 
     public static implicit operator LogString<TLevel>(string message) => new(message);
 

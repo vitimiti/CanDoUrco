@@ -43,6 +43,12 @@ public static partial class Sdl
         }
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct UnsafeGuid
+    {
+        public unsafe fixed byte Data[16];
+    }
+
     [NativeMarshalling(typeof(GuidMarshaller))]
     [StructLayout(LayoutKind.Sequential)]
     public struct Guid
@@ -58,11 +64,5 @@ public static partial class Sdl
                 Array.Copy(value, field, value.Length);
             }
         }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct UnsafeGuid
-    {
-        public unsafe fixed byte Data[16];
     }
 }
