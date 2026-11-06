@@ -88,6 +88,16 @@ public static partial class Sdl
         ref float y2
     );
 
+    private static unsafe void GetRectPointer(Rect? rect, out Rect* rectPtr)
+    {
+        rectPtr = null;
+        if (rect.HasValue)
+        {
+            var value = rect.Value;
+            rectPtr = &value;
+        }
+    }
+
     public static void RectToFRect(in Rect rect, out FRect fRect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
