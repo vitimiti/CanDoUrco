@@ -11,17 +11,16 @@ using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
-    [LibraryImport(DllName, EntryPoint = "SDL_OpenURL", StringMarshalling = StringMarshalling.Utf8)]
+    [LibraryImport(DllName, EntryPoint = "SDL_OpenURL")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _OpenURL(string url);
+    private static partial bool _OpenURL(byte* url);
 
-    public static bool OpenURL(string url)
+    public static bool OpenURL(byte* url)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(url);
         return _OpenURL(url);
     }
 }

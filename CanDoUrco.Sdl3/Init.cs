@@ -8,19 +8,20 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
-    public const string PropAppMetadataNameString = "SDL.app.metadata.name";
-    public const string PropAppMetadataVersionString = "SDL.app.metadata.version";
-    public const string PropAppMetadataIdentifierString = "SDL.app.metadata.identifier";
-    public const string PropAppMetadataCreatorString = "SDL.app.metadata.creator";
-    public const string PropAppMetadataCopyrightString = "SDL.app.metadata.copyright";
-    public const string PropAppMetadataUrlString = "SDL.app.metadata.url";
-    public const string PropAppMetadataTypeString = "SDL.app.metadata.type";
+    public static ReadOnlySpan<byte> PropAppMetadataNameString => "SDL.app.metadata.name"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataVersionString => "SDL.app.metadata.version"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataIdentifierString =>
+        "SDL.app.metadata.identifier"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataCreatorString => "SDL.app.metadata.creator"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataCopyrightString =>
+        "SDL.app.metadata.copyright"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataUrlString => "SDL.app.metadata.url"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataTypeString => "SDL.app.metadata.type"u8;
 
     public static InitFlags InitAudio => new(0x0000_0010U);
 
@@ -69,42 +70,29 @@ public static partial class Sdl
     [LibraryImport(DllName, EntryPoint = "SDL_RunOnMainThread")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _RunOnMainThread(
+    private static partial bool _RunOnMainThread(
         delegate* unmanaged[Cdecl]<void*, void> callback,
         void* userdata,
         [MarshalAs(UnmanagedType.I1)] bool waitComplete
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_SetAppMetadata",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_SetAppMetadata")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _SetAppMetadata(
-        string? appName,
-        string? appVersion,
-        string? appIdentifier
+        byte* appName,
+        byte* appVersion,
+        byte* appIdentifier
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_SetAppMetadataProperty",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_SetAppMetadataProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetAppMetadataProperty(string property, string? value);
+    private static partial bool _SetAppMetadataProperty(byte* property, byte* value);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetAppMetadataProperty",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetAppMetadataProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _GetAppMetadataProperty(string property);
+    private static partial byte* _GetAppMetadataProperty(byte* property);
 
     public static bool Init(InitFlags flags)
     {
@@ -142,7 +130,7 @@ public static partial class Sdl
         return _IsMainThread();
     }
 
-    public static unsafe bool RunOnMainThread(
+    public static bool RunOnMainThread(
         delegate* unmanaged[Cdecl]<void*, void> callback,
         void* userdata,
         bool waitComplete
@@ -152,23 +140,21 @@ public static partial class Sdl
         return _RunOnMainThread(callback, userdata, waitComplete);
     }
 
-    public static bool SetAppMetadata(string? appName, string? appVersion, string? appIdentifier)
+    public static bool SetAppMetadata(byte* appName, byte* appVersion, byte* appIdentifier)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetAppMetadata(appName, appVersion, appIdentifier);
     }
 
-    public static bool SetAppMetadataProperty(string property, string? value)
+    public static bool SetAppMetadataProperty(byte* property, byte* value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(property);
         return _SetAppMetadataProperty(property, value);
     }
 
-    public static string? GetAppMetadataProperty(string property)
+    public static byte* GetAppMetadataProperty(byte* property)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(property);
         return _GetAppMetadataProperty(property);
     }
 

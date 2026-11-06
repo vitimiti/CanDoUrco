@@ -12,7 +12,7 @@ using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_HasRectIntersection")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -31,7 +31,7 @@ public static partial class Sdl
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectEnclosingPoints")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _GetRectEnclosingPoints(
+    private static partial bool _GetRectEnclosingPoints(
         [In]
         [MarshalUsing(typeof(ArrayMarshaller<Point, Point>), CountElementName = nameof(count))]
             Point[] points,
@@ -68,7 +68,7 @@ public static partial class Sdl
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectEnclosingPointsFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _GetRectEnclosingPointsFloat(
+    private static partial bool _GetRectEnclosingPointsFloat(
         [In]
         [MarshalUsing(typeof(ArrayMarshaller<Point, Point>), CountElementName = nameof(count))]
             Point[] points,
@@ -87,16 +87,6 @@ public static partial class Sdl
         ref float x2,
         ref float y2
     );
-
-    private static unsafe void GetRectPointer(Rect? rect, out Rect* rectPtr)
-    {
-        rectPtr = null;
-        if (rect.HasValue)
-        {
-            var value = rect.Value;
-            rectPtr = &value;
-        }
-    }
 
     public static void RectToFRect(in Rect rect, out FRect fRect)
     {
@@ -146,24 +136,15 @@ public static partial class Sdl
         _GetRectUnion(a, b, out result);
     }
 
-    public static unsafe bool GetRectEnclosingPoints(
+    public static bool GetRectEnclosingPoints(
         Point[] points,
         int count,
-        in Rect? clip,
+        Rect* clip,
         out Rect result
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(points);
-        ArgumentOutOfRangeException.ThrowIfNegative(count);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, points.Length);
-        if (clip is null)
-        {
-            return _GetRectEnclosingPoints(points, count, null, out result);
-        }
-
-        var clipRect = clip.Value;
-        return _GetRectEnclosingPoints(points, count, &clipRect, out result);
+        return _GetRectEnclosingPoints(points, count, clip, out result);
     }
 
     public static bool GetRectAndLineIntersection(
@@ -223,24 +204,15 @@ public static partial class Sdl
         _GetRectUnionFloat(a, b, out result);
     }
 
-    public static unsafe bool GetRectEnclosingPointsFloat(
+    public static bool GetRectEnclosingPointsFloat(
         Point[] points,
         int count,
-        in FRect? clip,
+        FRect* clip,
         out FRect result
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(points);
-        ArgumentOutOfRangeException.ThrowIfNegative(count);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, points.Length);
-        if (clip is null)
-        {
-            return _GetRectEnclosingPointsFloat(points, count, null, out result);
-        }
-
-        var clipRect = clip.Value;
-        return _GetRectEnclosingPointsFloat(points, count, &clipRect, out result);
+        return _GetRectEnclosingPointsFloat(points, count, clip, out result);
     }
 
     public static bool GetRectAndLineIntersectionFloat(

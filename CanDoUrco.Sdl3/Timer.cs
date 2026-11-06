@@ -150,8 +150,6 @@ public static partial class Sdl
 
     public readonly record struct TimerID(uint Value)
     {
-        public bool IsInvalid => Value == 0;
-
         public static implicit operator TimerID(uint value) => new TimerID(value);
 
         public static implicit operator uint(TimerID timerID) => timerID.Value;

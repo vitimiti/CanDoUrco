@@ -8,24 +8,18 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_GetVersion")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int _GetVersion();
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetRevision",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetRevision")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string _GetRevision();
+    private static partial byte* _GetRevision();
 
     public static int VersionNumMajor(int version) => version / 1_000_000;
 
@@ -39,7 +33,7 @@ public static partial class Sdl
         return _GetVersion();
     }
 
-    public static string GetRevision()
+    public static byte* GetRevision()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetRevision();

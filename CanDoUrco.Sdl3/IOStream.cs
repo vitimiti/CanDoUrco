@@ -11,33 +11,35 @@ using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
-    public const string PropIOStreamWindowsHandlePointer = "SDL.iostream.windows.handle";
-    public const string PropIOStreamStdIOFilePointer = "SDL.iostream.stdio.file";
-    public const string PropIOStreamFileDescriptorNumber = "SDL.iostream.file_descriptor";
-    public const string PropIOStreamAndroidAAssetPointer = "SDL.iostream.android.aasset";
-    public const string PropIOStreamMemoryPointer = "SDL.iostream.memory.base";
-    public const string PropIOStreamMemorySizeNumber = "SDL.iostream.memory.size";
-    public const string PropIOStreamMemoryFreeFuncPointer = "SDL.iostream.memory.free";
-    public const string PropIOStreamDynamicMemoryPointer = "SDL.iostream.dynamic.memory";
-    public const string PropIOStreamDynamicChunkSizeNumber = "SDL.iostream.dynamic.chunksize";
+    public static ReadOnlySpan<byte> PropIOStreamWindowsHandlePointer =>
+        "SDL.iostream.windows.handle"u8;
+    public static ReadOnlySpan<byte> PropIOStreamStdIOFilePointer => "SDL.iostream.stdio.file"u8;
+    public static ReadOnlySpan<byte> PropIOStreamFileDescriptorNumber =>
+        "SDL.iostream.file_descriptor"u8;
+    public static ReadOnlySpan<byte> PropIOStreamAndroidAAssetPointer =>
+        "SDL.iostream.android.aasset"u8;
+    public static ReadOnlySpan<byte> PropIOStreamMemoryPointer => "SDL.iostream.memory.base"u8;
+    public static ReadOnlySpan<byte> PropIOStreamMemorySizeNumber => "SDL.iostream.memory.size"u8;
+    public static ReadOnlySpan<byte> PropIOStreamMemoryFreeFuncPointer =>
+        "SDL.iostream.memory.free"u8;
+    public static ReadOnlySpan<byte> PropIOStreamDynamicMemoryPointer =>
+        "SDL.iostream.dynamic.memory"u8;
+    public static ReadOnlySpan<byte> PropIOStreamDynamicChunkSizeNumber =>
+        "SDL.iostream.dynamic.chunksize"u8;
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_IOFromFile",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_IOFromFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial IOStream _IOFromFile(string file, string mode);
+    private static partial IOStream _IOFromFile(byte* file, byte* mode);
 
     [LibraryImport(DllName, EntryPoint = "SDL_IOFromMem")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial IOStream _IOFromMem(void* mem, nuint size);
+    private static partial IOStream _IOFromMem(void* mem, nuint size);
 
     [LibraryImport(DllName, EntryPoint = "SDL_IOFromConstMem")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial IOStream _IOFromConstMem(void* mem, nuint size);
+    private static partial IOStream _IOFromConstMem(void* mem, nuint size);
 
     [LibraryImport(DllName, EntryPoint = "SDL_IOFromDynamicMem")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -45,12 +47,12 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_OpenIO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial IOStream _OpenIO(in IOStreamInterface iface, void* userdata);
+    private static partial IOStream _OpenIO(in IOStreamInterface iface, void* userdata);
 
     [LibraryImport(DllName, EntryPoint = "SDL_CloseIO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _CloseIO(IOStream context);
+    private static partial bool _CloseIO(IOStream context);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetIOProperties")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -74,19 +76,15 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadIO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _ReadIO(IOStream context, void* buffer, nuint size);
+    private static partial nuint _ReadIO(IOStream context, void* buffer, nuint size);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteIO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _WriteIO(IOStream context, void* buffer, nuint size);
+    private static partial nuint _WriteIO(IOStream context, void* buffer, nuint size);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_IOprintf",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_IOprintf")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial nuint _IOprintf(IOStream context, string fmt, string message);
+    private static partial nuint _IOprintf(IOStream context, byte* fmt, byte* message);
 
     [LibraryImport(DllName, EntryPoint = "SDL_FlushIO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -95,38 +93,30 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadFile_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _LoadFileIO(
+    private static partial void* _LoadFileIO(
         IOStream src,
         out nuint dataSize,
         [MarshalAs(UnmanagedType.I1)] bool closeIO
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_LoadFile",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_LoadFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _LoadFile(string file, out nuint dataSize);
+    private static partial void* _LoadFile(byte* file, out nuint dataSize);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SaveFile_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _SaveFileIO(
+    private static partial bool _SaveFileIO(
         IOStream src,
         void* data,
         nuint dataSize,
         [MarshalAs(UnmanagedType.I1)] bool closeIO
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_SaveFile",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_SaveFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _SaveFile(string file, void* data, nuint dataSize);
+    private static partial bool _SaveFile(byte* file, void* data, nuint dataSize);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadU8")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -268,21 +258,19 @@ public static partial class Sdl
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _WriteS64BE(IOStream context, long value);
 
-    public static IOStream IOFromFile(string file, string mode)
+    public static IOStream IOFromFile(byte* file, byte* mode)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(file);
-        ArgumentNullException.ThrowIfNull(mode);
         return _IOFromFile(file, mode);
     }
 
-    public static unsafe IOStream IOFromMem(void* mem, nuint size)
+    public static IOStream IOFromMem(void* mem, nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IOFromMem(mem, size);
     }
 
-    public static unsafe IOStream IOFromConstMem(void* mem, nuint size)
+    public static IOStream IOFromConstMem(void* mem, nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IOFromConstMem(mem, size);
@@ -294,7 +282,7 @@ public static partial class Sdl
         return _IOFromDynamicMem();
     }
 
-    public static unsafe IOStream OpenIO(in IOStreamInterface iface, void* userdata)
+    public static IOStream OpenIO(in IOStreamInterface iface, void* userdata)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _OpenIO(in iface, userdata);
@@ -336,24 +324,22 @@ public static partial class Sdl
         return _TellIO(context);
     }
 
-    public static unsafe nuint ReadIO(IOStream context, void* buffer, nuint size)
+    public static nuint ReadIO(IOStream context, void* buffer, nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(buffer);
         return _ReadIO(context, buffer, size);
     }
 
-    public static unsafe nuint WriteIO(IOStream context, void* buffer, nuint size)
+    public static nuint WriteIO(IOStream context, void* buffer, nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(buffer);
         return _WriteIO(context, buffer, size);
     }
 
-    public static nuint IOPrintF(IOStream context, string message)
+    public static nuint IOPrintF(IOStream context, byte* fmt, byte* message)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        return _IOprintf(context, "%s", message ?? string.Empty);
+        return _IOprintf(context, fmt, message);
     }
 
     public static bool FlushIO(IOStream context)
@@ -362,31 +348,27 @@ public static partial class Sdl
         return _FlushIO(context);
     }
 
-    public static unsafe void* LoadFileIO(IOStream src, out nuint dataSize, bool closeIO)
+    public static void* LoadFileIO(IOStream src, out nuint dataSize, bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _LoadFileIO(src, out dataSize, closeIO);
     }
 
-    public static unsafe void* LoadFile(string file, out nuint dataSize)
+    public static void* LoadFile(byte* file, out nuint dataSize)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(file);
         return _LoadFile(file, out dataSize);
     }
 
-    public static unsafe bool SaveFileIO(IOStream src, void* data, nuint dataSize, bool closeIO)
+    public static bool SaveFileIO(IOStream src, void* data, nuint dataSize, bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(data);
         return _SaveFileIO(src, data, dataSize, closeIO);
     }
 
-    public static unsafe bool SaveFile(string file, void* data, nuint dataSize)
+    public static bool SaveFile(byte* file, void* data, nuint dataSize)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(file);
-        ArgumentNullException.ThrowIfNull(data);
         return _SaveFile(file, data, dataSize);
     }
 
@@ -562,18 +544,16 @@ public static partial class Sdl
     public struct IOStreamInterface
     {
         public uint Version;
-        public unsafe delegate* unmanaged[Cdecl]<void*, long> Size;
-        public unsafe delegate* unmanaged[Cdecl]<void*, long, IOWhence, long> Seek;
-        public unsafe delegate* unmanaged[Cdecl]<void*, void*, nuint, IOStatus*, nuint> Read;
-        public unsafe delegate* unmanaged[Cdecl]<void*, void*, nuint, IOStatus*, nuint> Write;
-        public unsafe delegate* unmanaged[Cdecl]<void*, IOStatus*, sbyte> Flush; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, sbyte> Close; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, long> Size;
+        public delegate* unmanaged[Cdecl]<void*, long, IOWhence, long> Seek;
+        public delegate* unmanaged[Cdecl]<void*, void*, nuint, IOStatus*, nuint> Read;
+        public delegate* unmanaged[Cdecl]<void*, void*, nuint, IOStatus*, nuint> Write;
+        public delegate* unmanaged[Cdecl]<void*, IOStatus*, sbyte> Flush; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, sbyte> Close; // sbyte is bool
     }
 
     public readonly record struct IOStream(nint Value)
     {
-        public bool IsNull => Value == 0;
-
         public static implicit operator IOStream(nint value) => new(value);
 
         public static implicit operator nint(IOStream value) => value.Value;

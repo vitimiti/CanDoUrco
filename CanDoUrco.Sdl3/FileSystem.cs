@@ -7,205 +7,134 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
     public static GlobFlags GlobCaseInsensitive => new(1U << 0);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetBasePath",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetBasePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _GetBasePath();
+    private static partial byte* _GetBasePath();
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetPrefPath",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetPrefPath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalUsing(typeof(SdlAllocatedUtf8StringMarshaller))]
-    private static partial string? _GetPrefPath(string org, string app);
+    private static partial byte* _GetPrefPath(byte* org, byte* app);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetUserFolder",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetUserFolder")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _GetUserFolder(Folder folder);
+    private static partial byte* _GetUserFolder(Folder folder);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_CreateDirectory",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_CreateDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CreateDirectory(string path);
+    private static partial bool _CreateDirectory(byte* path);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_EnumerateDirectory",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_EnumerateDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _EnumerateDirectory(
-        string path,
+    private static partial bool _EnumerateDirectory(
+        byte* path,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult> callback,
         void* userdata
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_RemovePath",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_RemovePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RemovePath(string path);
+    private static partial bool _RemovePath(byte* path);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_RenamePath",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_RenamePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RenamePath(string oldPath, string newPath);
+    private static partial bool _RenamePath(byte* oldPath, byte* newPath);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_CopyFile",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_CopyFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CopyFile(string src, string dst);
+    private static partial bool _CopyFile(byte* src, byte* dst);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetPathInfo",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetPathInfo")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetPathInfo(string path, out PathInfo info);
+    private static partial bool _GetPathInfo(byte* path, out PathInfo info);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GlobDirectory",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GlobDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalUsing(
-        typeof(SdlAllocatedArrayMarshaller<string, nint>),
-        CountElementName = nameof(count)
-    )]
-    private static partial string[]? _GlobDirectory(
-        string path,
-        string? pattern,
+    private static partial byte** _GlobDirectory(
+        byte* path,
+        byte* pattern,
         GlobFlags flags,
         out int count
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetCurrentDirectory",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(SdlAllocatedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetCurrentDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _GetCurrentDirectory();
+    private static partial byte* _GetCurrentDirectory();
 
-    public static string? GetBasePath()
+    public static byte* GetBasePath()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetBasePath();
     }
 
-    public static string? GetPrefPath(string org, string app)
+    public static byte* GetPrefPath(byte* org, byte* app)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(org);
-        ArgumentNullException.ThrowIfNull(app);
         return _GetPrefPath(org, app);
     }
 
-    public static string? GetUserFolder(Folder folder)
+    public static byte* GetUserFolder(Folder folder)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetUserFolder(folder);
     }
 
-    public static bool CreateDirectory(string path)
+    public static bool CreateDirectory(byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _CreateDirectory(path);
     }
 
-    public static unsafe bool EnumerateDirectory(
-        string path,
+    public static bool EnumerateDirectory(
+        byte* path,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult> callback,
         void* userdata
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _EnumerateDirectory(path, callback, userdata);
     }
 
-    public static bool RemovePath(string path)
+    public static bool RemovePath(byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _RemovePath(path);
     }
 
-    public static bool RenamePath(string oldPath, string newPath)
+    public static bool RenamePath(byte* oldPath, byte* newPath)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(oldPath);
-        ArgumentNullException.ThrowIfNull(newPath);
         return _RenamePath(oldPath, newPath);
     }
 
-    public static bool CopyFile(string src, string dst)
+    public static bool CopyFile(byte* src, byte* dst)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(src);
-        ArgumentNullException.ThrowIfNull(dst);
         return _CopyFile(src, dst);
     }
 
-    public static bool GetPathInfo(string path, out PathInfo info)
+    public static bool GetPathInfo(byte* path, out PathInfo info)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _GetPathInfo(path, out info);
     }
 
-    public static string[]? GlobDirectory(
-        string path,
-        string? pattern,
-        GlobFlags flags,
-        out int count
-    )
+    public static byte** GlobDirectory(byte* path, byte* pattern, GlobFlags flags, out int count)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _GlobDirectory(path, pattern, flags, out count);
     }
 

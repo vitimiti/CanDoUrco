@@ -7,40 +7,31 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.Versioning;
 using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_SetMainReady")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void _SetMainReady();
 
-    [LibraryImport(DllName, EntryPoint = "SDL_RunApp", StringMarshalling = StringMarshalling.Utf8)]
+    [LibraryImport(DllName, EntryPoint = "SDL_RunApp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _RunApp(
+    private static partial int _RunApp(
         int argc,
-        [In, Out]
-        [MarshalUsing(typeof(ArrayMarshaller<string, nint>), CountElementName = nameof(argc))]
-            string[] argv,
+        byte** argv,
         delegate* unmanaged[Cdecl]<int, byte**, int> mainFunction,
         void* reserved
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_EnterAppMainCallbacks",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_EnterAppMainCallbacks")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _EnterAppMainCallbacks(
+    private static partial int _EnterAppMainCallbacks(
         int argc,
-        [In, Out]
-        [MarshalUsing(typeof(ArrayMarshaller<string, nint>), CountElementName = nameof(argc))]
-            string[] argv,
+        byte** argv,
         delegate* unmanaged[Cdecl]<void**, int, byte**, AppResult> appInit,
         delegate* unmanaged[Cdecl]<void*, AppResult> appIter,
         delegate* unmanaged[Cdecl]<void*, Event*, AppResult> appEvent,
@@ -48,14 +39,10 @@ public static partial class Sdl
     );
 
     [SupportedOSPlatform("windows")]
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_RegisterApp",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_RegisterApp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _RegisterApp(string? name, uint style, void* hInst);
+    private static partial bool _RegisterApp(byte* name, uint style, void* hInst);
 
     [SupportedOSPlatform("windows")]
     [LibraryImport(DllName, EntryPoint = "SDL_UnregisterApp")]
@@ -72,20 +59,19 @@ public static partial class Sdl
         _SetMainReady();
     }
 
-    public static unsafe void RunApp(
+    public static void RunApp(
         int argc,
-        string[] argv,
+        byte** argv,
         delegate* unmanaged[Cdecl]<int, byte**, int> mainFunction
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(argv);
         _RunApp(argc, argv, mainFunction, null);
     }
 
-    public static unsafe int EnterAppMainCallbacks(
+    public static int EnterAppMainCallbacks(
         int argc,
-        string[] argv,
+        byte** argv,
         delegate* unmanaged[Cdecl]<void**, int, byte**, AppResult> appInit,
         delegate* unmanaged[Cdecl]<void*, AppResult> appIter,
         delegate* unmanaged[Cdecl]<void*, Event*, AppResult> appEvent,
@@ -93,12 +79,11 @@ public static partial class Sdl
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(argv);
         return _EnterAppMainCallbacks(argc, argv, appInit, appIter, appEvent, appQuit);
     }
 
     [SupportedOSPlatform("windows")]
-    public static unsafe bool RegisterApp(string? name, uint style, void* hInst)
+    public static bool RegisterApp(byte* name, uint style, void* hInst)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RegisterApp(name, style, hInst);

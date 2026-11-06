@@ -7,13 +7,11 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
     public const byte AlphaOpaque = 255;
     public const float AlphaOpaqueFloat = 1F;
@@ -190,14 +188,9 @@ public static partial class Sdl
         return (format.Value >> 20) & 0x0F;
     }
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetPixelFormatName",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetPixelFormatName")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string _GetPixelFormatName(PixelFormat format);
+    private static partial byte* _GetPixelFormatName(PixelFormat format);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetMasksForPixelFormat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -223,33 +216,31 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetPixelFormatDetails")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial PixelFormatDetails _GetPixelFormatDetails(PixelFormat format);
+    private static partial PixelFormatDetails* _GetPixelFormatDetails(PixelFormat format);
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreatePalette")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Palette _CreatePalette(int nColors);
+    private static partial Palette* _CreatePalette(int nColors);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetPaletteColors")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _SetPaletteColors(
-        Palette palette,
-        [In]
-        [MarshalUsing(typeof(ArrayMarshaller<Color, Color>), CountElementName = nameof(nColors))]
-            Color[] colors,
+        Palette* palette,
+        Color* colors,
         int firstColor,
         int nColors
     );
 
     [LibraryImport(DllName, EntryPoint = "SDL_DestroyPalette")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial void _DestroyPalette(Palette palette);
+    private static partial void _DestroyPalette(Palette* palette);
 
     [LibraryImport(DllName, EntryPoint = "SDL_MapRGB")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial uint _MapRgb(
-        PixelFormatDetails format,
-        Palette palette,
+        PixelFormatDetails* format,
+        Palette* palette,
         byte r,
         byte g,
         byte b
@@ -258,8 +249,8 @@ public static partial class Sdl
     [LibraryImport(DllName, EntryPoint = "SDL_MapRGBA")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial uint _MapRgba(
-        PixelFormatDetails format,
-        Palette palette,
+        PixelFormatDetails* format,
+        Palette* palette,
         byte r,
         byte g,
         byte b,
@@ -270,8 +261,8 @@ public static partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void _GetRgb(
         uint pixelValue,
-        PixelFormatDetails format,
-        Palette palette,
+        PixelFormatDetails* format,
+        Palette* palette,
         out byte r,
         out byte g,
         out byte b
@@ -281,8 +272,8 @@ public static partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void _GetRgba(
         uint pixelValue,
-        PixelFormatDetails format,
-        Palette palette,
+        PixelFormatDetails* format,
+        Palette* palette,
         out byte r,
         out byte g,
         out byte b,
@@ -557,7 +548,7 @@ public static partial class Sdl
         return ColorspaceRange(cspace) is ColorRange.Full;
     }
 
-    public static string GetPixelFormatName(PixelFormat format)
+    public static byte* GetPixelFormatName(PixelFormat format)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetPixelFormatName(format);
@@ -588,49 +579,44 @@ public static partial class Sdl
         return _GetPixelFormatForMasks(bpp, rMask, gMask, bMask, aMask);
     }
 
-    public static PixelFormatDetails GetPixelFormatDetails(PixelFormat format)
+    public static PixelFormatDetails* GetPixelFormatDetails(PixelFormat format)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetPixelFormatDetails(format);
     }
 
-    public static Palette CreatePalette(int nColors)
+    public static Palette* CreatePalette(int nColors)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CreatePalette(nColors);
     }
 
     public static bool SetPaletteColors(
-        Palette palette,
-        Color[] colors,
+        Palette* palette,
+        Color* colors,
         int firstColor,
         int nColors
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(colors);
-        ArgumentOutOfRangeException.ThrowIfNegative(firstColor);
-        ArgumentOutOfRangeException.ThrowIfNegative(nColors);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(firstColor, colors.Length);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(nColors, colors.Length - firstColor);
         return _SetPaletteColors(palette, colors, firstColor, nColors);
     }
 
-    public static void DestroyPalette(Palette palette)
+    public static void DestroyPalette(Palette* palette)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         _DestroyPalette(palette);
     }
 
-    public static uint MapRgb(PixelFormatDetails format, Palette palette, byte r, byte g, byte b)
+    public static uint MapRgb(PixelFormatDetails* format, Palette* palette, byte r, byte g, byte b)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _MapRgb(format, palette, r, g, b);
     }
 
     public static uint MapRgba(
-        PixelFormatDetails format,
-        Palette palette,
+        PixelFormatDetails* format,
+        Palette* palette,
         byte r,
         byte g,
         byte b,
@@ -643,8 +629,8 @@ public static partial class Sdl
 
     public static void GetRgb(
         uint pixelValue,
-        PixelFormatDetails format,
-        Palette palette,
+        PixelFormatDetails* format,
+        Palette* palette,
         out byte r,
         out byte g,
         out byte b
@@ -656,8 +642,8 @@ public static partial class Sdl
 
     public static void GetRgba(
         uint pixelValue,
-        PixelFormatDetails format,
-        Palette palette,
+        PixelFormatDetails* format,
+        Palette* palette,
         out byte r,
         out byte g,
         out byte b,
@@ -751,36 +737,6 @@ public static partial class Sdl
         TopLeft,
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    private struct UnsafePixelFormatDetails
-    {
-        public PixelFormat Format;
-        public byte BitsPerPixel;
-        public byte BytesPerPixel;
-        private unsafe fixed byte _padding[2];
-        public uint RMask;
-        public uint GMask;
-        public uint BMask;
-        public uint AMask;
-        public byte RBits;
-        public byte GBits;
-        public byte BBits;
-        public byte ABits;
-        public byte RShift;
-        public byte GShift;
-        public byte BShift;
-        public byte AShift;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct UnsafePalette
-    {
-        public int NColors;
-        public unsafe Color* Colors;
-        public uint Version;
-        public int RefCount;
-    }
-
     public readonly record struct PixelFormat(uint Value)
     {
         public static implicit operator uint(PixelFormat format) => format.Value;
@@ -834,63 +790,33 @@ public static partial class Sdl
         public float A;
     }
 
-    public readonly record struct Palette(nint Value)
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Palette
     {
-        private readonly unsafe UnsafePalette* UnsafeValue => (UnsafePalette*)Value;
-
-        public bool IsNull => Value == 0;
-        public unsafe Color[]? Colors
-        {
-            get
-            {
-                if (UnsafeValue is null || UnsafeValue->Colors is null)
-                {
-                    return null;
-                }
-
-                var count = UnsafeValue->NColors;
-                var colors = new Color[count];
-                for (int i = 0; i < count; i++)
-                {
-                    colors[i] = UnsafeValue->Colors[i];
-                }
-
-                return colors;
-            }
-        }
-        public unsafe uint Version => UnsafeValue->Version;
-        public unsafe int RefCount => UnsafeValue->RefCount;
-
-        public static implicit operator nint(Palette palette) => palette.Value;
-
-        public static implicit operator Palette(nint value) => new(value);
+        public int NColors;
+        public Color* Colors;
+        public uint Version;
+        public int RefCount;
     }
 
-    public readonly record struct PixelFormatDetails(nint Value)
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PixelFormatDetails
     {
-        private readonly unsafe UnsafePixelFormatDetails* UnsafeValue =>
-            (UnsafePixelFormatDetails*)Value;
-
-        public bool IsNull => Value == 0;
-
-        public unsafe PixelFormat Format => UnsafeValue->Format;
-        public unsafe byte BitsPerPixel => UnsafeValue->BitsPerPixel;
-        public unsafe byte BytesPerPixel => UnsafeValue->BytesPerPixel;
-        public unsafe uint RMask => UnsafeValue->RMask;
-        public unsafe uint GMask => UnsafeValue->GMask;
-        public unsafe uint BMask => UnsafeValue->BMask;
-        public unsafe uint AMask => UnsafeValue->AMask;
-        public unsafe byte RBits => UnsafeValue->RBits;
-        public unsafe byte GBits => UnsafeValue->GBits;
-        public unsafe byte BBits => UnsafeValue->BBits;
-        public unsafe byte ABits => UnsafeValue->ABits;
-        public unsafe byte RShift => UnsafeValue->RShift;
-        public unsafe byte GShift => UnsafeValue->GShift;
-        public unsafe byte BShift => UnsafeValue->BShift;
-        public unsafe byte AShift => UnsafeValue->AShift;
-
-        public static implicit operator nint(PixelFormatDetails details) => details.Value;
-
-        public static implicit operator PixelFormatDetails(nint value) => new(value);
+        public PixelFormat Format;
+        public byte BitsPerPixel;
+        public byte BytesPerPixel;
+        private fixed byte _padding[2];
+        public uint RMask;
+        public uint GMask;
+        public uint BMask;
+        public uint AMask;
+        public byte RBits;
+        public byte GBits;
+        public byte BBits;
+        public byte ABits;
+        public byte RShift;
+        public byte GShift;
+        public byte BShift;
+        public byte AShift;
     }
 }

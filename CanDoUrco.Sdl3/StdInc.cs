@@ -8,11 +8,10 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
     public const uint InvalidUnicodeCodepoint = 0xFFFD;
 
@@ -36,23 +35,23 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_malloc")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _MAlloc(nuint size);
+    private static partial void* _MAlloc(nuint size);
 
     [LibraryImport(DllName, EntryPoint = "SDL_calloc")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _CAlloc(nuint nmemb, nuint size);
+    private static partial void* _CAlloc(nuint nmemb, nuint size);
 
     [LibraryImport(DllName, EntryPoint = "SDL_realloc")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _Realloc(void* mem, nuint size);
+    private static partial void* _Realloc(void* mem, nuint size);
 
     [LibraryImport(DllName, EntryPoint = "SDL_free")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void _Free(void* mem);
+    private static partial void _Free(void* mem);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetOriginalMemoryFunctions")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void _GetOriginalMemoryFunctions(
+    private static partial void _GetOriginalMemoryFunctions(
         delegate* unmanaged[Cdecl]<nuint, void*> mallocFunc,
         delegate* unmanaged[Cdecl]<nuint, nuint, void*> callocFunc,
         delegate* unmanaged[Cdecl]<void*, nuint, void*> reallocFunc,
@@ -61,7 +60,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetMemoryFunctions")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void _GetMemoryFunctions(
+    private static partial void _GetMemoryFunctions(
         delegate* unmanaged[Cdecl]<nuint, void*> mallocFunc,
         delegate* unmanaged[Cdecl]<nuint, nuint, void*> callocFunc,
         delegate* unmanaged[Cdecl]<void*, nuint, void*> reallocFunc,
@@ -71,7 +70,7 @@ public static partial class Sdl
     [LibraryImport(DllName, EntryPoint = "SDL_SetMemoryFunctions")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _SetMemoryFunctions(
+    private static partial bool _SetMemoryFunctions(
         delegate* unmanaged[Cdecl]<nuint, void*> mallocFunc,
         delegate* unmanaged[Cdecl]<nuint, nuint, void*> callocFunc,
         delegate* unmanaged[Cdecl]<void*, nuint, void*> reallocFunc,
@@ -80,11 +79,11 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_aligned_alloc")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _AlignedAlloc(nuint alignment, nuint size);
+    private static partial void* _AlignedAlloc(nuint alignment, nuint size);
 
     [LibraryImport(DllName, EntryPoint = "SDL_aligned_free")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void _AlignedFree(void* mem);
+    private static partial void _AlignedFree(void* mem);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetNumAllocations")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -92,103 +91,67 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetEnvironment")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial Environment _GetEnvironment();
+    private static partial Environment _GetEnvironment();
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreateEnvironment")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial Environment _CreateEnvironment(
+    private static partial Environment _CreateEnvironment(
         [MarshalAs(UnmanagedType.I1)] bool populated
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetEnvironmentVariable",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetEnvironmentVariable")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial string? _GetEnvironmentVariable(Environment env, string name);
+    private static partial byte* _GetEnvironmentVariable(Environment env, byte* name);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetEnvironmentVariables",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetEnvironmentVariables")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte** _GetEnvironmentVariables(Environment env);
+    private static partial byte** _GetEnvironmentVariables(Environment env);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_SetEnvironmentVariable",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_SetEnvironmentVariable")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _SetEnvironmentVariable(
         Environment env,
-        string name,
-        string? value,
+        byte* name,
+        byte* value,
         [MarshalAs(UnmanagedType.I1)] bool overwrite
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_UnsetEnvironmentVariable",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_UnsetEnvironmentVariable")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _UnsetEnvironmentVariable(Environment env, string name);
+    private static partial bool _UnsetEnvironmentVariable(Environment env, byte* name);
 
     [LibraryImport(DllName, EntryPoint = "SDL_DestroyEnvironment")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void _DestroyEnvironment(Environment env);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_getenv",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_getenv")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial string? _GetEnv(string name);
+    private static partial byte* _GetEnv(byte* name);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_getenv_unsafe",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_getenv_unsafe")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial string? _GetEnvUnsafe(string name);
+    private static partial byte* _GetEnvUnsafe(byte* name);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_setenv_unsafe",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_setenv_unsafe")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _SetEnvUnsafe(
         Environment env,
-        string name,
-        string? value,
+        byte* name,
+        byte* value,
         [MarshalAs(UnmanagedType.I1)] bool overwrite
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_unsetenv_unsafe",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_unsetenv_unsafe")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _UnsetEnvUnsafe(Environment env, string name);
+    private static partial bool _UnsetEnvUnsafe(Environment env, byte* name);
 
     [LibraryImport(DllName, EntryPoint = "SDL_qsort")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void _QSort(
+    private static partial void _QSort(
         void* @base,
         nuint nmemb,
         nuint size,
@@ -197,7 +160,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_bsearch")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _BSearch(
+    private static partial void* _BSearch(
         void* key,
         void* @base,
         nuint nmemb,
@@ -207,7 +170,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_qsort_r")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void _QSortR(
+    private static partial void _QSortR(
         void* @base,
         nuint nmemb,
         nuint size,
@@ -217,7 +180,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_bsearch_r")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _BSearchR(
+    private static partial void* _BSearchR(
         void* key,
         void* @base,
         nuint nmemb,
@@ -300,223 +263,223 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_crc16")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial ushort _Crc16(ushort crc, byte* data, nuint length);
+    private static partial ushort _Crc16(ushort crc, byte* data, nuint length);
 
     [LibraryImport(DllName, EntryPoint = "SDL_crc32")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial uint _Crc32(uint crc, byte* data, nuint length);
+    private static partial uint _Crc32(uint crc, byte* data, nuint length);
 
     [LibraryImport(DllName, EntryPoint = "SDL_murmur3_32")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial uint _Murmur332(void* data, nuint len, uint seed);
+    private static partial uint _Murmur332(void* data, nuint len, uint seed);
 
     [LibraryImport(DllName, EntryPoint = "SDL_memcpy")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _MemCpy(void* dst, void* src, nuint len);
+    private static partial void* _MemCpy(void* dst, void* src, nuint len);
 
     [LibraryImport(DllName, EntryPoint = "SDL_memmove")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _MemMove(void* dst, void* src, nuint len);
+    private static partial void* _MemMove(void* dst, void* src, nuint len);
 
     [LibraryImport(DllName, EntryPoint = "SDL_memset")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _MemSet(void* dst, int c, nuint len);
+    private static partial void* _MemSet(void* dst, int c, nuint len);
 
     [LibraryImport(DllName, EntryPoint = "SDL_memset4")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _MemSet4(void* dst, uint val, nuint dwords);
+    private static partial void* _MemSet4(void* dst, uint val, nuint dwords);
 
     [LibraryImport(DllName, EntryPoint = "SDL_memcmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _MemCmp(void* s1, void* s2, nuint len);
+    private static partial int _MemCmp(void* s1, void* s2, nuint len);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcslen")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _WcsLen(char* str);
+    private static partial nuint _WcsLen(char* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcsnlen")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _WcsNLen(char* str, nuint maxlen);
+    private static partial nuint _WcsNLen(char* str, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcslcpy")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _WcsLCpy(char* dst, char* src, nuint maxlen);
+    private static partial nuint _WcsLCpy(char* dst, char* src, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcslcat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _WcsLCat(char* dst, char* src, nuint maxlen);
+    private static partial nuint _WcsLCat(char* dst, char* src, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcsdup")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial char* _WcsDup(char* str);
+    private static partial char* _WcsDup(char* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcsstr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial char* _WcsStr(char* haystack, char* needle);
+    private static partial char* _WcsStr(char* haystack, char* needle);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcsnstr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial char* _WcsNStr(char* haystack, char* needle, nuint maxlen);
+    private static partial char* _WcsNStr(char* haystack, char* needle, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcscmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _WcsCmp(char* str1, char* str2);
+    private static partial int _WcsCmp(char* str1, char* str2);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcsncmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _WcsNCmp(char* str1, char* str2, nuint maxlen);
+    private static partial int _WcsNCmp(char* str1, char* str2, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcscasecmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _WcsCaseCmp(char* str1, char* str2);
+    private static partial int _WcsCaseCmp(char* str1, char* str2);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcsncasecmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _WcsNCaseCmp(char* str1, char* str2, nuint maxlen);
+    private static partial int _WcsNCaseCmp(char* str1, char* str2, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_wcstol")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial long _WcsToL(char* str, char** endptr, int @base);
+    private static partial long _WcsToL(char* str, char** endptr, int @base);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strlen")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _StrLen(byte* str);
+    private static partial nuint _StrLen(byte* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strnlen")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _StrNLen(byte* str, nuint maxlen);
+    private static partial nuint _StrNLen(byte* str, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strlcpy")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _StrLCpy(byte* dst, byte* src, nuint maxlen);
+    private static partial nuint _StrLCpy(byte* dst, byte* src, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_utf8strlcpy")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _Utf8StrLCpy(byte* dst, byte* src, nuint maxlen);
+    private static partial nuint _Utf8StrLCpy(byte* dst, byte* src, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strlcat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _StrLCat(byte* dst, byte* src, nuint maxlen);
+    private static partial nuint _StrLCat(byte* dst, byte* src, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strdup")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrDup(byte* str);
+    private static partial byte* _StrDup(byte* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strndup")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrNDup(byte* str, nuint maxlen);
+    private static partial byte* _StrNDup(byte* str, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strrev")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrRev(byte* str);
+    private static partial byte* _StrRev(byte* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strupr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrUpr(byte* str);
+    private static partial byte* _StrUpr(byte* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strlwr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrLwr(byte* str);
+    private static partial byte* _StrLwr(byte* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strchr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrChr(byte* str, int c);
+    private static partial byte* _StrChr(byte* str, int c);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strrchr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrRChr(byte* str, int c);
+    private static partial byte* _StrRChr(byte* str, int c);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strstr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrStr(byte* haystack, byte* needle);
+    private static partial byte* _StrStr(byte* haystack, byte* needle);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strnstr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrNStr(byte* haystack, byte* needle, nuint maxlen);
+    private static partial byte* _StrNStr(byte* haystack, byte* needle, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strcasestr")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrCaseStr(byte* haystack, byte* needle);
+    private static partial byte* _StrCaseStr(byte* haystack, byte* needle);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strtok_r")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrTokR(byte* str, byte* delim, byte** saveptr);
+    private static partial byte* _StrTokR(byte* str, byte* delim, byte** saveptr);
 
     [LibraryImport(DllName, EntryPoint = "SDL_utf8strlen")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _Utf8StrLen(byte* str);
+    private static partial int _Utf8StrLen(byte* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_utf8strnlen")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _Utf8StrNLen(byte* str, nuint maxlen);
+    private static partial int _Utf8StrNLen(byte* str, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_itoa")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _IToA(int value, byte* str, int radix);
+    private static partial byte* _IToA(int value, byte* str, int radix);
 
     [LibraryImport(DllName, EntryPoint = "SDL_uitoa")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _UIToA(uint value, byte* str, int radix);
+    private static partial byte* _UIToA(uint value, byte* str, int radix);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ltoa")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _LToA(long value, byte* str, int radix);
+    private static partial byte* _LToA(long value, byte* str, int radix);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ultoa")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _ULToA(ulong value, byte* str, int radix);
+    private static partial byte* _ULToA(ulong value, byte* str, int radix);
 
     [LibraryImport(DllName, EntryPoint = "SDL_atoi")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _AToI(byte* str);
+    private static partial int _AToI(byte* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_atof")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial double _AToF(byte* str);
+    private static partial double _AToF(byte* str);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strtol")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial long _StrToL(byte* str, byte** endptr, int @base);
+    private static partial long _StrToL(byte* str, byte** endptr, int @base);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strtoul")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial ulong _StrToUL(byte* str, byte** endptr, int @base);
+    private static partial ulong _StrToUL(byte* str, byte** endptr, int @base);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strtod")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial double _StrToD(byte* str, byte** endptr);
+    private static partial double _StrToD(byte* str, byte** endptr);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strcmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _StrCmp(byte* str1, byte* str2);
+    private static partial int _StrCmp(byte* str1, byte* str2);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strncmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _StrNCmp(byte* str1, byte* str2, nuint maxlen);
+    private static partial int _StrNCmp(byte* str1, byte* str2, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strcasecmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _StrCaseCmp(byte* str1, byte* str2);
+    private static partial int _StrCaseCmp(byte* str1, byte* str2);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strncasecmp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial int _StrNCaseCmp(byte* str1, byte* str2, nuint maxlen);
+    private static partial int _StrNCaseCmp(byte* str1, byte* str2, nuint maxlen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_strpbrk")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _StrPBrk(byte* str, byte* breakset);
+    private static partial byte* _StrPBrk(byte* str, byte* breakset);
 
     [LibraryImport(DllName, EntryPoint = "SDL_StepUTF8")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial uint _StepUtf8(byte** str, out nuint pslen);
+    private static partial uint _StepUtf8(byte** str, out nuint pslen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_StepBackUTF8")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial uint _StepBackUtf8(byte** str, out nuint pslen);
+    private static partial uint _StepBackUtf8(byte** str, out nuint pslen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_UCS4ToUTF8")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte* _Ucs4ToUtf8(uint codepoint, byte* dst);
+    private static partial byte* _Ucs4ToUtf8(uint codepoint, byte* dst);
 
     [LibraryImport(DllName, EntryPoint = "SDL_srand")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -742,13 +705,9 @@ public static partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial float _TanF(float x);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_iconv_open",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_iconv_open")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial IconVData _IconVOpen(string toCode, string fromCode);
+    private static partial IconVData _IconVOpen(byte* toCode, byte* fromCode);
 
     [LibraryImport(DllName, EntryPoint = "SDL_iconv_close")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -757,7 +716,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_iconv")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial nuint _IconV(
+    private static partial nuint _IconV(
         IconVData cd,
         byte** inbuf,
         out nuint inBytesLeft,
@@ -765,17 +724,12 @@ public static partial class Sdl
         out nuint outBytesLeft
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_iconv_string",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_iconv_string")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _IconVString(
-        string toCode,
-        string fromCode,
-        string inbuf,
+    private static partial byte* _IconVString(
+        byte* toCode,
+        byte* fromCode,
+        byte* inbuf,
         nuint inBytesLeft
     );
 
@@ -785,7 +739,7 @@ public static partial class Sdl
         return (byte)a | ((uint)(byte)b << 8) | ((uint)(byte)c << 16) | ((uint)(byte)d << 24);
     }
 
-    public static unsafe void InitInterface(ref IOStreamInterface iface)
+    public static void InitInterface(ref IOStreamInterface iface)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         fixed (IOStreamInterface* pIface = &iface)
@@ -795,7 +749,7 @@ public static partial class Sdl
         }
     }
 
-    public static unsafe void InitInterface(ref StorageInterface iface)
+    public static void InitInterface(ref StorageInterface iface)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         fixed (StorageInterface* pIface = &iface)
@@ -805,31 +759,31 @@ public static partial class Sdl
         }
     }
 
-    public static unsafe void* MAlloc(nuint size)
+    public static void* MAlloc(nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _MAlloc(size);
     }
 
-    public static unsafe void* CAlloc(nuint nmemb, nuint size)
+    public static void* CAlloc(nuint nmemb, nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CAlloc(nmemb, size);
     }
 
-    public static unsafe void* Realloc(void* mem, nuint size)
+    public static void* Realloc(void* mem, nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _Realloc(mem, size);
     }
 
-    public static unsafe void Free(void* mem)
+    public static void Free(void* mem)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         _Free(mem);
     }
 
-    public static unsafe void GetOriginalMemoryFunctions(
+    public static void GetOriginalMemoryFunctions(
         delegate* unmanaged[Cdecl]<nuint, void*> mallocFunc,
         delegate* unmanaged[Cdecl]<nuint, nuint, void*> callocFunc,
         delegate* unmanaged[Cdecl]<void*, nuint, void*> reallocFunc,
@@ -840,7 +794,7 @@ public static partial class Sdl
         _GetOriginalMemoryFunctions(mallocFunc, callocFunc, reallocFunc, freeFunc);
     }
 
-    public static unsafe void GetMemoryFunctions(
+    public static void GetMemoryFunctions(
         delegate* unmanaged[Cdecl]<nuint, void*> mallocFunc,
         delegate* unmanaged[Cdecl]<nuint, nuint, void*> callocFunc,
         delegate* unmanaged[Cdecl]<void*, nuint, void*> reallocFunc,
@@ -851,7 +805,7 @@ public static partial class Sdl
         _GetMemoryFunctions(mallocFunc, callocFunc, reallocFunc, freeFunc);
     }
 
-    public static unsafe bool SetMemoryFunctions(
+    public static bool SetMemoryFunctions(
         delegate* unmanaged[Cdecl]<nuint, void*> mallocFunc,
         delegate* unmanaged[Cdecl]<nuint, nuint, void*> callocFunc,
         delegate* unmanaged[Cdecl]<void*, nuint, void*> reallocFunc,
@@ -859,20 +813,16 @@ public static partial class Sdl
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(mallocFunc);
-        ArgumentNullException.ThrowIfNull(callocFunc);
-        ArgumentNullException.ThrowIfNull(reallocFunc);
-        ArgumentNullException.ThrowIfNull(freeFunc);
         return _SetMemoryFunctions(mallocFunc, callocFunc, reallocFunc, freeFunc);
     }
 
-    public static unsafe void* AlignedAlloc(nuint alignment, nuint size)
+    public static void* AlignedAlloc(nuint alignment, nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _AlignedAlloc(alignment, size);
     }
 
-    public static unsafe void AlignedFree(void* mem)
+    public static void AlignedFree(void* mem)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         _AlignedFree(mem);
@@ -896,14 +846,13 @@ public static partial class Sdl
         return _CreateEnvironment(populated);
     }
 
-    public static string? GetEnvironmentVariable(Environment env, string name)
+    public static byte* GetEnvironmentVariable(Environment env, byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _GetEnvironmentVariable(env, name);
     }
 
-    public static unsafe byte** GetEnvironmentVariables(Environment env)
+    public static byte** GetEnvironmentVariables(Environment env)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetEnvironmentVariables(env);
@@ -911,20 +860,18 @@ public static partial class Sdl
 
     public static bool SetEnvironmentVariable(
         Environment env,
-        string name,
-        string? value,
+        byte* name,
+        byte* value,
         bool overwrite
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _SetEnvironmentVariable(env, name, value, overwrite);
     }
 
-    public static bool UnsetEnvironmentVariable(Environment env, string name)
+    public static bool UnsetEnvironmentVariable(Environment env, byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _UnsetEnvironmentVariable(env, name);
     }
 
@@ -934,35 +881,31 @@ public static partial class Sdl
         _DestroyEnvironment(env);
     }
 
-    public static string? GetEnv(string name)
+    public static byte* GetEnv(byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _GetEnv(name);
     }
 
-    public static string? GetEnvUnsafe(string name)
+    public static byte* GetEnvUnsafe(byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _GetEnvUnsafe(name);
     }
 
-    public static bool SetEnvUnsafe(Environment env, string name, string? value, bool overwrite)
+    public static bool SetEnvUnsafe(Environment env, byte* name, byte* value, bool overwrite)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _SetEnvUnsafe(env, name, value, overwrite);
     }
 
-    public static bool UnsetEnvUnsafe(Environment env, string name)
+    public static bool UnsetEnvUnsafe(Environment env, byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _UnsetEnvUnsafe(env, name);
     }
 
-    public static unsafe void QSort(
+    public static void QSort(
         void* @base,
         nuint nmemb,
         nuint size,
@@ -970,12 +913,10 @@ public static partial class Sdl
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(@base);
-        ArgumentNullException.ThrowIfNull(compare);
         _QSort(@base, nmemb, size, compare);
     }
 
-    public static unsafe void* BSearch(
+    public static void* BSearch(
         void* key,
         void* @base,
         nuint nmemb,
@@ -984,13 +925,10 @@ public static partial class Sdl
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(key);
-        ArgumentNullException.ThrowIfNull(@base);
-        ArgumentNullException.ThrowIfNull(compare);
         return _BSearch(key, @base, nmemb, size, compare);
     }
 
-    public static unsafe void QSortR(
+    public static void QSortR(
         void* @base,
         nuint nmemb,
         nuint size,
@@ -999,12 +937,10 @@ public static partial class Sdl
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(@base);
-        ArgumentNullException.ThrowIfNull(compare);
         _QSortR(@base, nmemb, size, compare, userdata);
     }
 
-    public static unsafe void* BSearchR(
+    public static void* BSearchR(
         void* key,
         void* @base,
         nuint nmemb,
@@ -1014,9 +950,6 @@ public static partial class Sdl
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(key);
-        ArgumentNullException.ThrowIfNull(@base);
-        ArgumentNullException.ThrowIfNull(compare);
         return _BSearchR(key, @base, nmemb, size, compare, userdata);
     }
 
@@ -1128,434 +1061,354 @@ public static partial class Sdl
         return _ToLower(x);
     }
 
-    public static unsafe ushort Crc16(ushort crc, byte* data, nuint length)
+    public static ushort Crc16(ushort crc, byte* data, nuint length)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(data);
         return _Crc16(crc, data, length);
     }
 
-    public static unsafe uint Crc32(uint crc, byte* data, nuint length)
+    public static uint Crc32(uint crc, byte* data, nuint length)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(data);
         return _Crc32(crc, data, length);
     }
 
-    public static unsafe uint Murmur332(void* data, nuint len, uint seed)
+    public static uint Murmur332(void* data, nuint len, uint seed)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(data);
         return _Murmur332(data, len, seed);
     }
 
-    public static unsafe void* MemCpy(void* dst, void* src, nuint len)
+    public static void* MemCpy(void* dst, void* src, nuint len)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
-        ArgumentNullException.ThrowIfNull(src);
         return _MemCpy(dst, src, len);
     }
 
-    public static unsafe void* MemMove(void* dst, void* src, nuint len)
+    public static void* MemMove(void* dst, void* src, nuint len)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
-        ArgumentNullException.ThrowIfNull(src);
         return _MemMove(dst, src, len);
     }
 
-    public static unsafe void* MemSet(void* dst, int c, nuint len)
+    public static void* MemSet(void* dst, int c, nuint len)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
         return _MemSet(dst, c, len);
     }
 
-    public static unsafe void* MemSet4(void* dst, uint val, nuint dwords)
+    public static void* MemSet4(void* dst, uint val, nuint dwords)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
         return _MemSet4(dst, val, dwords);
     }
 
-    public static unsafe void* Zero<T>(T x)
+    public static void* Zero<T>(T x)
         where T : unmanaged
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return MemSet(&x, 0, (nuint)sizeof(T));
     }
 
-    public static unsafe void* ZeroP<T>(void* x)
+    public static void* ZeroP<T>(void* x)
         where T : unmanaged
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(x);
         return MemSet(x, 0, (nuint)sizeof(T));
     }
 
-    public static unsafe void* ZeroA<T>(void* x)
+    public static void* ZeroA<T>(void* x)
         where T : unmanaged
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(x);
         return MemSet(x, 0, (nuint)sizeof(T));
     }
 
-    public static unsafe int MemCmp(void* s1, void* s2, nuint len)
+    public static int MemCmp(void* s1, void* s2, nuint len)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(s1);
-        ArgumentNullException.ThrowIfNull(s2);
         return _MemCmp(s1, s2, len);
     }
 
-    public static unsafe nuint WcsLen(char* str)
+    public static nuint WcsLen(char* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _WcsLen(str);
     }
 
-    public static unsafe nuint WcsNLen(char* str, nuint maxlen)
+    public static nuint WcsNLen(char* str, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _WcsNLen(str, maxlen);
     }
 
-    public static unsafe nuint WcsLCpy(char* dst, char* src, nuint maxlen)
+    public static nuint WcsLCpy(char* dst, char* src, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
-        ArgumentNullException.ThrowIfNull(src);
         return _WcsLCpy(dst, src, maxlen);
     }
 
-    public static unsafe nuint WcsLCat(char* dst, char* src, nuint maxlen)
+    public static nuint WcsLCat(char* dst, char* src, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
-        ArgumentNullException.ThrowIfNull(src);
         return _WcsLCat(dst, src, maxlen);
     }
 
-    public static unsafe char* WcsDup(char* str)
+    public static char* WcsDup(char* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _WcsDup(str);
     }
 
-    public static unsafe char* WcsStr(char* haystack, char* needle)
+    public static char* WcsStr(char* haystack, char* needle)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(haystack);
-        ArgumentNullException.ThrowIfNull(needle);
         return _WcsStr(haystack, needle);
     }
 
-    public static unsafe char* WcsNStr(char* haystack, char* needle, nuint maxlen)
+    public static char* WcsNStr(char* haystack, char* needle, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(haystack);
-        ArgumentNullException.ThrowIfNull(needle);
         return _WcsNStr(haystack, needle, maxlen);
     }
 
-    public static unsafe int WcsCmp(char* str1, char* str2)
+    public static int WcsCmp(char* str1, char* str2)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str1);
-        ArgumentNullException.ThrowIfNull(str2);
         return _WcsCmp(str1, str2);
     }
 
-    public static unsafe int WcsNCmp(char* str1, char* str2, nuint maxlen)
+    public static int WcsNCmp(char* str1, char* str2, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str1);
-        ArgumentNullException.ThrowIfNull(str2);
         return _WcsNCmp(str1, str2, maxlen);
     }
 
-    public static unsafe int WcsCaseCmp(char* str1, char* str2)
+    public static int WcsCaseCmp(char* str1, char* str2)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str1);
-        ArgumentNullException.ThrowIfNull(str2);
         return _WcsCaseCmp(str1, str2);
     }
 
-    public static unsafe int WcsNCaseCmp(char* str1, char* str2, nuint maxlen)
+    public static int WcsNCaseCmp(char* str1, char* str2, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str1);
-        ArgumentNullException.ThrowIfNull(str2);
         return _WcsNCaseCmp(str1, str2, maxlen);
     }
 
-    public static unsafe long WcsToL(char* str, char** endptr, int @base)
+    public static long WcsToL(char* str, char** endptr, int @base)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _WcsToL(str, endptr, @base);
     }
 
-    public static unsafe nuint StrLen(byte* str)
+    public static nuint StrLen(byte* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrLen(str);
     }
 
-    public static unsafe nuint StrNLen(byte* str, nuint maxlen)
+    public static nuint StrNLen(byte* str, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrNLen(str, maxlen);
     }
 
-    public static unsafe nuint StrLCpy(byte* dst, byte* src, nuint maxlen)
+    public static nuint StrLCpy(byte* dst, byte* src, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
-        ArgumentNullException.ThrowIfNull(src);
         return _StrLCpy(dst, src, maxlen);
     }
 
-    public static unsafe nuint Utf8StrLCpy(byte* dst, byte* src, nuint maxlen)
+    public static nuint Utf8StrLCpy(byte* dst, byte* src, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
-        ArgumentNullException.ThrowIfNull(src);
         return _Utf8StrLCpy(dst, src, maxlen);
     }
 
-    public static unsafe nuint StrLCat(byte* dst, byte* src, nuint maxlen)
+    public static nuint StrLCat(byte* dst, byte* src, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
-        ArgumentNullException.ThrowIfNull(src);
         return _StrLCat(dst, src, maxlen);
     }
 
-    public static unsafe byte* StrDup(byte* str)
+    public static byte* StrDup(byte* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrDup(str);
     }
 
-    public static unsafe byte* StrNDup(byte* str, nuint maxlen)
+    public static byte* StrNDup(byte* str, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrNDup(str, maxlen);
     }
 
-    public static unsafe byte* StrRev(byte* str)
+    public static byte* StrRev(byte* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrRev(str);
     }
 
-    public static unsafe byte* StrUpr(byte* str)
+    public static byte* StrUpr(byte* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrUpr(str);
     }
 
-    public static unsafe byte* StrLwr(byte* str)
+    public static byte* StrLwr(byte* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrLwr(str);
     }
 
-    public static unsafe byte* StrChr(byte* str, int c)
+    public static byte* StrChr(byte* str, int c)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrChr(str, c);
     }
 
-    public static unsafe byte* StrRChr(byte* str, int c)
+    public static byte* StrRChr(byte* str, int c)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrRChr(str, c);
     }
 
-    public static unsafe byte* StrStr(byte* haystack, byte* needle)
+    public static byte* StrStr(byte* haystack, byte* needle)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(haystack);
-        ArgumentNullException.ThrowIfNull(needle);
         return _StrStr(haystack, needle);
     }
 
-    public static unsafe byte* StrNStr(byte* haystack, byte* needle, nuint maxlen)
+    public static byte* StrNStr(byte* haystack, byte* needle, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(haystack);
-        ArgumentNullException.ThrowIfNull(needle);
         return _StrNStr(haystack, needle, maxlen);
     }
 
-    public static unsafe byte* StrCaseStr(byte* haystack, byte* needle)
+    public static byte* StrCaseStr(byte* haystack, byte* needle)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(haystack);
-        ArgumentNullException.ThrowIfNull(needle);
         return _StrCaseStr(haystack, needle);
     }
 
-    public static unsafe byte* StrTokR(byte* str, byte* delim, byte** saveptr)
+    public static byte* StrTokR(byte* str, byte* delim, byte** saveptr)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(delim);
-        ArgumentNullException.ThrowIfNull(saveptr);
         return _StrTokR(str, delim, saveptr);
     }
 
-    public static unsafe int Utf8StrLen(byte* str)
+    public static int Utf8StrLen(byte* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _Utf8StrLen(str);
     }
 
-    public static unsafe int Utf8StrNLen(byte* str, nuint maxlen)
+    public static int Utf8StrNLen(byte* str, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _Utf8StrNLen(str, maxlen);
     }
 
-    public static unsafe byte* IToA(int value, byte* str, int radix)
+    public static byte* IToA(int value, byte* str, int radix)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _IToA(value, str, radix);
     }
 
-    public static unsafe byte* UIToA(uint value, byte* str, int radix)
+    public static byte* UIToA(uint value, byte* str, int radix)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _UIToA(value, str, radix);
     }
 
-    public static unsafe byte* LToA(long value, byte* str, int radix)
+    public static byte* LToA(long value, byte* str, int radix)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _LToA(value, str, radix);
     }
 
-    public static unsafe byte* ULToA(ulong value, byte* str, int radix)
+    public static byte* ULToA(ulong value, byte* str, int radix)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _ULToA(value, str, radix);
     }
 
-    public static unsafe int AToI(byte* str)
+    public static int AToI(byte* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _AToI(str);
     }
 
-    public static unsafe double AToF(byte* str)
+    public static double AToF(byte* str)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _AToF(str);
     }
 
-    public static unsafe long StrToL(byte* str, byte** endptr, int @base)
+    public static long StrToL(byte* str, byte** endptr, int @base)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrToL(str, endptr, @base);
     }
 
-    public static unsafe ulong StrToUL(byte* str, byte** endptr, int @base)
+    public static ulong StrToUL(byte* str, byte** endptr, int @base)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrToUL(str, endptr, @base);
     }
 
-    public static unsafe double StrToD(byte* str, byte** endptr)
+    public static double StrToD(byte* str, byte** endptr)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StrToD(str, endptr);
     }
 
-    public static unsafe int StrCmp(byte* str1, byte* str2)
+    public static int StrCmp(byte* str1, byte* str2)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str1);
-        ArgumentNullException.ThrowIfNull(str2);
         return _StrCmp(str1, str2);
     }
 
-    public static unsafe int StrNCmp(byte* str1, byte* str2, nuint maxlen)
+    public static int StrNCmp(byte* str1, byte* str2, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str1);
-        ArgumentNullException.ThrowIfNull(str2);
         return _StrNCmp(str1, str2, maxlen);
     }
 
-    public static unsafe int StrCaseCmp(byte* str1, byte* str2)
+    public static int StrCaseCmp(byte* str1, byte* str2)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str1);
-        ArgumentNullException.ThrowIfNull(str2);
         return _StrCaseCmp(str1, str2);
     }
 
-    public static unsafe int StrNCaseCmp(byte* str1, byte* str2, nuint maxlen)
+    public static int StrNCaseCmp(byte* str1, byte* str2, nuint maxlen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str1);
-        ArgumentNullException.ThrowIfNull(str2);
         return _StrNCaseCmp(str1, str2, maxlen);
     }
 
-    public static unsafe byte* StrPBrk(byte* str, byte* breakset)
+    public static byte* StrPBrk(byte* str, byte* breakset)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
-        ArgumentNullException.ThrowIfNull(breakset);
         return _StrPBrk(str, breakset);
     }
 
-    public static unsafe uint StepUtf8(byte** str, out nuint pslen)
+    public static uint StepUtf8(byte** str, out nuint pslen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StepUtf8(str, out pslen);
     }
 
-    public static unsafe uint StepBackUtf8(byte** str, out nuint pslen)
+    public static uint StepBackUtf8(byte** str, out nuint pslen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(str);
         return _StepBackUtf8(str, out pslen);
     }
 
-    public static unsafe byte* Ucs4ToUtf8(uint codepoint, byte* dst)
+    public static byte* Ucs4ToUtf8(uint codepoint, byte* dst)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(dst);
         return _Ucs4ToUtf8(codepoint, dst);
     }
 
@@ -1891,11 +1744,9 @@ public static partial class Sdl
         return _TanF(x);
     }
 
-    public static IconVData IconVOpen(string toCode, string fromCode)
+    public static IconVData IconVOpen(byte* toCode, byte* fromCode)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(toCode);
-        ArgumentNullException.ThrowIfNull(fromCode);
         return _IconVOpen(toCode, fromCode);
     }
 
@@ -1905,7 +1756,7 @@ public static partial class Sdl
         return _IconVClose(cd);
     }
 
-    public static unsafe nuint IconV(
+    public static nuint IconV(
         IconVData cd,
         byte** inbuf,
         out nuint inBytesLeft,
@@ -1914,51 +1765,53 @@ public static partial class Sdl
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(inbuf);
-        ArgumentNullException.ThrowIfNull(outbuf);
         return _IconV(cd, inbuf, out inBytesLeft, outbuf, out outBytesLeft);
     }
 
-    public static string? IconVString(
-        string toCode,
-        string fromCode,
-        string inbuf,
-        nuint inBytesLeft
-    )
+    public static byte* IconVString(byte* toCode, byte* fromCode, byte* inbuf, nuint inBytesLeft)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(toCode);
-        ArgumentNullException.ThrowIfNull(fromCode);
-        ArgumentNullException.ThrowIfNull(inbuf);
         return _IconVString(toCode, fromCode, inbuf, inBytesLeft);
     }
 
-    public static string? IconVUtf8Locale(string s)
+    public static byte* IconVUtf8Locale(byte* s)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(s);
-        return IconVString("", "UTF-8", s, (nuint)(s.Length + 1));
+        fixed (byte* toCodePtr = ""u8)
+        fixed (byte* fromCodePtr = "UTF-8"u8)
+        {
+            return IconVString(toCodePtr, fromCodePtr, s, (nuint)(StrLen(s) + 1));
+        }
     }
 
-    public static string? IconVUtf8Ucs2(string s)
+    public static byte* IconVUtf8Ucs2(byte* s)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(s);
-        return IconVString("UCS-2", "UTF-8", s, (nuint)(s.Length + 1));
+        fixed (byte* toCodePtr = "UCS-2"u8)
+        fixed (byte* fromCodePtr = "UTF-8"u8)
+        {
+            return IconVString(toCodePtr, fromCodePtr, s, (nuint)(StrLen(s) + 1));
+        }
     }
 
-    public static string? IconVUtf8Ucs4(string s)
+    public static byte* IconVUtf8Ucs4(byte* s)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(s);
-        return IconVString("UCS-4", "UTF-8", s, (nuint)(s.Length + 1));
+        fixed (byte* toCodePtr = "UCS-4"u8)
+        fixed (byte* fromCodePtr = "UTF-8"u8)
+        {
+            return IconVString(toCodePtr, fromCodePtr, s, (nuint)(StrLen(s) + 1));
+        }
     }
 
-    public static string? IconVWcharUtf8(string s)
+    public static byte* IconVWcharUtf8(byte* s)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(s);
-        return IconVString("UTF-8", "WCHAR_T", s, (nuint)((s.Length + 1) * sizeof(char)));
+        fixed (byte* toCodePtr = "UTF-8"u8)
+        fixed (byte* fromCodePtr = "WCHAR_T"u8)
+        {
+            return IconVString(toCodePtr, fromCodePtr, s, (nuint)((StrLen(s) + 1) * sizeof(char)));
+        }
     }
 
     public readonly record struct Time(long Value)
@@ -1970,8 +1823,6 @@ public static partial class Sdl
 
     public readonly record struct Environment(nint Value)
     {
-        public bool IsNull => Value == 0;
-
         public static implicit operator nint(Environment env) => env.Value;
 
         public static implicit operator Environment(nint value) => new(value);
@@ -1979,8 +1830,6 @@ public static partial class Sdl
 
     public readonly record struct IconVData(nint Value)
     {
-        public bool IsNull => Value == 0;
-
         public static implicit operator nint(IconVData env) => env.Value;
 
         public static implicit operator IconVData(nint value) => new(value);

@@ -11,49 +11,23 @@ using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
     // Making a marshaller for this is an absolute pain :D
     [LibraryImport(DllName, EntryPoint = "SDL_GetPreferredLocales")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial UnsafeLocale** _GetPreferredLocales(out int count);
+    private static partial Locale** _GetPreferredLocales(out int count);
 
-    public static unsafe Locale?[]? GetPreferredLocales(out int count)
+    public static Locale** GetPreferredLocales(out int count)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        var ptr = _GetPreferredLocales(out count);
-        try
-        {
-            var result = new Locale?[count];
-            for (int i = 0; i < count; i++)
-            {
-                result[i] = ptr[i] is null
-                    ? null
-                    : new Locale
-                    {
-                        Language = Marshal.PtrToStringUTF8((nint)ptr[i]->Language),
-                        Country = Marshal.PtrToStringUTF8((nint)ptr[i]->Country),
-                    };
-            }
-
-            return result;
-        }
-        finally
-        {
-            Free(ptr);
-        }
+        return _GetPreferredLocales(out count);
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct UnsafeLocale
+    public struct Locale
     {
-        public unsafe byte* Language;
-        public unsafe byte* Country;
-    }
-
-    public class Locale
-    {
-        public string? Language { get; set; }
-        public string? Country { get; set; }
+        public byte* Language;
+        public byte* Country;
     }
 }

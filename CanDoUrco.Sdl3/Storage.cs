@@ -7,41 +7,27 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_OpenTitleStorage",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_OpenTitleStorage")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Storage _OpenTitleStorage(string @override, PropertiesID props);
+    private static partial Storage _OpenTitleStorage(byte* @override, PropertiesID props);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_OpenUserStorage",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_OpenUserStorage")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Storage _OpenUserStorage(string org, string app, PropertiesID props);
+    private static partial Storage _OpenUserStorage(byte* org, byte* app, PropertiesID props);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_OpenFileStorage",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_OpenFileStorage")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Storage _OpenFileStorage(string path);
+    private static partial Storage _OpenFileStorage(byte* path);
 
     [LibraryImport(DllName, EntryPoint = "SDL_OpenStorage")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial Storage _OpenStorage(in StorageInterface iface, void* userdata);
+    private static partial Storage _OpenStorage(in StorageInterface iface, void* userdata);
 
     [LibraryImport(DllName, EntryPoint = "SDL_CloseStorage")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -53,155 +39,99 @@ public static partial class Sdl
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _StorageReady(Storage storage);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetStorageFileSize",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetStorageFileSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetStorageFileSize(Storage storage, string path, out ulong length);
+    private static partial bool _GetStorageFileSize(Storage storage, byte* path, out ulong length);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_ReadStorageFile",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_ReadStorageFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _ReadStorageFile(
+    private static partial bool _ReadStorageFile(
         Storage storage,
-        string path,
+        byte* path,
         void* destination,
         ulong length
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_WriteStorageFile",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_WriteStorageFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _WriteStorageFile(
+    private static partial bool _WriteStorageFile(
         Storage storage,
-        string path,
+        byte* path,
         void* destination,
         ulong length
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_CreateStorageDirectory",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_CreateStorageDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CreateStorageDirectory(Storage storage, string path);
+    private static partial bool _CreateStorageDirectory(Storage storage, byte* path);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_EnumerateStorageDirectory",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_EnumerateStorageDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _EnumerateStorageDirectory(
+    private static partial bool _EnumerateStorageDirectory(
         Storage storage,
-        string path,
+        byte* path,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult> callback,
         void* userdata
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_RemoveStoragePath",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_RemoveStoragePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RemoveStoragePath(Storage storage, string path);
+    private static partial bool _RemoveStoragePath(Storage storage, byte* path);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_RenameStoragePath",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_RenameStoragePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RenameStoragePath(Storage storage, string oldPath, string newPath);
+    private static partial bool _RenameStoragePath(Storage storage, byte* oldPath, byte* newPath);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_CopyStorageFile",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_CopyStorageFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _CopyStorageFile(
-        Storage storage,
-        string oldPath,
-        string newPath
-    );
+    private static partial bool _CopyStorageFile(Storage storage, byte* oldPath, byte* newPath);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetStoragePathInfo",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetStoragePathInfo")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetStoragePathInfo(
-        Storage storage,
-        string path,
-        out PathInfo info
-    );
+    private static partial bool _GetStoragePathInfo(Storage storage, byte* path, out PathInfo info);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetStorageSpaceRemaining")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial ulong _GetStorageSpaceRemaining(Storage storage);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GlobStorageDirectory",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GlobStorageDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalUsing(
-        typeof(SdlAllocatedArrayMarshaller<string, nint>),
-        CountElementName = nameof(count)
-    )]
-    private static partial string[]? _GlobStorageDirectory(
+    private static partial byte** _GlobStorageDirectory(
         Storage storage,
-        string path,
-        string? pattern,
+        byte* path,
+        byte* pattern,
         GlobFlags flags,
         out int count
     );
 
-    public static Storage OpenTitleStorage(string @override, PropertiesID props)
+    public static Storage OpenTitleStorage(byte* @override, PropertiesID props)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(@override);
         return _OpenTitleStorage(@override, props);
     }
 
-    public static Storage OpenUserStorage(string org, string app, PropertiesID props)
+    public static Storage OpenUserStorage(byte* org, byte* app, PropertiesID props)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(org);
-        ArgumentNullException.ThrowIfNull(app);
         return _OpenUserStorage(org, app, props);
     }
 
-    public static Storage OpenFileStorage(string path)
+    public static Storage OpenFileStorage(byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _OpenFileStorage(path);
     }
 
-    public static unsafe Storage OpenStorage(in StorageInterface iface, void* userdata)
+    public static Storage OpenStorage(in StorageInterface iface, void* userdata)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _OpenStorage(iface, userdata);
@@ -219,86 +149,62 @@ public static partial class Sdl
         return _StorageReady(storage);
     }
 
-    public static bool GetStorageFileSize(Storage storage, string path, out ulong length)
+    public static bool GetStorageFileSize(Storage storage, byte* path, out ulong length)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _GetStorageFileSize(storage, path, out length);
     }
 
-    public static unsafe bool ReadStorageFile(
-        Storage storage,
-        string path,
-        void* destination,
-        ulong length
-    )
+    public static bool ReadStorageFile(Storage storage, byte* path, void* destination, ulong length)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
-        ArgumentNullException.ThrowIfNull(destination);
         return _ReadStorageFile(storage, path, destination, length);
     }
 
-    public static unsafe bool WriteStorageFile(
-        Storage storage,
-        string path,
-        void* source,
-        ulong length
-    )
+    public static bool WriteStorageFile(Storage storage, byte* path, void* source, ulong length)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
-        ArgumentNullException.ThrowIfNull(source);
         return _WriteStorageFile(storage, path, source, length);
     }
 
-    public static bool CreateStorageDirectory(Storage storage, string path)
+    public static bool CreateStorageDirectory(Storage storage, byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _CreateStorageDirectory(storage, path);
     }
 
-    public static unsafe bool EnumerateStorageDirectory(
+    public static bool EnumerateStorageDirectory(
         Storage storage,
-        string path,
+        byte* path,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult> callback,
         void* userdata
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
-        ArgumentNullException.ThrowIfNull(callback);
         return _EnumerateStorageDirectory(storage, path, callback, userdata);
     }
 
-    public static bool RemoveStoragePath(Storage storage, string path)
+    public static bool RemoveStoragePath(Storage storage, byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _RemoveStoragePath(storage, path);
     }
 
-    public static bool RenameStoragePath(Storage storage, string oldPath, string newPath)
+    public static bool RenameStoragePath(Storage storage, byte* oldPath, byte* newPath)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(oldPath);
-        ArgumentNullException.ThrowIfNull(newPath);
         return _RenameStoragePath(storage, oldPath, newPath);
     }
 
-    public static bool CopyStorageFile(Storage storage, string oldPath, string newPath)
+    public static bool CopyStorageFile(Storage storage, byte* oldPath, byte* newPath)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(oldPath);
-        ArgumentNullException.ThrowIfNull(newPath);
         return _CopyStorageFile(storage, oldPath, newPath);
     }
 
-    public static bool GetStoragePathInfo(Storage storage, string path, out PathInfo info)
+    public static bool GetStoragePathInfo(Storage storage, byte* path, out PathInfo info)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _GetStoragePathInfo(storage, path, out info);
     }
 
@@ -308,16 +214,15 @@ public static partial class Sdl
         return _GetStorageSpaceRemaining(storage);
     }
 
-    public static string[]? GlobStorageDirectory(
+    public static byte** GlobStorageDirectory(
         Storage storage,
-        string path,
-        string? pattern,
+        byte* path,
+        byte* pattern,
         GlobFlags flags,
         out int count
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(path);
         return _GlobStorageDirectory(storage, path, pattern, flags, out count);
     }
 
@@ -325,28 +230,26 @@ public static partial class Sdl
     public struct StorageInterface
     {
         public uint Version;
-        public unsafe delegate* unmanaged[Cdecl]<void*, sbyte> Close; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, sbyte> Ready; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<
+        public delegate* unmanaged[Cdecl]<void*, sbyte> Close; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, sbyte> Ready; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<
             void*,
             byte*,
             delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult>,
             void*,
             sbyte> Enumerate; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, byte*, PathInfo, sbyte> Info; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, byte*, void*, ulong, sbyte> ReadFile; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, byte*, void*, ulong, sbyte> WriteFile; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, byte*, sbyte> MkDir; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, byte*, sbyte> Remove; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, byte*, byte*, sbyte> Rename; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, byte*, byte*, sbyte> Copy; // sbyte is bool
-        public unsafe delegate* unmanaged[Cdecl]<void*, ulong> SpaceRemaining;
+        public delegate* unmanaged[Cdecl]<void*, byte*, PathInfo, sbyte> Info; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, byte*, void*, ulong, sbyte> ReadFile; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, byte*, void*, ulong, sbyte> WriteFile; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, byte*, sbyte> MkDir; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, byte*, sbyte> Remove; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, byte*, byte*, sbyte> Rename; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, byte*, byte*, sbyte> Copy; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, ulong> SpaceRemaining;
     }
 
     public readonly record struct Storage(nint Value)
     {
-        public bool IsNull => Value == 0;
-
         public static implicit operator Storage(nint value) => new(value);
 
         public static implicit operator nint(Storage storage) => storage.Value;

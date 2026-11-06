@@ -8,44 +8,34 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_SetError",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_SetError")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetError(string fmt, string msg);
+    private static partial bool _SetError(byte* fmt, byte* msg);
 
     [LibraryImport(DllName, EntryPoint = "SDL_OutOfMemory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _OutOfMemory();
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetError",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetError")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _GetError();
+    private static partial byte* _GetError();
 
     [LibraryImport(DllName, EntryPoint = "SDL_ClearError")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _ClearError();
 
-    public static bool SetError(string message)
+    public static bool SetError(byte* fmt, byte* message)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        return _SetError("%s", message ?? string.Empty);
+        return _SetError(fmt, message);
     }
 
     public static bool OutOfMemory()
@@ -54,10 +44,10 @@ public static partial class Sdl
         return _OutOfMemory();
     }
 
-    public static string GetError()
+    public static byte* GetError()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        return _GetError() ?? string.Empty;
+        return _GetError();
     }
 
     public static bool ClearError()
@@ -69,12 +59,19 @@ public static partial class Sdl
     public static bool Unsupported()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        return SetError("That operation is not supported");
+        fixed (byte* fmt = "%s"u8)
+        fixed (byte* msg = "That operation is not supported"u8)
+        {
+            return SetError(fmt, msg);
+        }
     }
 
-    public static bool InvalidParamError(string param)
+    public static bool InvalidParamError(byte* param)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        return SetError($"Parameter '{param ?? string.Empty}' is invalid");
+        fixed (byte* fmt = "Parameter '%s' is invalid"u8)
+        {
+            return SetError(fmt, param);
+        }
     }
 }

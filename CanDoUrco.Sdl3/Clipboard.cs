@@ -8,66 +8,43 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_SetClipboardText",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_SetClipboardText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetClipboardText(string text);
+    private static partial bool _SetClipboardText(byte* text);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetClipboardText",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(SdlAllocatedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetClipboardText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _GetClipboardText();
+    private static partial byte* _GetClipboardText();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasClipboardText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _HasClipboardText();
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_SetPrimarySelectionText",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_SetPrimarySelectionText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetPrimarySelectionText(string text);
+    private static partial bool _SetPrimarySelectionText(byte* text);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetPrimarySelectionText",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(SdlAllocatedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetPrimarySelectionText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _GetPrimarySelectionText();
+    private static partial byte* _GetPrimarySelectionText();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasPrimarySelectionText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     private static partial bool _HasPrimarySelectionText();
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_SetClipboardData",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_SetClipboardData")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _SetClipboardData(
+    private static partial bool _SetClipboardData(
         delegate* unmanaged[Cdecl]<void*, byte*, nuint*, void*> callback,
         delegate* unmanaged[Cdecl]<void*, void> cleanup,
         void* userdata,
@@ -75,13 +52,9 @@ public static partial class Sdl
         nuint numMimeTypes
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetClipboardData",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetClipboardData")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _GetClipboardData(string mimeType, out uint size);
+    private static partial void* _GetClipboardData(byte* mimeType, out uint size);
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasClipboardData")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -95,16 +68,15 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetClipboardMimeTypes")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial byte** _GetClipboardMimeTypes(out nuint numMimeTypes);
+    private static partial byte** _GetClipboardMimeTypes(out nuint numMimeTypes);
 
-    public static bool SetClipboardText(string text)
+    public static bool SetClipboardText(byte* text)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(text);
         return _SetClipboardText(text);
     }
 
-    public static string? GetClipboardText()
+    public static byte* GetClipboardText()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetClipboardText();
@@ -116,14 +88,13 @@ public static partial class Sdl
         return _HasClipboardText();
     }
 
-    public static bool SetPrimarySelectionText(string text)
+    public static bool SetPrimarySelectionText(byte* text)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(text);
         return _SetPrimarySelectionText(text);
     }
 
-    public static string? GetPrimarySelectionText()
+    public static byte* GetPrimarySelectionText()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetPrimarySelectionText();
@@ -135,7 +106,7 @@ public static partial class Sdl
         return _HasPrimarySelectionText();
     }
 
-    public static unsafe bool SetClipboardData(
+    public static bool SetClipboardData(
         delegate* unmanaged[Cdecl]<void*, byte*, nuint*, void*> callback,
         delegate* unmanaged[Cdecl]<void*, void> cleanup,
         void* userdata,
@@ -144,7 +115,6 @@ public static partial class Sdl
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(mimeTypes);
         return _SetClipboardData(callback, cleanup, userdata, mimeTypes, numMimeTypes);
     }
 
@@ -154,10 +124,9 @@ public static partial class Sdl
         return _ClearClipboardData();
     }
 
-    public static unsafe void* GetClipboardData(string mimeType, out uint size)
+    public static void* GetClipboardData(byte* mimeType, out uint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(mimeType);
         return _GetClipboardData(mimeType, out size);
     }
 
@@ -167,7 +136,7 @@ public static partial class Sdl
         return _HasClipboardData();
     }
 
-    public static unsafe byte** GetClipboardMimeTypes(out nuint numMimeTypes)
+    public static byte** GetClipboardMimeTypes(out nuint numMimeTypes)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetClipboardMimeTypes(out numMimeTypes);

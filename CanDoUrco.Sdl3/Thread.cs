@@ -8,26 +8,24 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CanDoUrco.Logging;
-using CanDoUrco.Sdl3.CustomMarshallers;
 
 namespace CanDoUrco.Sdl3;
 
-public static partial class Sdl
+public static unsafe partial class Sdl
 {
-    public const string PropThreadCreateEntryFunctionPointer = "SDL.thread.create.entry_function";
-    public const string PropThreadCreateNameString = "SDL.thread.create.name";
-    public const string PropThreadCreateUserdataPointer = "SDL.thread.create.userdata";
-    public const string PropThreadCreateStackSizeNumber = "SDL.thread.create.stacksize";
+    public static ReadOnlySpan<byte> PropThreadCreateEntryFunctionPointer =>
+        "SDL.thread.create.entry_function"u8;
+    public static ReadOnlySpan<byte> PropThreadCreateNameString => "SDL.thread.create.name"u8;
+    public static ReadOnlySpan<byte> PropThreadCreateUserdataPointer =>
+        "SDL.thread.create.userdata"u8;
+    public static ReadOnlySpan<byte> PropThreadCreateStackSizeNumber =>
+        "SDL.thread.create.stacksize"u8;
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_CreateThread",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_CreateThread")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial Thread _CreateThread(
+    private static partial Thread _CreateThread(
         delegate* unmanaged[Cdecl]<void*, int> fn,
-        string name,
+        byte* name,
         void* data
     );
 
@@ -35,40 +33,27 @@ public static partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial Thread _CreateThreadWithProperties(PropertiesID props);
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_CreateThreadRuntime",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_CreateThreadRuntime")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial Thread _CreateThreadRuntime(
+    private static partial Thread _CreateThreadRuntime(
         delegate* unmanaged[Cdecl]<void*, int> fn,
-        string name,
+        byte* name,
         void* data,
         delegate* unmanaged[Cdecl]<void> pfnBeginThread,
         delegate* unmanaged[Cdecl]<void> pfnEndThread
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_CreateThreadWithPropertiesRuntime",
-        StringMarshalling = StringMarshalling.Utf8
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_CreateThreadWithPropertiesRuntime")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial Thread _CreateThreadWithPropertiesRuntime(
+    private static partial Thread _CreateThreadWithPropertiesRuntime(
         PropertiesID props,
         delegate* unmanaged[Cdecl]<void> pfnBeginThread,
         delegate* unmanaged[Cdecl]<void> pfnEndThread
     );
 
-    [LibraryImport(
-        DllName,
-        EntryPoint = "SDL_GetThreadName",
-        StringMarshalling = StringMarshalling.Custom,
-        StringMarshallingCustomType = typeof(UnownedUtf8StringMarshaller)
-    )]
+    [LibraryImport(DllName, EntryPoint = "SDL_GetThreadName")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial string? _GetThreadName(Thread thread);
+    private static partial byte* _GetThreadName(Thread thread);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetCurrentThreadID")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -97,12 +82,12 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetTLS")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial void* _GetTls(ref TlsID id);
+    private static partial void* _GetTls(ref TlsID id);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetTLS")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _SetTls(
+    private static partial bool _SetTls(
         ref TlsID id,
         void* value,
         delegate* unmanaged[Cdecl]<void*, void> destructor
@@ -112,14 +97,13 @@ public static partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void _CleanupTls();
 
-    public static unsafe Thread CreateThread(
+    public static Thread CreateThread(
         delegate* unmanaged[Cdecl]<void*, int> fn,
-        string name,
+        byte* name,
         void* data
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _CreateThread(fn, name, data);
     }
 
@@ -129,20 +113,19 @@ public static partial class Sdl
         return _CreateThreadWithProperties(props);
     }
 
-    public static unsafe Thread CreateThreadRuntime(
+    public static Thread CreateThreadRuntime(
         delegate* unmanaged[Cdecl]<void*, int> fn,
-        string name,
+        byte* name,
         void* data,
         delegate* unmanaged[Cdecl]<void> pfnBeginThread,
         delegate* unmanaged[Cdecl]<void> pfnEndThread
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        ArgumentNullException.ThrowIfNull(name);
         return _CreateThreadRuntime(fn, name, data, pfnBeginThread, pfnEndThread);
     }
 
-    public static unsafe Thread CreateThreadWithPropertiesRuntime(
+    public static Thread CreateThreadWithPropertiesRuntime(
         PropertiesID props,
         delegate* unmanaged[Cdecl]<void> pfnBeginThread,
         delegate* unmanaged[Cdecl]<void> pfnEndThread
@@ -152,7 +135,7 @@ public static partial class Sdl
         return _CreateThreadWithPropertiesRuntime(props, pfnBeginThread, pfnEndThread);
     }
 
-    public static string? GetThreadName(Thread thread)
+    public static byte* GetThreadName(Thread thread)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetThreadName(thread);
@@ -194,13 +177,13 @@ public static partial class Sdl
         _DetachThread(thread);
     }
 
-    public static unsafe void* GetTls(ref TlsID id)
+    public static void* GetTls(ref TlsID id)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetTls(ref id);
     }
 
-    public static unsafe bool SetTls(
+    public static bool SetTls(
         ref TlsID id,
         void* value,
         delegate* unmanaged[Cdecl]<void*, void> destructor
@@ -234,8 +217,6 @@ public static partial class Sdl
 
     public readonly record struct Thread(nint Value)
     {
-        public bool IsNull => Value == 0;
-
         public static implicit operator Thread(nint value) => new(value);
 
         public static implicit operator nint(Thread thread) => thread.Value;
@@ -243,8 +224,6 @@ public static partial class Sdl
 
     public readonly record struct ThreadID(ulong Value)
     {
-        public bool IsInvalid => Value == 0;
-
         public static implicit operator ThreadID(ulong value) => new(value);
 
         public static implicit operator ulong(ThreadID threadID) => threadID.Value;
