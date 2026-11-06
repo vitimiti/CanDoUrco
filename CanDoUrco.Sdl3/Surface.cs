@@ -1155,6 +1155,8 @@ public static partial class Sdl
     {
         private unsafe UnsafeSurface* UnsafeValue => (UnsafeSurface*)Value;
 
+        public bool IsNull => Value == 0;
+
         public unsafe SurfaceFlags Flags => UnsafeValue->Flags;
 
         public unsafe PixelFormat Format => UnsafeValue->Format;
