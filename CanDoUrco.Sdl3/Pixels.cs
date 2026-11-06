@@ -602,17 +602,18 @@ public static partial class Sdl
 
     public static bool SetPaletteColors(
         Palette palette,
-        ReadOnlySpan<Color> colors,
+        Color[] colors,
         int firstColor,
         int nColors
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ArgumentNullException.ThrowIfNull(colors);
         ArgumentOutOfRangeException.ThrowIfNegative(firstColor);
         ArgumentOutOfRangeException.ThrowIfNegative(nColors);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(firstColor, colors.Length);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(nColors, colors.Length - firstColor);
-        return _SetPaletteColors(palette, colors.ToArray(), firstColor, nColors);
+        return _SetPaletteColors(palette, colors, firstColor, nColors);
     }
 
     public static void DestroyPalette(Palette palette)
