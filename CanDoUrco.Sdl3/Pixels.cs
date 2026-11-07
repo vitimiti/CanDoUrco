@@ -194,8 +194,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetMasksForPixelFormat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetMasksForPixelFormat(
+    private static partial Bool _GetMasksForPixelFormat(
         PixelFormat format,
         out int bpp,
         out uint rMask,
@@ -224,8 +223,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetPaletteColors")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetPaletteColors(
+    private static partial Bool _SetPaletteColors(
         Palette* palette,
         Color* colors,
         int firstColor,
@@ -379,7 +377,7 @@ public static unsafe partial class Sdl
             : format & 0xFF;
     }
 
-    public static bool IsPixelFormatIndexed(PixelFormat format)
+    public static Bool IsPixelFormatIndexed(PixelFormat format)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         var pixelType = PixelTypeGet(format);
@@ -391,7 +389,7 @@ public static unsafe partial class Sdl
                     or PixelType.Index8;
     }
 
-    public static bool IsPixelFormatPacked(PixelFormat format)
+    public static Bool IsPixelFormatPacked(PixelFormat format)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         var pixelType = PixelTypeGet(format);
@@ -399,7 +397,7 @@ public static unsafe partial class Sdl
             && pixelType is PixelType.Packed8 or PixelType.Packed16 or PixelType.Packed32;
     }
 
-    public static bool IsPixelFormatArray(PixelFormat format)
+    public static Bool IsPixelFormatArray(PixelFormat format)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         var pixelType = PixelTypeGet(format);
@@ -412,7 +410,7 @@ public static unsafe partial class Sdl
                     or PixelType.ArrayF32;
     }
 
-    public static bool IsPixelFormat10Bit(PixelFormat format)
+    public static Bool IsPixelFormat10Bit(PixelFormat format)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return !IsPixelFormatFourCC(format)
@@ -420,7 +418,7 @@ public static unsafe partial class Sdl
             && PixelLayout(format) is PackedLayout.Layout2101010;
     }
 
-    public static bool IsPixelFormatFloat(PixelFormat format)
+    public static Bool IsPixelFormatFloat(PixelFormat format)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         var pixelType = PixelTypeGet(format);
@@ -428,7 +426,7 @@ public static unsafe partial class Sdl
             && (pixelType is PixelType.ArrayF16 or PixelType.ArrayF32);
     }
 
-    public static bool IsPixelFormatAlpha(PixelFormat format)
+    public static Bool IsPixelFormatAlpha(PixelFormat format)
     {
         var result = false;
         if (IsPixelFormatPacked(format))
@@ -457,7 +455,7 @@ public static unsafe partial class Sdl
         return result;
     }
 
-    public static bool IsPixelFormatFourCC(PixelFormat format)
+    public static Bool IsPixelFormatFourCC(PixelFormat format)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return format.Value != 0 && PixelFlag(format) != 1;
@@ -517,32 +515,32 @@ public static unsafe partial class Sdl
         return (MatrixCoefficients)(cspace.Value & 0x1F);
     }
 
-    public static bool IsColorspaceMatrixBt601(Colorspace cspace)
+    public static Bool IsColorspaceMatrixBt601(Colorspace cspace)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         var matrix = ColorspaceMatrix(cspace);
         return matrix == MatrixCoefficientsBT601 || matrix == MatrixCoefficientsBT470BG;
     }
 
-    public static bool IsColorspaceMatrixBT709(Colorspace cspace)
+    public static Bool IsColorspaceMatrixBT709(Colorspace cspace)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return ColorspaceMatrix(cspace) == MatrixCoefficientsBT709;
     }
 
-    public static bool IsColorspaceMatrixBT2020Ncl(Colorspace cspace)
+    public static Bool IsColorspaceMatrixBT2020Ncl(Colorspace cspace)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return ColorspaceMatrix(cspace) == MatrixCoefficientsBT2020Ncl;
     }
 
-    public static bool IsColorspaceLimitedRange(Colorspace cspace)
+    public static Bool IsColorspaceLimitedRange(Colorspace cspace)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return ColorspaceRange(cspace) is not ColorRange.Full;
     }
 
-    public static bool IsColorspaceFullRange(Colorspace cspace)
+    public static Bool IsColorspaceFullRange(Colorspace cspace)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return ColorspaceRange(cspace) is ColorRange.Full;
@@ -554,7 +552,7 @@ public static unsafe partial class Sdl
         return _GetPixelFormatName(format);
     }
 
-    public static bool GetMasksForPixelFormat(
+    public static Bool GetMasksForPixelFormat(
         PixelFormat format,
         out int bpp,
         out uint rMask,
@@ -591,7 +589,7 @@ public static unsafe partial class Sdl
         return _CreatePalette(nColors);
     }
 
-    public static bool SetPaletteColors(
+    public static Bool SetPaletteColors(
         Palette* palette,
         Color* colors,
         int firstColor,

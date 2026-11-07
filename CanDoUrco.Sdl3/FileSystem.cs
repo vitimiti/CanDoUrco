@@ -29,13 +29,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreateDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CreateDirectory(byte* path);
+    private static partial Bool _CreateDirectory(byte* path);
 
     [LibraryImport(DllName, EntryPoint = "SDL_EnumerateDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _EnumerateDirectory(
+    private static partial Bool _EnumerateDirectory(
         byte* path,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult> callback,
         void* userdata
@@ -43,23 +41,19 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_RemovePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RemovePath(byte* path);
+    private static partial Bool _RemovePath(byte* path);
 
     [LibraryImport(DllName, EntryPoint = "SDL_RenamePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RenamePath(byte* oldPath, byte* newPath);
+    private static partial Bool _RenamePath(byte* oldPath, byte* newPath);
 
     [LibraryImport(DllName, EntryPoint = "SDL_CopyFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CopyFile(byte* src, byte* dst);
+    private static partial Bool _CopyFile(byte* src, byte* dst);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetPathInfo")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetPathInfo(byte* path, out PathInfo info);
+    private static partial Bool _GetPathInfo(byte* path, out PathInfo info);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GlobDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -92,13 +86,13 @@ public static unsafe partial class Sdl
         return _GetUserFolder(folder);
     }
 
-    public static bool CreateDirectory(byte* path)
+    public static Bool CreateDirectory(byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CreateDirectory(path);
     }
 
-    public static bool EnumerateDirectory(
+    public static Bool EnumerateDirectory(
         byte* path,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult> callback,
         void* userdata
@@ -108,25 +102,25 @@ public static unsafe partial class Sdl
         return _EnumerateDirectory(path, callback, userdata);
     }
 
-    public static bool RemovePath(byte* path)
+    public static Bool RemovePath(byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RemovePath(path);
     }
 
-    public static bool RenamePath(byte* oldPath, byte* newPath)
+    public static Bool RenamePath(byte* oldPath, byte* newPath)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RenamePath(oldPath, newPath);
     }
 
-    public static bool CopyFile(byte* src, byte* dst)
+    public static Bool CopyFile(byte* src, byte* dst)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CopyFile(src, dst);
     }
 
-    public static bool GetPathInfo(byte* path, out PathInfo info)
+    public static Bool GetPathInfo(byte* path, out PathInfo info)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetPathInfo(path, out info);

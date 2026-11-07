@@ -25,13 +25,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CopyProperties")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CopyProperties(PropertiesID src, PropertiesID dst);
+    private static partial Bool _CopyProperties(PropertiesID src, PropertiesID dst);
 
     [LibraryImport(DllName, EntryPoint = "SDL_LockProperties")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _LockProperties(PropertiesID props);
+    private static partial Bool _LockProperties(PropertiesID props);
 
     [LibraryImport(DllName, EntryPoint = "SDL_UnlockProperties")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -39,8 +37,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetPointerPropertyWithCleanup")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetPointerPropertyWithCleanup(
+    private static partial Bool _SetPointerPropertyWithCleanup(
         PropertiesID props,
         byte* name,
         void* value,
@@ -50,37 +47,27 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetPointerProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetPointerProperty(PropertiesID props, byte* name, void* value);
+    private static partial Bool _SetPointerProperty(PropertiesID props, byte* name, void* value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetStringProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetStringProperty(PropertiesID props, byte* name, byte* value);
+    private static partial Bool _SetStringProperty(PropertiesID props, byte* name, byte* value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetNumberProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetNumberProperty(PropertiesID props, byte* name, long value);
+    private static partial Bool _SetNumberProperty(PropertiesID props, byte* name, long value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetFloatProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetFloatProperty(PropertiesID props, byte* name, float value);
+    private static partial Bool _SetFloatProperty(PropertiesID props, byte* name, float value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetBooleanProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetBooleanProperty(
-        PropertiesID props,
-        byte* name,
-        [MarshalAs(UnmanagedType.I1)] bool value
-    );
+    private static partial Bool _SetBooleanProperty(PropertiesID props, byte* name, Bool value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasProperty(PropertiesID props, byte* name);
+    private static partial Bool _HasProperty(PropertiesID props, byte* name);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetPropertyType")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -120,22 +107,19 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetBooleanProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetBooleanProperty(
+    private static partial Bool _GetBooleanProperty(
         PropertiesID props,
         byte* name,
-        [MarshalAs(UnmanagedType.I1)] bool defaultValue
+        Bool defaultValue
     );
 
     [LibraryImport(DllName, EntryPoint = "SDL_ClearProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ClearProperty(PropertiesID props, byte* name);
+    private static partial Bool _ClearProperty(PropertiesID props, byte* name);
 
     [LibraryImport(DllName, EntryPoint = "SDL_EnumerateProperties")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _EnumerateProperties(
+    private static partial Bool _EnumerateProperties(
         PropertiesID props,
         delegate* unmanaged[Cdecl]<void*, PropertiesID, byte*, void> callback,
         void* userdata
@@ -157,13 +141,13 @@ public static unsafe partial class Sdl
         return _CreateProperties();
     }
 
-    public static bool CopyProperties(PropertiesID src, PropertiesID dst)
+    public static Bool CopyProperties(PropertiesID src, PropertiesID dst)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CopyProperties(src, dst);
     }
 
-    public static bool LockProperties(PropertiesID props)
+    public static Bool LockProperties(PropertiesID props)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _LockProperties(props);
@@ -175,7 +159,7 @@ public static unsafe partial class Sdl
         _UnlockProperties(props);
     }
 
-    public static bool SetPointerPropertyWithCleanup(
+    public static Bool SetPointerPropertyWithCleanup(
         PropertiesID props,
         byte* name,
         void* value,
@@ -187,37 +171,37 @@ public static unsafe partial class Sdl
         return _SetPointerPropertyWithCleanup(props, name, value, cleanup, userdata);
     }
 
-    public static bool SetPointerProperty(PropertiesID props, byte* name, void* value)
+    public static Bool SetPointerProperty(PropertiesID props, byte* name, void* value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetPointerProperty(props, name, value);
     }
 
-    public static bool SetStringProperty(PropertiesID props, byte* name, byte* value)
+    public static Bool SetStringProperty(PropertiesID props, byte* name, byte* value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetStringProperty(props, name, value);
     }
 
-    public static bool SetNumberProperty(PropertiesID props, byte* name, long value)
+    public static Bool SetNumberProperty(PropertiesID props, byte* name, long value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetNumberProperty(props, name, value);
     }
 
-    public static bool SetFloatProperty(PropertiesID props, byte* name, float value)
+    public static Bool SetFloatProperty(PropertiesID props, byte* name, float value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetFloatProperty(props, name, value);
     }
 
-    public static bool SetBooleanProperty(PropertiesID props, byte* name, bool value)
+    public static Bool SetBooleanProperty(PropertiesID props, byte* name, Bool value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetBooleanProperty(props, name, value);
     }
 
-    public static bool HasProperty(PropertiesID props, byte* name)
+    public static Bool HasProperty(PropertiesID props, byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasProperty(props, name);
@@ -253,19 +237,19 @@ public static unsafe partial class Sdl
         return _GetFloatProperty(props, name, defaultValue);
     }
 
-    public static bool GetBooleanProperty(PropertiesID props, byte* name, bool defaultValue)
+    public static Bool GetBooleanProperty(PropertiesID props, byte* name, Bool defaultValue)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetBooleanProperty(props, name, defaultValue);
     }
 
-    public static bool ClearProperty(PropertiesID props, byte* name)
+    public static Bool ClearProperty(PropertiesID props, byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ClearProperty(props, name);
     }
 
-    public static bool EnumerateProperties(
+    public static Bool EnumerateProperties(
         PropertiesID props,
         delegate* unmanaged[Cdecl]<void*, PropertiesID, byte*, void> callback,
         void* userdata

@@ -41,18 +41,15 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_Init")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _Init(InitFlags flags);
+    private static partial Bool _Init(InitFlags flags);
 
     [LibraryImport(DllName, EntryPoint = "SDL_InitSubSystem")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _InitSubSystem(InitFlags flags);
+    private static partial Bool _InitSubSystem(InitFlags flags);
 
     [LibraryImport(DllName, EntryPoint = "SDL_QuitSubSystem")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _QuitSubSystem(InitFlags flags);
+    private static partial Bool _QuitSubSystem(InitFlags flags);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WasInit")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -64,22 +61,19 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_IsMainThread")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsMainThread();
+    private static partial Bool _IsMainThread();
 
     [LibraryImport(DllName, EntryPoint = "SDL_RunOnMainThread")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RunOnMainThread(
+    private static partial Bool _RunOnMainThread(
         delegate* unmanaged[Cdecl]<void*, void> callback,
         void* userdata,
-        [MarshalAs(UnmanagedType.I1)] bool waitComplete
+        Bool waitComplete
     );
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetAppMetadata")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetAppMetadata(
+    private static partial Bool _SetAppMetadata(
         byte* appName,
         byte* appVersion,
         byte* appIdentifier
@@ -87,26 +81,25 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetAppMetadataProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetAppMetadataProperty(byte* property, byte* value);
+    private static partial Bool _SetAppMetadataProperty(byte* property, byte* value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetAppMetadataProperty")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial byte* _GetAppMetadataProperty(byte* property);
 
-    public static bool Init(InitFlags flags)
+    public static Bool Init(InitFlags flags)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _Init(flags);
     }
 
-    public static bool InitSubSystem(InitFlags flags)
+    public static Bool InitSubSystem(InitFlags flags)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _InitSubSystem(flags);
     }
 
-    public static bool QuitSubSystem(InitFlags flags)
+    public static Bool QuitSubSystem(InitFlags flags)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _QuitSubSystem(flags);
@@ -124,29 +117,29 @@ public static unsafe partial class Sdl
         _Quit();
     }
 
-    public static bool IsMainThread()
+    public static Bool IsMainThread()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsMainThread();
     }
 
-    public static bool RunOnMainThread(
+    public static Bool RunOnMainThread(
         delegate* unmanaged[Cdecl]<void*, void> callback,
         void* userdata,
-        bool waitComplete
+        Bool waitComplete
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RunOnMainThread(callback, userdata, waitComplete);
     }
 
-    public static bool SetAppMetadata(byte* appName, byte* appVersion, byte* appIdentifier)
+    public static Bool SetAppMetadata(byte* appName, byte* appVersion, byte* appIdentifier)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetAppMetadata(appName, appVersion, appIdentifier);
     }
 
-    public static bool SetAppMetadataProperty(byte* property, byte* value)
+    public static Bool SetAppMetadataProperty(byte* property, byte* value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetAppMetadataProperty(property, value);

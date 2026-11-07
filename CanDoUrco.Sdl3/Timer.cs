@@ -77,8 +77,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_RemoveTimer")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RemoveTimer(TimerID id);
+    private static partial Bool _RemoveTimer(TimerID id);
 
     public static ulong GetTicks()
     {
@@ -142,7 +141,7 @@ public static partial class Sdl
         return _AddTimerNS(interval, callback, userdata);
     }
 
-    public static bool RemoveTimer(TimerID id)
+    public static Bool RemoveTimer(TimerID id)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RemoveTimer(id);

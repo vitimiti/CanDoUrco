@@ -16,13 +16,11 @@ public static unsafe partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_HasRectIntersection")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasRectIntersection(in Rect a, in Rect b);
+    private static partial Bool _HasRectIntersection(in Rect a, in Rect b);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectIntersection")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetRectIntersection(in Rect a, in Rect b, out Rect result);
+    private static partial Bool _GetRectIntersection(in Rect a, in Rect b, out Rect result);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectUnion")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -30,8 +28,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectEnclosingPoints")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetRectEnclosingPoints(
+    private static partial Bool _GetRectEnclosingPoints(
         [In]
         [MarshalUsing(typeof(ArrayMarshaller<Point, Point>), CountElementName = nameof(count))]
             Point[] points,
@@ -42,8 +39,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectAndLineIntersection")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetRectAndLineIntersection(
+    private static partial Bool _GetRectAndLineIntersection(
         in Rect rect,
         ref int x1,
         ref int y1,
@@ -53,13 +49,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasRectIntersectionFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasRectIntersectionFloat(in FRect a, in FRect b);
+    private static partial Bool _HasRectIntersectionFloat(in FRect a, in FRect b);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectIntersectionFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetRectIntersectionFloat(in FRect a, in FRect b, out FRect result);
+    private static partial Bool _GetRectIntersectionFloat(in FRect a, in FRect b, out FRect result);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectUnionFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -67,8 +61,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectEnclosingPointsFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetRectEnclosingPointsFloat(
+    private static partial Bool _GetRectEnclosingPointsFloat(
         [In]
         [MarshalUsing(typeof(ArrayMarshaller<Point, Point>), CountElementName = nameof(count))]
             Point[] points,
@@ -79,8 +72,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectAndLineIntersectionFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetRectAndLineIntersectionFloat(
+    private static partial Bool _GetRectAndLineIntersectionFloat(
         in FRect rect,
         ref float x1,
         ref float y1,
@@ -100,31 +92,31 @@ public static unsafe partial class Sdl
         };
     }
 
-    public static bool PointInRect(in Point p, in Rect r)
+    public static Bool PointInRect(in Point p, in Rect r)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return p.X >= r.X && p.X < r.X + r.W && p.Y >= r.Y && p.Y < r.Y + r.H;
     }
 
-    public static bool RectEmpty(in Rect r)
+    public static Bool RectEmpty(in Rect r)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return r.W <= 0 || r.H <= 0;
     }
 
-    public static bool RectsEqual(in Rect a, in Rect b)
+    public static Bool RectsEqual(in Rect a, in Rect b)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return a.X == b.X && a.Y == b.Y && a.W == b.W && a.H == b.H;
     }
 
-    public static bool HasRectIntersection(in Rect a, in Rect b)
+    public static Bool HasRectIntersection(in Rect a, in Rect b)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasRectIntersection(a, b);
     }
 
-    public static bool GetRectIntersection(in Rect a, in Rect b, out Rect result)
+    public static Bool GetRectIntersection(in Rect a, in Rect b, out Rect result)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetRectIntersection(a, b, out result);
@@ -136,7 +128,7 @@ public static unsafe partial class Sdl
         _GetRectUnion(a, b, out result);
     }
 
-    public static bool GetRectEnclosingPoints(
+    public static Bool GetRectEnclosingPoints(
         Point[] points,
         int count,
         Rect* clip,
@@ -147,7 +139,7 @@ public static unsafe partial class Sdl
         return _GetRectEnclosingPoints(points, count, clip, out result);
     }
 
-    public static bool GetRectAndLineIntersection(
+    public static Bool GetRectAndLineIntersection(
         in Rect rect,
         ref int x1,
         ref int y1,
@@ -159,19 +151,19 @@ public static unsafe partial class Sdl
         return _GetRectAndLineIntersection(rect, ref x1, ref y1, ref x2, ref y2);
     }
 
-    public static bool PointInRectFloat(in FPoint p, in FRect r)
+    public static Bool PointInRectFloat(in FPoint p, in FRect r)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return p.X >= r.X && p.X < r.X + r.W && p.Y >= r.Y && p.Y < r.Y + r.H;
     }
 
-    public static bool RectEmptyFloat(in FRect r)
+    public static Bool RectEmptyFloat(in FRect r)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return r.W <= 0F || r.H <= 0F;
     }
 
-    public static bool RectsEqualEpsilon(in FRect a, in FRect b, float epsilon)
+    public static Bool RectsEqualEpsilon(in FRect a, in FRect b, float epsilon)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return FAbsF(a.X - b.X) < epsilon
@@ -180,19 +172,19 @@ public static unsafe partial class Sdl
             && FAbsF(a.H - b.H) < epsilon;
     }
 
-    public static bool RectsEqualFloat(in FRect a, in FRect b)
+    public static Bool RectsEqualFloat(in FRect a, in FRect b)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return RectsEqualEpsilon(a, b, FltEpsilon);
     }
 
-    public static bool HasRectIntersectionFloat(in FRect a, in FRect b)
+    public static Bool HasRectIntersectionFloat(in FRect a, in FRect b)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasRectIntersectionFloat(a, b);
     }
 
-    public static bool GetRectIntersectionFloat(in FRect a, in FRect b, out FRect result)
+    public static Bool GetRectIntersectionFloat(in FRect a, in FRect b, out FRect result)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetRectIntersectionFloat(a, b, out result);
@@ -204,7 +196,7 @@ public static unsafe partial class Sdl
         _GetRectUnionFloat(a, b, out result);
     }
 
-    public static bool GetRectEnclosingPointsFloat(
+    public static Bool GetRectEnclosingPointsFloat(
         Point[] points,
         int count,
         FRect* clip,
@@ -215,7 +207,7 @@ public static unsafe partial class Sdl
         return _GetRectEnclosingPointsFloat(points, count, clip, out result);
     }
 
-    public static bool GetRectAndLineIntersectionFloat(
+    public static Bool GetRectAndLineIntersectionFloat(
         in FRect rect,
         ref float x1,
         ref float y1,

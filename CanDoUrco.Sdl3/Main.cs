@@ -41,8 +41,7 @@ public static unsafe partial class Sdl
     [SupportedOSPlatform("windows")]
     [LibraryImport(DllName, EntryPoint = "SDL_RegisterApp")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RegisterApp(byte* name, uint style, void* hInst);
+    private static partial Bool _RegisterApp(byte* name, uint style, void* hInst);
 
     [SupportedOSPlatform("windows")]
     [LibraryImport(DllName, EntryPoint = "SDL_UnregisterApp")]
@@ -83,7 +82,7 @@ public static unsafe partial class Sdl
     }
 
     [SupportedOSPlatform("windows")]
-    public static bool RegisterApp(byte* name, uint style, void* hInst)
+    public static Bool RegisterApp(byte* name, uint style, void* hInst)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RegisterApp(name, style, hInst);

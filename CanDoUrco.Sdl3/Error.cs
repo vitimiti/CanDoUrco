@@ -15,13 +15,11 @@ public static unsafe partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_SetError")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetError(byte* fmt, byte* msg);
+    private static partial Bool _SetError(byte* fmt, byte* msg);
 
     [LibraryImport(DllName, EntryPoint = "SDL_OutOfMemory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _OutOfMemory();
+    private static partial Bool _OutOfMemory();
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetError")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -29,16 +27,15 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_ClearError")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ClearError();
+    private static partial Bool _ClearError();
 
-    public static bool SetError(byte* fmt, byte* message)
+    public static Bool SetError(byte* fmt, byte* message)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetError(fmt, message);
     }
 
-    public static bool OutOfMemory()
+    public static Bool OutOfMemory()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _OutOfMemory();
@@ -50,13 +47,13 @@ public static unsafe partial class Sdl
         return _GetError();
     }
 
-    public static bool ClearError()
+    public static Bool ClearError()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ClearError();
     }
 
-    public static bool Unsupported()
+    public static Bool Unsupported()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         fixed (byte* fmt = "%s"u8)
@@ -66,7 +63,7 @@ public static unsafe partial class Sdl
         }
     }
 
-    public static bool InvalidParamError(byte* param)
+    public static Bool InvalidParamError(byte* param)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         fixed (byte* fmt = "Parameter '%s' is invalid"u8)

@@ -25,73 +25,59 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasAltiVec")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasAltiVec();
+    private static partial Bool _HasAltiVec();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasMMX")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasMmx();
+    private static partial Bool _HasMmx();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasSSE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasSse();
+    private static partial Bool _HasSse();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasSSE2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasSse2();
+    private static partial Bool _HasSse2();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasSSE3")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasSse3();
+    private static partial Bool _HasSse3();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasSSE41")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasSse41();
+    private static partial Bool _HasSse41();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasSSE42")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasSse42();
+    private static partial Bool _HasSse42();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasAVX")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasAvx();
+    private static partial Bool _HasAvx();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasAVX2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasAvx2();
+    private static partial Bool _HasAvx2();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasAVX512F")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasAvx512F();
+    private static partial Bool _HasAvx512F();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasARMSIMD")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasArmSimd();
+    private static partial Bool _HasArmSimd();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasNEON")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasNeon();
+    private static partial Bool _HasNeon();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasLSX")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasLsx();
+    private static partial Bool _HasLsx();
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasLASX")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasLasx();
+    private static partial Bool _HasLasx();
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSystemRAM")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -117,85 +103,85 @@ public static partial class Sdl
         return _GetCpuCacheLineSize();
     }
 
-    public static bool HasAltiVec()
+    public static Bool HasAltiVec()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasAltiVec();
     }
 
-    public static bool HasMmx()
+    public static Bool HasMmx()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasMmx();
     }
 
-    public static bool HasSse()
+    public static Bool HasSse()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasSse();
     }
 
-    public static bool HasSse2()
+    public static Bool HasSse2()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasSse2();
     }
 
-    public static bool HasSse3()
+    public static Bool HasSse3()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasSse3();
     }
 
-    public static bool HasSse41()
+    public static Bool HasSse41()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasSse41();
     }
 
-    public static bool HasSse42()
+    public static Bool HasSse42()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasSse42();
     }
 
-    public static bool HasAvx()
+    public static Bool HasAvx()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasAvx();
     }
 
-    public static bool HasAvx2()
+    public static Bool HasAvx2()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasAvx2();
     }
 
-    public static bool HasAvx512F()
+    public static Bool HasAvx512F()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasAvx512F();
     }
 
-    public static bool HasArmSimd()
+    public static Bool HasArmSimd()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasArmSimd();
     }
 
-    public static bool HasNeon()
+    public static Bool HasNeon()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasNeon();
     }
 
-    public static bool HasLsx()
+    public static Bool HasLsx()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasLsx();
     }
 
-    public static bool HasLasx()
+    public static Bool HasLasx()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasLasx();

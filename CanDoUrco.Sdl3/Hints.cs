@@ -384,8 +384,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetHintWithPriority")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetHintWithPriority(
+    private static partial Bool _SetHintWithPriority(
         byte* name,
         byte* value,
         HintPriority priority
@@ -393,13 +392,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetHint")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetHint(byte* name, byte* value);
+    private static partial Bool _SetHint(byte* name, byte* value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ResetHint")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ResetHint(byte* name);
+    private static partial Bool _ResetHint(byte* name);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ResetHints")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -411,16 +408,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetHintBoolean")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetHintBoolean(
-        byte* name,
-        [MarshalAs(UnmanagedType.I1)] bool defaultValue
-    );
+    private static partial Bool _GetHintBoolean(byte* name, Bool defaultValue);
 
     [LibraryImport(DllName, EntryPoint = "SDL_AddHintCallback")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _AddHintCallback(
+    private static partial Bool _AddHintCallback(
         byte* name,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, byte*, void> callback,
         void* userdata
@@ -434,19 +426,19 @@ public static unsafe partial class Sdl
         void* userdata
     );
 
-    public static bool SetHintWithPriority(byte* name, byte* value, HintPriority priority)
+    public static Bool SetHintWithPriority(byte* name, byte* value, HintPriority priority)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetHintWithPriority(name, value, priority);
     }
 
-    public static bool SetHint(byte* name, byte* value)
+    public static Bool SetHint(byte* name, byte* value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetHint(name, value);
     }
 
-    public static bool ResetHint(byte* name)
+    public static Bool ResetHint(byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ResetHint(name);
@@ -464,13 +456,13 @@ public static unsafe partial class Sdl
         return _GetHint(name);
     }
 
-    public static bool GetHintBoolean(byte* name, bool defaultValue)
+    public static Bool GetHintBoolean(byte* name, Bool defaultValue)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetHintBoolean(name, defaultValue);
     }
 
-    public static bool AddHintCallback(
+    public static Bool AddHintCallback(
         byte* name,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, byte*, void> callback,
         void* userdata

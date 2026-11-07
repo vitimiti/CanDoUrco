@@ -15,9 +15,9 @@ public static unsafe partial class Sdl
 {
     public const uint InvalidUnicodeCodepoint = 0xFFFD;
 
-    public static bool UseDotnetEpsilon { get; set; }
+    public static Bool UseDotnetEpsilon { get; set; }
 
-    public static bool UseDotnetPi { get; set; }
+    public static Bool UseDotnetPi { get; set; }
 
     public static float FltEpsilon => UseDotnetEpsilon ? float.Epsilon : 1.1920928955078125e-07F;
 
@@ -69,8 +69,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetMemoryFunctions")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetMemoryFunctions(
+    private static partial Bool _SetMemoryFunctions(
         delegate* unmanaged[Cdecl]<nuint, void*> mallocFunc,
         delegate* unmanaged[Cdecl]<nuint, nuint, void*> callocFunc,
         delegate* unmanaged[Cdecl]<void*, nuint, void*> reallocFunc,
@@ -95,9 +94,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreateEnvironment")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Environment _CreateEnvironment(
-        [MarshalAs(UnmanagedType.I1)] bool populated
-    );
+    private static partial Environment _CreateEnvironment(Bool populated);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetEnvironmentVariable")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -109,18 +106,16 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetEnvironmentVariable")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetEnvironmentVariable(
+    private static partial Bool _SetEnvironmentVariable(
         Environment env,
         byte* name,
         byte* value,
-        [MarshalAs(UnmanagedType.I1)] bool overwrite
+        Bool overwrite
     );
 
     [LibraryImport(DllName, EntryPoint = "SDL_UnsetEnvironmentVariable")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _UnsetEnvironmentVariable(Environment env, byte* name);
+    private static partial Bool _UnsetEnvironmentVariable(Environment env, byte* name);
 
     [LibraryImport(DllName, EntryPoint = "SDL_DestroyEnvironment")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -136,18 +131,16 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_setenv_unsafe")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetEnvUnsafe(
+    private static partial Bool _SetEnvUnsafe(
         Environment env,
         byte* name,
         byte* value,
-        [MarshalAs(UnmanagedType.I1)] bool overwrite
+        Bool overwrite
     );
 
     [LibraryImport(DllName, EntryPoint = "SDL_unsetenv_unsafe")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _UnsetEnvUnsafe(Environment env, byte* name);
+    private static partial Bool _UnsetEnvUnsafe(Environment env, byte* name);
 
     [LibraryImport(DllName, EntryPoint = "SDL_qsort")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -195,63 +188,51 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_isalpha")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsAlpha(int x);
+    private static partial Bool _IsAlpha(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isalnum")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsAlnum(int x);
+    private static partial Bool _IsAlnum(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isblank")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsBlank(int x);
+    private static partial Bool _IsBlank(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_iscntrl")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsCntrl(int x);
+    private static partial Bool _IsCntrl(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isdigit")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsDigit(int x);
+    private static partial Bool _IsDigit(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isxdigit")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsXDigit(int x);
+    private static partial Bool _IsXDigit(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ispunct")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsPunct(int x);
+    private static partial Bool _IsPunct(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isspace")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsSpace(int x);
+    private static partial Bool _IsSpace(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isupper")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsUpper(int x);
+    private static partial Bool _IsUpper(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_islower")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsLower(int x);
+    private static partial Bool _IsLower(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isprint")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsPrint(int x);
+    private static partial Bool _IsPrint(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isgraph")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsGraph(int x);
+    private static partial Bool _IsGraph(int x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_toupper")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -607,23 +588,19 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_isinf")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsInf(double x);
+    private static partial Bool _IsInf(double x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isinff")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsInfF(float x);
+    private static partial Bool _IsInfF(float x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isnan")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsNaN(double x);
+    private static partial Bool _IsNaN(double x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_isnanf")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IsNaNF(float x);
+    private static partial Bool _IsNaNF(float x);
 
     [LibraryImport(DllName, EntryPoint = "SDL_log")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -711,8 +688,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_iconv_close")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _IconVClose(IconVData cd);
+    private static partial Bool _IconVClose(IconVData cd);
 
     [LibraryImport(DllName, EntryPoint = "SDL_iconv")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -805,7 +781,7 @@ public static unsafe partial class Sdl
         _GetMemoryFunctions(mallocFunc, callocFunc, reallocFunc, freeFunc);
     }
 
-    public static bool SetMemoryFunctions(
+    public static Bool SetMemoryFunctions(
         delegate* unmanaged[Cdecl]<nuint, void*> mallocFunc,
         delegate* unmanaged[Cdecl]<nuint, nuint, void*> callocFunc,
         delegate* unmanaged[Cdecl]<void*, nuint, void*> reallocFunc,
@@ -840,7 +816,7 @@ public static unsafe partial class Sdl
         return _GetEnvironment();
     }
 
-    public static Environment CreateEnvironment(bool populated)
+    public static Environment CreateEnvironment(Bool populated)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CreateEnvironment(populated);
@@ -858,18 +834,18 @@ public static unsafe partial class Sdl
         return _GetEnvironmentVariables(env);
     }
 
-    public static bool SetEnvironmentVariable(
+    public static Bool SetEnvironmentVariable(
         Environment env,
         byte* name,
         byte* value,
-        bool overwrite
+        Bool overwrite
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetEnvironmentVariable(env, name, value, overwrite);
     }
 
-    public static bool UnsetEnvironmentVariable(Environment env, byte* name)
+    public static Bool UnsetEnvironmentVariable(Environment env, byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _UnsetEnvironmentVariable(env, name);
@@ -893,13 +869,13 @@ public static unsafe partial class Sdl
         return _GetEnvUnsafe(name);
     }
 
-    public static bool SetEnvUnsafe(Environment env, byte* name, byte* value, bool overwrite)
+    public static Bool SetEnvUnsafe(Environment env, byte* name, byte* value, Bool overwrite)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetEnvUnsafe(env, name, value, overwrite);
     }
 
-    public static bool UnsetEnvUnsafe(Environment env, byte* name)
+    public static Bool UnsetEnvUnsafe(Environment env, byte* name)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _UnsetEnvUnsafe(env, name);
@@ -977,73 +953,73 @@ public static unsafe partial class Sdl
         return x < a ? a : (x > b ? b : x);
     }
 
-    public static bool IsAlpha(int x)
+    public static Bool IsAlpha(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsAlpha(x);
     }
 
-    public static bool IsAlnum(int x)
+    public static Bool IsAlnum(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsAlnum(x);
     }
 
-    public static bool IsBlank(int x)
+    public static Bool IsBlank(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsBlank(x);
     }
 
-    public static bool IsCntrl(int x)
+    public static Bool IsCntrl(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsCntrl(x);
     }
 
-    public static bool IsDigit(int x)
+    public static Bool IsDigit(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsDigit(x);
     }
 
-    public static bool IsXDigit(int x)
+    public static Bool IsXDigit(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsXDigit(x);
     }
 
-    public static bool IsPunct(int x)
+    public static Bool IsPunct(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsPunct(x);
     }
 
-    public static bool IsSpace(int x)
+    public static Bool IsSpace(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsSpace(x);
     }
 
-    public static bool IsUpper(int x)
+    public static Bool IsUpper(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsUpper(x);
     }
 
-    public static bool IsLower(int x)
+    public static Bool IsLower(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsLower(x);
     }
 
-    public static bool IsPrint(int x)
+    public static Bool IsPrint(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsPrint(x);
     }
 
-    public static bool IsGraph(int x)
+    public static Bool IsGraph(int x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsGraph(x);
@@ -1600,25 +1576,25 @@ public static unsafe partial class Sdl
         return _FModF(x, y);
     }
 
-    public static bool IsInf(double x)
+    public static Bool IsInf(double x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsInf(x);
     }
 
-    public static bool IsInfF(float x)
+    public static Bool IsInfF(float x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsInfF(x);
     }
 
-    public static bool IsNaN(double x)
+    public static Bool IsNaN(double x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsNaN(x);
     }
 
-    public static bool IsNaNF(float x)
+    public static Bool IsNaNF(float x)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IsNaNF(x);
@@ -1750,7 +1726,7 @@ public static unsafe partial class Sdl
         return _IconVOpen(toCode, fromCode);
     }
 
-    public static bool IconVClose(IconVData cd)
+    public static Bool IconVClose(IconVData cd)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _IconVClose(cd);

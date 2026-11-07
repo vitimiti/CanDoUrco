@@ -65,8 +65,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetCurrentThreadPriority")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetCurrentThreadPriority(ThreadPriority priority);
+    private static partial Bool _SetCurrentThreadPriority(ThreadPriority priority);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WaitThread")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -86,8 +85,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetTLS")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetTls(
+    private static partial Bool _SetTls(
         ref TlsID id,
         void* value,
         delegate* unmanaged[Cdecl]<void*, void> destructor
@@ -153,7 +151,7 @@ public static unsafe partial class Sdl
         return _GetThreadID(thread);
     }
 
-    public static bool SetCurrentThreadPriority(ThreadPriority priority)
+    public static Bool SetCurrentThreadPriority(ThreadPriority priority)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetCurrentThreadPriority(priority);
@@ -183,7 +181,7 @@ public static unsafe partial class Sdl
         return _GetTls(ref id);
     }
 
-    public static bool SetTls(
+    public static Bool SetTls(
         ref TlsID id,
         void* value,
         delegate* unmanaged[Cdecl]<void*, void> destructor

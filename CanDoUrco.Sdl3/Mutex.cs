@@ -23,8 +23,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_TryLockMutex")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _TryLockMutex(Mutex mutex);
+    private static partial Bool _TryLockMutex(Mutex mutex);
 
     [LibraryImport(DllName, EntryPoint = "SDL_UnlockMutex")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -48,13 +47,11 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_TryLockRWLockForReading")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _TryLockRWLockForReading(RWLock rwLock);
+    private static partial Bool _TryLockRWLockForReading(RWLock rwLock);
 
     [LibraryImport(DllName, EntryPoint = "SDL_TryLockRWLockForWriting")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _TryLockRWLockForWriting(RWLock rwLock);
+    private static partial Bool _TryLockRWLockForWriting(RWLock rwLock);
 
     [LibraryImport(DllName, EntryPoint = "SDL_UnlockRWLock")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -78,13 +75,11 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_TryWaitSemaphore")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _TryWaitSemaphore(Semaphore sem);
+    private static partial Bool _TryWaitSemaphore(Semaphore sem);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WaitSemaphoreTimeout")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WaitSemaphoreTimeout(Semaphore sem, uint timeoutMS);
+    private static partial Bool _WaitSemaphoreTimeout(Semaphore sem, uint timeoutMS);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SignalSemaphore")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -116,25 +111,19 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_WaitConditionTimeout")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WaitConditionTimeout(Condition cond, Mutex mutex, uint timeoutMS);
+    private static partial Bool _WaitConditionTimeout(Condition cond, Mutex mutex, uint timeoutMS);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ShouldInit")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ShouldInit(ref InitState state);
+    private static partial Bool _ShouldInit(ref InitState state);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ShouldQuit")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ShouldQuit(ref InitState state);
+    private static partial Bool _ShouldQuit(ref InitState state);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetInitialized")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial void _SetInitialized(
-        ref InitState state,
-        [MarshalAs(UnmanagedType.I1)] bool initialized
-    );
+    private static partial void _SetInitialized(ref InitState state, Bool initialized);
 
     public static Mutex CreateMutex()
     {
@@ -148,7 +137,7 @@ public static partial class Sdl
         _LockMutex(mutex);
     }
 
-    public static bool TryLockMutex(Mutex mutex)
+    public static Bool TryLockMutex(Mutex mutex)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _TryLockMutex(mutex);
@@ -184,13 +173,13 @@ public static partial class Sdl
         _LockRWLockForWriting(rwLock);
     }
 
-    public static bool TryLockRWLockForReading(RWLock rwLock)
+    public static Bool TryLockRWLockForReading(RWLock rwLock)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _TryLockRWLockForReading(rwLock);
     }
 
-    public static bool TryLockRWLockForWriting(RWLock rwLock)
+    public static Bool TryLockRWLockForWriting(RWLock rwLock)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _TryLockRWLockForWriting(rwLock);
@@ -226,13 +215,13 @@ public static partial class Sdl
         _WaitSemaphore(sem);
     }
 
-    public static bool TryWaitSemaphore(Semaphore sem)
+    public static Bool TryWaitSemaphore(Semaphore sem)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _TryWaitSemaphore(sem);
     }
 
-    public static bool WaitSemaphoreTimeout(Semaphore sem, uint timeoutMS)
+    public static Bool WaitSemaphoreTimeout(Semaphore sem, uint timeoutMS)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WaitSemaphoreTimeout(sem, timeoutMS);
@@ -280,25 +269,25 @@ public static partial class Sdl
         _WaitCondition(cond, mutex);
     }
 
-    public static bool WaitConditionTimeout(Condition cond, Mutex mutex, uint timeoutMS)
+    public static Bool WaitConditionTimeout(Condition cond, Mutex mutex, uint timeoutMS)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WaitConditionTimeout(cond, mutex, timeoutMS);
     }
 
-    public static bool ShouldInit(ref InitState state)
+    public static Bool ShouldInit(ref InitState state)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ShouldInit(ref state);
     }
 
-    public static bool ShouldQuit(ref InitState state)
+    public static Bool ShouldQuit(ref InitState state)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ShouldQuit(ref state);
     }
 
-    public static void SetInitialized(ref InitState state, bool initialized)
+    public static void SetInitialized(ref InitState state, Bool initialized)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         _SetInitialized(ref state, initialized);

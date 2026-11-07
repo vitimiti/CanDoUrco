@@ -31,23 +31,19 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CloseStorage")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CloseStorage(Storage storage);
+    private static partial Bool _CloseStorage(Storage storage);
 
     [LibraryImport(DllName, EntryPoint = "SDL_StorageReady")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _StorageReady(Storage storage);
+    private static partial Bool _StorageReady(Storage storage);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetStorageFileSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetStorageFileSize(Storage storage, byte* path, out ulong length);
+    private static partial Bool _GetStorageFileSize(Storage storage, byte* path, out ulong length);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadStorageFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadStorageFile(
+    private static partial Bool _ReadStorageFile(
         Storage storage,
         byte* path,
         void* destination,
@@ -56,8 +52,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteStorageFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteStorageFile(
+    private static partial Bool _WriteStorageFile(
         Storage storage,
         byte* path,
         void* destination,
@@ -66,13 +61,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreateStorageDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CreateStorageDirectory(Storage storage, byte* path);
+    private static partial Bool _CreateStorageDirectory(Storage storage, byte* path);
 
     [LibraryImport(DllName, EntryPoint = "SDL_EnumerateStorageDirectory")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _EnumerateStorageDirectory(
+    private static partial Bool _EnumerateStorageDirectory(
         Storage storage,
         byte* path,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult> callback,
@@ -81,23 +74,19 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_RemoveStoragePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RemoveStoragePath(Storage storage, byte* path);
+    private static partial Bool _RemoveStoragePath(Storage storage, byte* path);
 
     [LibraryImport(DllName, EntryPoint = "SDL_RenameStoragePath")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RenameStoragePath(Storage storage, byte* oldPath, byte* newPath);
+    private static partial Bool _RenameStoragePath(Storage storage, byte* oldPath, byte* newPath);
 
     [LibraryImport(DllName, EntryPoint = "SDL_CopyStorageFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CopyStorageFile(Storage storage, byte* oldPath, byte* newPath);
+    private static partial Bool _CopyStorageFile(Storage storage, byte* oldPath, byte* newPath);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetStoragePathInfo")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetStoragePathInfo(Storage storage, byte* path, out PathInfo info);
+    private static partial Bool _GetStoragePathInfo(Storage storage, byte* path, out PathInfo info);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetStorageSpaceRemaining")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -137,43 +126,43 @@ public static unsafe partial class Sdl
         return _OpenStorage(iface, userdata);
     }
 
-    public static bool CloseStorage(Storage storage)
+    public static Bool CloseStorage(Storage storage)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CloseStorage(storage);
     }
 
-    public static bool StorageReady(Storage storage)
+    public static Bool StorageReady(Storage storage)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _StorageReady(storage);
     }
 
-    public static bool GetStorageFileSize(Storage storage, byte* path, out ulong length)
+    public static Bool GetStorageFileSize(Storage storage, byte* path, out ulong length)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetStorageFileSize(storage, path, out length);
     }
 
-    public static bool ReadStorageFile(Storage storage, byte* path, void* destination, ulong length)
+    public static Bool ReadStorageFile(Storage storage, byte* path, void* destination, ulong length)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadStorageFile(storage, path, destination, length);
     }
 
-    public static bool WriteStorageFile(Storage storage, byte* path, void* source, ulong length)
+    public static Bool WriteStorageFile(Storage storage, byte* path, void* source, ulong length)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteStorageFile(storage, path, source, length);
     }
 
-    public static bool CreateStorageDirectory(Storage storage, byte* path)
+    public static Bool CreateStorageDirectory(Storage storage, byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CreateStorageDirectory(storage, path);
     }
 
-    public static bool EnumerateStorageDirectory(
+    public static Bool EnumerateStorageDirectory(
         Storage storage,
         byte* path,
         delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult> callback,
@@ -184,25 +173,25 @@ public static unsafe partial class Sdl
         return _EnumerateStorageDirectory(storage, path, callback, userdata);
     }
 
-    public static bool RemoveStoragePath(Storage storage, byte* path)
+    public static Bool RemoveStoragePath(Storage storage, byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RemoveStoragePath(storage, path);
     }
 
-    public static bool RenameStoragePath(Storage storage, byte* oldPath, byte* newPath)
+    public static Bool RenameStoragePath(Storage storage, byte* oldPath, byte* newPath)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RenameStoragePath(storage, oldPath, newPath);
     }
 
-    public static bool CopyStorageFile(Storage storage, byte* oldPath, byte* newPath)
+    public static Bool CopyStorageFile(Storage storage, byte* oldPath, byte* newPath)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CopyStorageFile(storage, oldPath, newPath);
     }
 
-    public static bool GetStoragePathInfo(Storage storage, byte* path, out PathInfo info)
+    public static Bool GetStoragePathInfo(Storage storage, byte* path, out PathInfo info)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetStoragePathInfo(storage, path, out info);
@@ -230,21 +219,21 @@ public static unsafe partial class Sdl
     public struct StorageInterface
     {
         public uint Version;
-        public delegate* unmanaged[Cdecl]<void*, sbyte> Close; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, sbyte> Ready; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, Bool> Close;
+        public delegate* unmanaged[Cdecl]<void*, Bool> Ready;
         public delegate* unmanaged[Cdecl]<
             void*,
             byte*,
             delegate* unmanaged[Cdecl]<void*, byte*, byte*, EnumerationResult>,
             void*,
-            sbyte> Enumerate; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, byte*, PathInfo, sbyte> Info; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, byte*, void*, ulong, sbyte> ReadFile; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, byte*, void*, ulong, sbyte> WriteFile; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, byte*, sbyte> MkDir; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, byte*, sbyte> Remove; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, byte*, byte*, sbyte> Rename; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, byte*, byte*, sbyte> Copy; // sbyte is bool
+            Bool> Enumerate;
+        public delegate* unmanaged[Cdecl]<void*, byte*, PathInfo, Bool> Info;
+        public delegate* unmanaged[Cdecl]<void*, byte*, void*, ulong, Bool> ReadFile;
+        public delegate* unmanaged[Cdecl]<void*, byte*, void*, ulong, Bool> WriteFile;
+        public delegate* unmanaged[Cdecl]<void*, byte*, Bool> MkDir;
+        public delegate* unmanaged[Cdecl]<void*, byte*, Bool> Remove;
+        public delegate* unmanaged[Cdecl]<void*, byte*, byte*, Bool> Rename;
+        public delegate* unmanaged[Cdecl]<void*, byte*, byte*, Bool> Copy;
         public delegate* unmanaged[Cdecl]<void*, ulong> SpaceRemaining;
     }
 

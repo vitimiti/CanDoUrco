@@ -15,30 +15,22 @@ public static partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_GetDateTimeLocalePreferences")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetDateTimeLocalePreferences(
+    private static partial Bool _GetDateTimeLocalePreferences(
         out DateFormat dateFormat,
         out TimeFormat timeFormat
     );
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetCurrentTime")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetCurrentTime(out Time ticks);
+    private static partial Bool _GetCurrentTime(out Time ticks);
 
     [LibraryImport(DllName, EntryPoint = "SDL_TimeToDateTime")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _TimeToDateTime(
-        Time ticks,
-        out DateTime dateTime,
-        [MarshalAs(UnmanagedType.I1)] bool localTime
-    );
+    private static partial Bool _TimeToDateTime(Time ticks, out DateTime dateTime, Bool localTime);
 
     [LibraryImport(DllName, EntryPoint = "SDL_DateTimeToTime")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _DateTimeToTime(in DateTime dateTime, out Time ticks);
+    private static partial Bool _DateTimeToTime(in DateTime dateTime, out Time ticks);
 
     [LibraryImport(DllName, EntryPoint = "SDL_TimeToWindows")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -64,7 +56,7 @@ public static partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int _GetDayOfWeek(int year, int month, int day);
 
-    public static bool GetDateTimeLocalePreferences(
+    public static Bool GetDateTimeLocalePreferences(
         out DateFormat dateFormat,
         out TimeFormat timeFormat
     )
@@ -73,19 +65,19 @@ public static partial class Sdl
         return _GetDateTimeLocalePreferences(out dateFormat, out timeFormat);
     }
 
-    public static bool GetCurrentTime(out Time ticks)
+    public static Bool GetCurrentTime(out Time ticks)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetCurrentTime(out ticks);
     }
 
-    public static bool TimeToDateTime(Time ticks, out DateTime dateTime, bool localTime)
+    public static Bool TimeToDateTime(Time ticks, out DateTime dateTime, Bool localTime)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _TimeToDateTime(ticks, out dateTime, localTime);
     }
 
-    public static bool DateTimeToTime(in DateTime dateTime, out Time ticks)
+    public static Bool DateTimeToTime(in DateTime dateTime, out Time ticks)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _DateTimeToTime(in dateTime, out ticks);

@@ -44,10 +44,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreateProcess")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe partial Process _CreateProcess(
-        byte** args,
-        [MarshalAs(UnmanagedType.I1)] bool pipeStdIO
-    );
+    private static unsafe partial Process _CreateProcess(byte** args, Bool pipeStdIO);
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreateProcessWithProperties")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -75,26 +72,17 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_KillProcess")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _KillProcess(
-        Process process,
-        [MarshalAs(UnmanagedType.I1)] bool force
-    );
+    private static partial Bool _KillProcess(Process process, Bool force);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WaitProcess")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WaitProcess(
-        Process process,
-        [MarshalAs(UnmanagedType.I1)] bool block,
-        out int exitCode
-    );
+    private static partial Bool _WaitProcess(Process process, Bool block, out int exitCode);
 
     [LibraryImport(DllName, EntryPoint = "SDL_DestroyProcess")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void _DestroyProcess(Process process);
 
-    public static unsafe Process CreateProcess(byte** args, bool pipeStdIO)
+    public static unsafe Process CreateProcess(byte** args, Bool pipeStdIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CreateProcess(args, pipeStdIO);
@@ -130,13 +118,13 @@ public static partial class Sdl
         return _GetProcessOutput(process);
     }
 
-    public static bool KillProcess(Process process, bool force)
+    public static Bool KillProcess(Process process, Bool force)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _KillProcess(process, force);
     }
 
-    public static bool WaitProcess(Process process, bool block, out int exitCode)
+    public static Bool WaitProcess(Process process, Bool block, out int exitCode)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WaitProcess(process, block, out exitCode);

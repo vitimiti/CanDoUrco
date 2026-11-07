@@ -15,10 +15,9 @@ public static unsafe partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_OpenURL")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _OpenURL(byte* url);
+    private static partial Bool _OpenURL(byte* url);
 
-    public static bool OpenURL(byte* url)
+    public static Bool OpenURL(byte* url)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _OpenURL(url);

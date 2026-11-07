@@ -15,8 +15,7 @@ public static partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_TryLockSpinlock")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _TryLockSpinlock(SpinLock spinlock);
+    private static partial Bool _TryLockSpinlock(SpinLock spinlock);
 
     [LibraryImport(DllName, EntryPoint = "SDL_LockSpinlock")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -36,8 +35,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CompareAndSwapAtomicInt")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CompareAndSwapAtomicInt(ref AtomicInt a, int oldVal, int newVal);
+    private static partial Bool _CompareAndSwapAtomicInt(ref AtomicInt a, int oldVal, int newVal);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetAtomicInt")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -53,8 +51,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CompareAndSwapAtomicU32")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CompareAndSwapAtomicU32(ref AtomicU32 a, uint oldVal, uint newVal);
+    private static partial Bool _CompareAndSwapAtomicU32(ref AtomicU32 a, uint oldVal, uint newVal);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetAtomicU32")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -70,8 +67,7 @@ public static partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CompareAndSwapAtomicPointer")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static unsafe partial bool _CompareAndSwapAtomicPointer(
+    private static unsafe partial Bool _CompareAndSwapAtomicPointer(
         void** a,
         void* oldVal,
         void* newVal
@@ -85,7 +81,7 @@ public static partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe partial void* _GetAtomicPointer(void** a);
 
-    public static bool TryLockSpinlock(SpinLock spinlock)
+    public static Bool TryLockSpinlock(SpinLock spinlock)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _TryLockSpinlock(spinlock);
@@ -127,7 +123,7 @@ public static partial class Sdl
         MemoryBarrierAcquireFunction();
     }
 
-    public static bool CompareAndSwapAtomicInt(ref AtomicInt a, int oldVal, int newVal)
+    public static Bool CompareAndSwapAtomicInt(ref AtomicInt a, int oldVal, int newVal)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CompareAndSwapAtomicInt(ref a, oldVal, newVal);
@@ -157,13 +153,13 @@ public static partial class Sdl
         return AddAtomicInt(ref a, 1);
     }
 
-    public static bool AtomicDecRef(ref AtomicInt a)
+    public static Bool AtomicDecRef(ref AtomicInt a)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return AddAtomicInt(ref a, -1) == 1;
     }
 
-    public static bool CompareAndSwapAtomicU32(ref AtomicU32 a, uint oldVal, uint newVal)
+    public static Bool CompareAndSwapAtomicU32(ref AtomicU32 a, uint oldVal, uint newVal)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CompareAndSwapAtomicU32(ref a, oldVal, newVal);
@@ -187,7 +183,7 @@ public static partial class Sdl
         return _AddAtomicU32(ref a, v);
     }
 
-    public static unsafe bool CompareAndSwapAtomicPointer(void** a, void* oldVal, void* newVal)
+    public static unsafe Bool CompareAndSwapAtomicPointer(void** a, void* oldVal, void* newVal)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CompareAndSwapAtomicPointer(a, oldVal, newVal);

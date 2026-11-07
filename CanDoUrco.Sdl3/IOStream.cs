@@ -51,8 +51,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_CloseIO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _CloseIO(IOStream context);
+    private static partial Bool _CloseIO(IOStream context);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetIOProperties")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -88,16 +87,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_FlushIO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _FlushIO(IOStream context);
+    private static partial Bool _FlushIO(IOStream context);
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadFile_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial void* _LoadFileIO(
-        IOStream src,
-        out nuint dataSize,
-        [MarshalAs(UnmanagedType.I1)] bool closeIO
-    );
+    private static partial void* _LoadFileIO(IOStream src, out nuint dataSize, Bool closeIO);
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -105,158 +99,123 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SaveFile_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SaveFileIO(
-        IOStream src,
-        void* data,
-        nuint dataSize,
-        [MarshalAs(UnmanagedType.I1)] bool closeIO
-    );
+    private static partial Bool _SaveFileIO(IOStream src, void* data, nuint dataSize, Bool closeIO);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SaveFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SaveFile(byte* file, void* data, nuint dataSize);
+    private static partial Bool _SaveFile(byte* file, void* data, nuint dataSize);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadU8")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadU8(IOStream context, out byte value);
+    private static partial Bool _ReadU8(IOStream context, out byte value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadS8")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadS8(IOStream context, out sbyte value);
+    private static partial Bool _ReadS8(IOStream context, out sbyte value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadU16LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadU16LE(IOStream context, out ushort value);
+    private static partial Bool _ReadU16LE(IOStream context, out ushort value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadS16LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadS16LE(IOStream context, out short value);
+    private static partial Bool _ReadS16LE(IOStream context, out short value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadU16BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadU16BE(IOStream context, out ushort value);
+    private static partial Bool _ReadU16BE(IOStream context, out ushort value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadS16BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadS16BE(IOStream context, out short value);
+    private static partial Bool _ReadS16BE(IOStream context, out short value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadU32LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadU32LE(IOStream context, out uint value);
+    private static partial Bool _ReadU32LE(IOStream context, out uint value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadS32LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadS32LE(IOStream context, out int value);
+    private static partial Bool _ReadS32LE(IOStream context, out int value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadU32BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadU32BE(IOStream context, out uint value);
+    private static partial Bool _ReadU32BE(IOStream context, out uint value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadS32BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadS32BE(IOStream context, out int value);
+    private static partial Bool _ReadS32BE(IOStream context, out int value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadU64LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadU64LE(IOStream context, out ulong value);
+    private static partial Bool _ReadU64LE(IOStream context, out ulong value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadS64LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadS64LE(IOStream context, out long value);
+    private static partial Bool _ReadS64LE(IOStream context, out long value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadU64BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadU64BE(IOStream context, out ulong value);
+    private static partial Bool _ReadU64BE(IOStream context, out ulong value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadS64BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadS64BE(IOStream context, out long value);
+    private static partial Bool _ReadS64BE(IOStream context, out long value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteU8")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteU8(IOStream context, byte value);
+    private static partial Bool _WriteU8(IOStream context, byte value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteS8")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteS8(IOStream context, sbyte value);
+    private static partial Bool _WriteS8(IOStream context, sbyte value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteU16LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteU16LE(IOStream context, ushort value);
+    private static partial Bool _WriteU16LE(IOStream context, ushort value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteS16LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteS16LE(IOStream context, short value);
+    private static partial Bool _WriteS16LE(IOStream context, short value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteU16BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteU16BE(IOStream context, ushort value);
+    private static partial Bool _WriteU16BE(IOStream context, ushort value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteS16BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteS16BE(IOStream context, short value);
+    private static partial Bool _WriteS16BE(IOStream context, short value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteU32LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteU32LE(IOStream context, uint value);
+    private static partial Bool _WriteU32LE(IOStream context, uint value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteS32LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteS32LE(IOStream context, int value);
+    private static partial Bool _WriteS32LE(IOStream context, int value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteU32BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteU32BE(IOStream context, uint value);
+    private static partial Bool _WriteU32BE(IOStream context, uint value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteS32BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteS32BE(IOStream context, int value);
+    private static partial Bool _WriteS32BE(IOStream context, int value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteU64LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteU64LE(IOStream context, ulong value);
+    private static partial Bool _WriteU64LE(IOStream context, ulong value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteS64LE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteS64LE(IOStream context, long value);
+    private static partial Bool _WriteS64LE(IOStream context, long value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteU64BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteU64BE(IOStream context, ulong value);
+    private static partial Bool _WriteU64BE(IOStream context, ulong value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteS64BE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteS64BE(IOStream context, long value);
+    private static partial Bool _WriteS64BE(IOStream context, long value);
 
     public static IOStream IOFromFile(byte* file, byte* mode)
     {
@@ -288,7 +247,7 @@ public static unsafe partial class Sdl
         return _OpenIO(in iface, userdata);
     }
 
-    public static bool CloseIO(IOStream context)
+    public static Bool CloseIO(IOStream context)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _CloseIO(context);
@@ -342,13 +301,13 @@ public static unsafe partial class Sdl
         return _IOprintf(context, fmt, message);
     }
 
-    public static bool FlushIO(IOStream context)
+    public static Bool FlushIO(IOStream context)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _FlushIO(context);
     }
 
-    public static void* LoadFileIO(IOStream src, out nuint dataSize, bool closeIO)
+    public static void* LoadFileIO(IOStream src, out nuint dataSize, Bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _LoadFileIO(src, out dataSize, closeIO);
@@ -360,181 +319,181 @@ public static unsafe partial class Sdl
         return _LoadFile(file, out dataSize);
     }
 
-    public static bool SaveFileIO(IOStream src, void* data, nuint dataSize, bool closeIO)
+    public static Bool SaveFileIO(IOStream src, void* data, nuint dataSize, Bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SaveFileIO(src, data, dataSize, closeIO);
     }
 
-    public static bool SaveFile(byte* file, void* data, nuint dataSize)
+    public static Bool SaveFile(byte* file, void* data, nuint dataSize)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SaveFile(file, data, dataSize);
     }
 
-    public static bool ReadU8(IOStream context, out byte value)
+    public static Bool ReadU8(IOStream context, out byte value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadU8(context, out value);
     }
 
-    public static bool ReadS8(IOStream context, out sbyte value)
+    public static Bool ReadS8(IOStream context, out sbyte value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadS8(context, out value);
     }
 
-    public static bool ReadU16LE(IOStream context, out ushort value)
+    public static Bool ReadU16LE(IOStream context, out ushort value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadU16LE(context, out value);
     }
 
-    public static bool ReadS16LE(IOStream context, out short value)
+    public static Bool ReadS16LE(IOStream context, out short value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadS16LE(context, out value);
     }
 
-    public static bool ReadU16BE(IOStream context, out ushort value)
+    public static Bool ReadU16BE(IOStream context, out ushort value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadU16BE(context, out value);
     }
 
-    public static bool ReadS16BE(IOStream context, out short value)
+    public static Bool ReadS16BE(IOStream context, out short value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadS16BE(context, out value);
     }
 
-    public static bool ReadU32LE(IOStream context, out uint value)
+    public static Bool ReadU32LE(IOStream context, out uint value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadU32LE(context, out value);
     }
 
-    public static bool ReadS32LE(IOStream context, out int value)
+    public static Bool ReadS32LE(IOStream context, out int value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadS32LE(context, out value);
     }
 
-    public static bool ReadU32BE(IOStream context, out uint value)
+    public static Bool ReadU32BE(IOStream context, out uint value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadU32BE(context, out value);
     }
 
-    public static bool ReadS32BE(IOStream context, out int value)
+    public static Bool ReadS32BE(IOStream context, out int value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadS32BE(context, out value);
     }
 
-    public static bool ReadU64LE(IOStream context, out ulong value)
+    public static Bool ReadU64LE(IOStream context, out ulong value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadU64LE(context, out value);
     }
 
-    public static bool ReadS64LE(IOStream context, out long value)
+    public static Bool ReadS64LE(IOStream context, out long value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadS64LE(context, out value);
     }
 
-    public static bool ReadU64BE(IOStream context, out ulong value)
+    public static Bool ReadU64BE(IOStream context, out ulong value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadU64BE(context, out value);
     }
 
-    public static bool ReadS64BE(IOStream context, out long value)
+    public static Bool ReadS64BE(IOStream context, out long value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ReadS64BE(context, out value);
     }
 
-    public static bool WriteU8(IOStream context, byte value)
+    public static Bool WriteU8(IOStream context, byte value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteU8(context, value);
     }
 
-    public static bool WriteS8(IOStream context, sbyte value)
+    public static Bool WriteS8(IOStream context, sbyte value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteS8(context, value);
     }
 
-    public static bool WriteU16LE(IOStream context, ushort value)
+    public static Bool WriteU16LE(IOStream context, ushort value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteU16LE(context, value);
     }
 
-    public static bool WriteS16LE(IOStream context, short value)
+    public static Bool WriteS16LE(IOStream context, short value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteS16LE(context, value);
     }
 
-    public static bool WriteU16BE(IOStream context, ushort value)
+    public static Bool WriteU16BE(IOStream context, ushort value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteU16BE(context, value);
     }
 
-    public static bool WriteS16BE(IOStream context, short value)
+    public static Bool WriteS16BE(IOStream context, short value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteS16BE(context, value);
     }
 
-    public static bool WriteU32LE(IOStream context, uint value)
+    public static Bool WriteU32LE(IOStream context, uint value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteU32LE(context, value);
     }
 
-    public static bool WriteS32LE(IOStream context, int value)
+    public static Bool WriteS32LE(IOStream context, int value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteS32LE(context, value);
     }
 
-    public static bool WriteU32BE(IOStream context, uint value)
+    public static Bool WriteU32BE(IOStream context, uint value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteU32BE(context, value);
     }
 
-    public static bool WriteS32BE(IOStream context, int value)
+    public static Bool WriteS32BE(IOStream context, int value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteS32BE(context, value);
     }
 
-    public static bool WriteU64LE(IOStream context, ulong value)
+    public static Bool WriteU64LE(IOStream context, ulong value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteU64LE(context, value);
     }
 
-    public static bool WriteS64LE(IOStream context, long value)
+    public static Bool WriteS64LE(IOStream context, long value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteS64LE(context, value);
     }
 
-    public static bool WriteU64BE(IOStream context, ulong value)
+    public static Bool WriteU64BE(IOStream context, ulong value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteU64BE(context, value);
     }
 
-    public static bool WriteS64BE(IOStream context, long value)
+    public static Bool WriteS64BE(IOStream context, long value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WriteS64BE(context, value);
@@ -548,8 +507,8 @@ public static unsafe partial class Sdl
         public delegate* unmanaged[Cdecl]<void*, long, IOWhence, long> Seek;
         public delegate* unmanaged[Cdecl]<void*, void*, nuint, IOStatus*, nuint> Read;
         public delegate* unmanaged[Cdecl]<void*, void*, nuint, IOStatus*, nuint> Write;
-        public delegate* unmanaged[Cdecl]<void*, IOStatus*, sbyte> Flush; // sbyte is bool
-        public delegate* unmanaged[Cdecl]<void*, sbyte> Close; // sbyte is bool
+        public delegate* unmanaged[Cdecl]<void*, IOStatus*, Bool> Flush;
+        public delegate* unmanaged[Cdecl]<void*, Bool> Close;
     }
 
     public readonly record struct IOStream(nint Value)

@@ -235,13 +235,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetDisplayBounds")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetDisplayBounds(DisplayID displayID, out Rect rect);
+    private static partial Bool _GetDisplayBounds(DisplayID displayID, out Rect rect);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetDisplayUsableBounds")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetDisplayUsableBounds(DisplayID displayID, out Rect rect);
+    private static partial Bool _GetDisplayUsableBounds(DisplayID displayID, out Rect rect);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetNaturalDisplayOrientation")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -264,13 +262,12 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetClosestFullscreenDisplayMode")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetClosestFullscreenDisplayMode(
+    private static partial Bool _GetClosestFullscreenDisplayMode(
         DisplayID displayID,
         int w,
         int h,
         float refreshRate,
-        [MarshalAs(UnmanagedType.I1)] bool includeHighDensityModes,
+        Bool includeHighDensityModes,
         ref DisplayMode closest
     );
 
@@ -304,8 +301,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowFullscreenMode")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowFullscreenMode(Window window, DisplayMode* mode);
+    private static partial Bool _SetWindowFullscreenMode(Window window, DisplayMode* mode);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowFullscreenMode")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -364,8 +360,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowTitle")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowTitle(Window window, byte* title);
+    private static partial Bool _SetWindowTitle(Window window, byte* title);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowTitle")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -373,38 +368,31 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowIcon")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowIcon(Window window, Surface icon);
+    private static partial Bool _SetWindowIcon(Window window, Surface icon);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowPosition")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowPosition(Window window, int x, int y);
+    private static partial Bool _SetWindowPosition(Window window, int x, int y);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowPosition")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowPosition(Window window, out int x, out int y);
+    private static partial Bool _GetWindowPosition(Window window, out int x, out int y);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowSize(Window window, int w, int h);
+    private static partial Bool _SetWindowSize(Window window, int w, int h);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowSize(Window window, out int w, out int h);
+    private static partial Bool _GetWindowSize(Window window, out int w, out int h);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowSafeArea")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowSafeArea(Window window, out Rect rect);
+    private static partial Bool _GetWindowSafeArea(Window window, out Rect rect);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowAspectRatio")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowAspectRatio(
+    private static partial Bool _SetWindowAspectRatio(
         Window window,
         float minAspect,
         float maxAspect
@@ -412,8 +400,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowAspectRatio")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowAspectRatio(
+    private static partial Bool _GetWindowAspectRatio(
         Window window,
         out float minAspect,
         out float maxAspect
@@ -421,8 +408,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowBordersSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowBordersSize(
+    private static partial Bool _GetWindowBordersSize(
         Window window,
         out int top,
         out int left,
@@ -432,108 +418,75 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowSizeInPixels")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowSizeInPixels(Window window, out int w, out int h);
+    private static partial Bool _GetWindowSizeInPixels(Window window, out int w, out int h);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowMinimumSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowMinimumSize(Window window, int minW, int minH);
+    private static partial Bool _SetWindowMinimumSize(Window window, int minW, int minH);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowMinimumSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowMinimumSize(Window window, out int minW, out int minH);
+    private static partial Bool _GetWindowMinimumSize(Window window, out int minW, out int minH);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowMaximumSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowMaximumSize(Window window, int maxW, int maxH);
+    private static partial Bool _SetWindowMaximumSize(Window window, int maxW, int maxH);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowMaximumSize")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowMaximumSize(Window window, out int maxW, out int maxH);
+    private static partial Bool _GetWindowMaximumSize(Window window, out int maxW, out int maxH);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowBordered")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowBordered(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool bordered
-    );
+    private static partial Bool _SetWindowBordered(Window window, Bool bordered);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowResizable")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowResizable(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool resizable
-    );
+    private static partial Bool _SetWindowResizable(Window window, Bool resizable);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowAlwaysOnTop")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowAlwaysOnTop(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool onTop
-    );
+    private static partial Bool _SetWindowAlwaysOnTop(Window window, Bool onTop);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowFillDocument")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowFillDocument(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool fill
-    );
+    private static partial Bool _SetWindowFillDocument(Window window, Bool fill);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ShowWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ShowWindow(Window window);
+    private static partial Bool _ShowWindow(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_HideWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HideWindow(Window window);
+    private static partial Bool _HideWindow(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_RaiseWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RaiseWindow(Window window);
+    private static partial Bool _RaiseWindow(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_MaximizeWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _MaximizeWindow(Window window);
+    private static partial Bool _MaximizeWindow(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_MinimizeWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _MinimizeWindow(Window window);
+    private static partial Bool _MinimizeWindow(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_RestoreWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _RestoreWindow(Window window);
+    private static partial Bool _RestoreWindow(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowFullscreen")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowFullscreen(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool fullscreen
-    );
+    private static partial Bool _SetWindowFullscreen(Window window, Bool fullscreen);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SyncWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SyncWindow(Window window);
+    private static partial Bool _SyncWindow(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_WindowHasSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WindowHasSurface(Window window);
+    private static partial Bool _WindowHasSurface(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -541,54 +494,39 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowSurfaceVSync")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowSurfaceVSync(Window window, int vsync);
+    private static partial Bool _SetWindowSurfaceVSync(Window window, int vsync);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowSurfaceVSync")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowSurfaceVSync(Window window, out int vsync);
+    private static partial Bool _GetWindowSurfaceVSync(Window window, out int vsync);
 
     [LibraryImport(DllName, EntryPoint = "SDL_UpdateWindowSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _UpdateWindowSurface(Window window);
+    private static partial Bool _UpdateWindowSurface(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_UpdateWindowSurfaceRects")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _UpdateWindowSurfaceRects(Window window, Rect* rects, int numRects);
+    private static partial Bool _UpdateWindowSurfaceRects(Window window, Rect* rects, int numRects);
 
     [LibraryImport(DllName, EntryPoint = "SDL_DestroyWindowSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _DestroyWindowSurface(Window window);
+    private static partial Bool _DestroyWindowSurface(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowKeyboardGrab")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowKeyboardGrab(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool grabbed
-    );
+    private static partial Bool _SetWindowKeyboardGrab(Window window, Bool grabbed);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowMouseGrab")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowMouseGrab(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool grabbed
-    );
+    private static partial Bool _SetWindowMouseGrab(Window window, Bool grabbed);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowKeyboardGrab")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowKeyboardGrab(Window window);
+    private static partial Bool _GetWindowKeyboardGrab(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowMouseGrab")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetWindowMouseGrab(Window window);
+    private static partial Bool _GetWindowMouseGrab(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetGrabbedWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -596,8 +534,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowMouseRect")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowMouseRect(Window window, Rect* rect);
+    private static partial Bool _SetWindowMouseRect(Window window, Rect* rect);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowMouseRect")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -605,8 +542,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowOpacity")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowOpacity(Window window, float opacity);
+    private static partial Bool _SetWindowOpacity(Window window, float opacity);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowOpacity")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -614,34 +550,23 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowParent")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowParent(Window window, Window parent);
+    private static partial Bool _SetWindowParent(Window window, Window parent);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowModal")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowModal(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool modal
-    );
+    private static partial Bool _SetWindowModal(Window window, Bool modal);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowFocusable")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowFocusable(
-        Window window,
-        [MarshalAs(UnmanagedType.I1)] bool focusable
-    );
+    private static partial Bool _SetWindowFocusable(Window window, Bool focusable);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ShowWindowSystemMenu")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ShowWindowSystemMenu(Window window, int x, int y);
+    private static partial Bool _ShowWindowSystemMenu(Window window, int x, int y);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowHitTest")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowHitTest(
+    private static partial Bool _SetWindowHitTest(
         Window window,
         delegate* unmanaged[Cdecl]<Window, Point*, void*, HitTestResult> callback,
         void* callbackData
@@ -649,18 +574,15 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowShape")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowShape(Window window, Surface shape);
+    private static partial Bool _SetWindowShape(Window window, Surface shape);
 
     [LibraryImport(DllName, EntryPoint = "SDL_FlashWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _FlashWindow(Window window, FlashOperation operation);
+    private static partial Bool _FlashWindow(Window window, FlashOperation operation);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowProgressState")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowProgressState(Window window, ProgressState state);
+    private static partial Bool _SetWindowProgressState(Window window, ProgressState state);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowProgressState")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -668,8 +590,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowProgressValue")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetWindowProgressValue(Window window, float value);
+    private static partial Bool _SetWindowProgressValue(Window window, float value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowProgressValue")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -681,23 +602,19 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_ScreenSaverEnabled")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ScreenSaverEnabled();
+    private static partial Bool _ScreenSaverEnabled();
 
     [LibraryImport(DllName, EntryPoint = "SDL_EnableScreenSaver")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _EnableScreenSaver();
+    private static partial Bool _EnableScreenSaver();
 
     [LibraryImport(DllName, EntryPoint = "SDL_DisableScreenSaver")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _DisableScreenSaver();
+    private static partial Bool _DisableScreenSaver();
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_LoadLibrary")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLLoadLibrary(byte* path);
+    private static partial Bool _GLLoadLibrary(byte* path);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_GetProcAddress")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -713,8 +630,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_ExtensionSupported")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLExtensionSupported(byte* extension);
+    private static partial Bool _GLExtensionSupported(byte* extension);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_ResetAttributes")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -722,13 +638,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_SetAttribute")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLSetAttribute(int attr, int value);
+    private static partial Bool _GLSetAttribute(int attr, int value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_GetAttribute")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLGetAttribute(int attr, out int value);
+    private static partial Bool _GLGetAttribute(int attr, out int value);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_CreateContext")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -736,8 +650,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_MakeCurrent")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLMakeCurrent(Window window, GLContext context);
+    private static partial Bool _GLMakeCurrent(Window window, GLContext context);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_GetCurrentWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -770,31 +683,27 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_SetSwapInterval")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLSetSwapInterval(int interval);
+    private static partial Bool _GLSetSwapInterval(int interval);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_GetSwapInterval")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLGetSwapInterval(out int interval);
+    private static partial Bool _GLGetSwapInterval(out int interval);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_SwapWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLSwapWindow(Window window);
+    private static partial Bool _GLSwapWindow(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GL_DestroyContext")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GLDestroyContext(GLContext context);
+    private static partial Bool _GLDestroyContext(GLContext context);
 
     public static uint WindowPosUndefinedDisplay(DisplayID x) => WindowPosUndefinedMask | x;
 
-    public static bool WindowPosIsUndefined(int x) => (x & 0xFFFF_0000) == WindowPosUndefinedMask;
+    public static Bool WindowPosIsUndefined(int x) => (x & 0xFFFF_0000) == WindowPosUndefinedMask;
 
     public static uint WindowPosCenteredDisplay(DisplayID x) => WindowPosCenteredMask | x;
 
-    public static bool WindowPosIsCentered(int x) => (x & 0xFFFF_0000) == WindowPosCenteredMask;
+    public static Bool WindowPosIsCentered(int x) => (x & 0xFFFF_0000) == WindowPosCenteredMask;
 
     public static int GetNumVideoDrivers()
     {
@@ -844,13 +753,13 @@ public static unsafe partial class Sdl
         return _GetDisplayName(displayID);
     }
 
-    public static bool GetDisplayBounds(DisplayID displayID, out Rect rect)
+    public static Bool GetDisplayBounds(DisplayID displayID, out Rect rect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetDisplayBounds(displayID, out rect);
     }
 
-    public static bool GetDisplayUsableBounds(DisplayID displayID, out Rect rect)
+    public static Bool GetDisplayUsableBounds(DisplayID displayID, out Rect rect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetDisplayUsableBounds(displayID, out rect);
@@ -880,12 +789,12 @@ public static unsafe partial class Sdl
         return _GetFullscreenDisplayModes(displayID, out count);
     }
 
-    public static bool GetClosestFullscreenDisplayMode(
+    public static Bool GetClosestFullscreenDisplayMode(
         DisplayID displayID,
         int w,
         int h,
         float refreshRate,
-        bool includeHighDensityModes,
+        Bool includeHighDensityModes,
         ref DisplayMode closest
     )
     {
@@ -942,7 +851,7 @@ public static unsafe partial class Sdl
         return _GetWindowDisplayScale(window);
     }
 
-    public static bool SetWindowFullscreenMode(Window window, DisplayMode* mode)
+    public static Bool SetWindowFullscreenMode(Window window, DisplayMode* mode)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowFullscreenMode(window, mode);
@@ -1027,7 +936,7 @@ public static unsafe partial class Sdl
         return _GetWindowFlags(window);
     }
 
-    public static bool SetWindowTitle(Window window, byte* title)
+    public static Bool SetWindowTitle(Window window, byte* title)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowTitle(window, title);
@@ -1039,55 +948,55 @@ public static unsafe partial class Sdl
         return _GetWindowTitle(window);
     }
 
-    public static bool SetWindowIcon(Window window, Surface icon)
+    public static Bool SetWindowIcon(Window window, Surface icon)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowIcon(window, icon);
     }
 
-    public static bool SetWindowPosition(Window window, int x, int y)
+    public static Bool SetWindowPosition(Window window, int x, int y)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowPosition(window, x, y);
     }
 
-    public static bool GetWindowPosition(Window window, out int x, out int y)
+    public static Bool GetWindowPosition(Window window, out int x, out int y)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowPosition(window, out x, out y);
     }
 
-    public static bool SetWindowSize(Window window, int w, int h)
+    public static Bool SetWindowSize(Window window, int w, int h)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowSize(window, w, h);
     }
 
-    public static bool GetWindowSize(Window window, out int w, out int h)
+    public static Bool GetWindowSize(Window window, out int w, out int h)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowSize(window, out w, out h);
     }
 
-    public static bool GetWindowSafeArea(Window window, out Rect rect)
+    public static Bool GetWindowSafeArea(Window window, out Rect rect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowSafeArea(window, out rect);
     }
 
-    public static bool SetWindowAspectRatio(Window window, float minAspect, float maxAspect)
+    public static Bool SetWindowAspectRatio(Window window, float minAspect, float maxAspect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowAspectRatio(window, minAspect, maxAspect);
     }
 
-    public static bool GetWindowAspectRatio(Window window, out float minAspect, out float maxAspect)
+    public static Bool GetWindowAspectRatio(Window window, out float minAspect, out float maxAspect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowAspectRatio(window, out minAspect, out maxAspect);
     }
 
-    public static bool GetWindowBordersSize(
+    public static Bool GetWindowBordersSize(
         Window window,
         out int top,
         out int left,
@@ -1099,109 +1008,109 @@ public static unsafe partial class Sdl
         return _GetWindowBordersSize(window, out top, out left, out bottom, out right);
     }
 
-    public static bool GetWindowSizeInPixels(Window window, out int w, out int h)
+    public static Bool GetWindowSizeInPixels(Window window, out int w, out int h)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowSizeInPixels(window, out w, out h);
     }
 
-    public static bool SetWindowMinimumSize(Window window, int minW, int minH)
+    public static Bool SetWindowMinimumSize(Window window, int minW, int minH)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowMinimumSize(window, minW, minH);
     }
 
-    public static bool GetWindowMinimumSize(Window window, out int minW, out int minH)
+    public static Bool GetWindowMinimumSize(Window window, out int minW, out int minH)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowMinimumSize(window, out minW, out minH);
     }
 
-    public static bool SetWindowMaximumSize(Window window, int maxW, int maxH)
+    public static Bool SetWindowMaximumSize(Window window, int maxW, int maxH)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowMaximumSize(window, maxW, maxH);
     }
 
-    public static bool GetWindowMaximumSize(Window window, out int maxW, out int maxH)
+    public static Bool GetWindowMaximumSize(Window window, out int maxW, out int maxH)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowMaximumSize(window, out maxW, out maxH);
     }
 
-    public static bool SetWindowBordered(Window window, bool bordered)
+    public static Bool SetWindowBordered(Window window, Bool bordered)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowBordered(window, bordered);
     }
 
-    public static bool SetWindowResizable(Window window, bool resizable)
+    public static Bool SetWindowResizable(Window window, Bool resizable)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowResizable(window, resizable);
     }
 
-    public static bool SetWindowAlwaysOnTop(Window window, bool onTop)
+    public static Bool SetWindowAlwaysOnTop(Window window, Bool onTop)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowAlwaysOnTop(window, onTop);
     }
 
-    public static bool SetWindowFillDocument(Window window, bool fill)
+    public static Bool SetWindowFillDocument(Window window, Bool fill)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowFillDocument(window, fill);
     }
 
-    public static bool ShowWindow(Window window)
+    public static Bool ShowWindow(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ShowWindow(window);
     }
 
-    public static bool HideWindow(Window window)
+    public static Bool HideWindow(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HideWindow(window);
     }
 
-    public static bool RaiseWindow(Window window)
+    public static Bool RaiseWindow(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RaiseWindow(window);
     }
 
-    public static bool MaximizeWindow(Window window)
+    public static Bool MaximizeWindow(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _MaximizeWindow(window);
     }
 
-    public static bool MinimizeWindow(Window window)
+    public static Bool MinimizeWindow(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _MinimizeWindow(window);
     }
 
-    public static bool RestoreWindow(Window window)
+    public static Bool RestoreWindow(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _RestoreWindow(window);
     }
 
-    public static bool SetWindowFullscreen(Window window, bool fullscreen)
+    public static Bool SetWindowFullscreen(Window window, Bool fullscreen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowFullscreen(window, fullscreen);
     }
 
-    public static bool SyncWindow(Window window)
+    public static Bool SyncWindow(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SyncWindow(window);
     }
 
-    public static bool WindowHasSurface(Window window)
+    public static Bool WindowHasSurface(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _WindowHasSurface(window);
@@ -1213,55 +1122,55 @@ public static unsafe partial class Sdl
         return _GetWindowSurface(window);
     }
 
-    public static bool SetWindowSurfaceVSync(Window window, int vsync)
+    public static Bool SetWindowSurfaceVSync(Window window, int vsync)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowSurfaceVSync(window, vsync);
     }
 
-    public static bool GetWindowSurfaceVSync(Window window, out int vsync)
+    public static Bool GetWindowSurfaceVSync(Window window, out int vsync)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowSurfaceVSync(window, out vsync);
     }
 
-    public static bool UpdateWindowSurface(Window window)
+    public static Bool UpdateWindowSurface(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _UpdateWindowSurface(window);
     }
 
-    public static bool UpdateWindowSurfaceRects(Window window, Rect* rects, int numRects)
+    public static Bool UpdateWindowSurfaceRects(Window window, Rect* rects, int numRects)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _UpdateWindowSurfaceRects(window, rects, numRects);
     }
 
-    public static bool DestroyWindowSurface(Window window)
+    public static Bool DestroyWindowSurface(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _DestroyWindowSurface(window);
     }
 
-    public static bool SetWindowKeyboardGrab(Window window, bool grabbed)
+    public static Bool SetWindowKeyboardGrab(Window window, Bool grabbed)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowKeyboardGrab(window, grabbed);
     }
 
-    public static bool SetWindowMouseGrab(Window window, bool grabbed)
+    public static Bool SetWindowMouseGrab(Window window, Bool grabbed)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowMouseGrab(window, grabbed);
     }
 
-    public static bool GetWindowKeyboardGrab(Window window)
+    public static Bool GetWindowKeyboardGrab(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowKeyboardGrab(window);
     }
 
-    public static bool GetWindowMouseGrab(Window window)
+    public static Bool GetWindowMouseGrab(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowMouseGrab(window);
@@ -1273,7 +1182,7 @@ public static unsafe partial class Sdl
         return _GetGrabbedWindow();
     }
 
-    public static bool SetWindowMouseRect(Window window, Rect* rect)
+    public static Bool SetWindowMouseRect(Window window, Rect* rect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowMouseRect(window, rect);
@@ -1285,7 +1194,7 @@ public static unsafe partial class Sdl
         return _GetWindowMouseRect(window);
     }
 
-    public static bool SetWindowOpacity(Window window, float opacity)
+    public static Bool SetWindowOpacity(Window window, float opacity)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowOpacity(window, opacity);
@@ -1297,31 +1206,31 @@ public static unsafe partial class Sdl
         return _GetWindowOpacity(window);
     }
 
-    public static bool SetWindowParent(Window window, Window parent)
+    public static Bool SetWindowParent(Window window, Window parent)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowParent(window, parent);
     }
 
-    public static bool SetWindowModal(Window window, bool modal)
+    public static Bool SetWindowModal(Window window, Bool modal)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowModal(window, modal);
     }
 
-    public static bool SetWindowFocusable(Window window, bool focusable)
+    public static Bool SetWindowFocusable(Window window, Bool focusable)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowFocusable(window, focusable);
     }
 
-    public static bool ShowWindowSystemMenu(Window window, int x, int y)
+    public static Bool ShowWindowSystemMenu(Window window, int x, int y)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ShowWindowSystemMenu(window, x, y);
     }
 
-    public static bool SetWindowHitTest(
+    public static Bool SetWindowHitTest(
         Window window,
         delegate* unmanaged[Cdecl]<Window, Point*, void*, HitTestResult> callback,
         void* callbackData
@@ -1331,19 +1240,19 @@ public static unsafe partial class Sdl
         return _SetWindowHitTest(window, callback, callbackData);
     }
 
-    public static bool SetWindowShape(Window window, Surface shape)
+    public static Bool SetWindowShape(Window window, Surface shape)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowShape(window, shape);
     }
 
-    public static bool FlashWindow(Window window, FlashOperation operation)
+    public static Bool FlashWindow(Window window, FlashOperation operation)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _FlashWindow(window, operation);
     }
 
-    public static bool SetWindowProgressState(Window window, ProgressState state)
+    public static Bool SetWindowProgressState(Window window, ProgressState state)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowProgressState(window, state);
@@ -1355,7 +1264,7 @@ public static unsafe partial class Sdl
         return _GetWindowProgressState(window);
     }
 
-    public static bool SetWindowProgressValue(Window window, float value)
+    public static Bool SetWindowProgressValue(Window window, float value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowProgressValue(window, value);
@@ -1373,25 +1282,25 @@ public static unsafe partial class Sdl
         _DestroyWindow(window);
     }
 
-    public static bool ScreenSaverEnabled()
+    public static Bool ScreenSaverEnabled()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ScreenSaverEnabled();
     }
 
-    public static bool EnableScreenSaver()
+    public static Bool EnableScreenSaver()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _EnableScreenSaver();
     }
 
-    public static bool DisableScreenSaver()
+    public static Bool DisableScreenSaver()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _DisableScreenSaver();
     }
 
-    public static bool GLLoadLibrary(byte* path)
+    public static Bool GLLoadLibrary(byte* path)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLLoadLibrary(path);
@@ -1415,7 +1324,7 @@ public static unsafe partial class Sdl
         _GLUnloadLibrary();
     }
 
-    public static bool GLExtensionSupported(byte* extension)
+    public static Bool GLExtensionSupported(byte* extension)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLExtensionSupported(extension);
@@ -1427,13 +1336,13 @@ public static unsafe partial class Sdl
         _GLResetAttributes();
     }
 
-    public static bool GLSetAttribute(GLAttr attr, int value)
+    public static Bool GLSetAttribute(GLAttr attr, int value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLSetAttribute((int)attr, value);
     }
 
-    public static bool GLGetAttribute(GLAttr attr, out int value)
+    public static Bool GLGetAttribute(GLAttr attr, out int value)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLGetAttribute((int)attr, out value);
@@ -1445,7 +1354,7 @@ public static unsafe partial class Sdl
         return _GLCreateContext(window);
     }
 
-    public static bool GLMakeCurrent(Window window, GLContext context)
+    public static Bool GLMakeCurrent(Window window, GLContext context)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLMakeCurrent(window, context);
@@ -1497,25 +1406,25 @@ public static unsafe partial class Sdl
         );
     }
 
-    public static bool GLSetSwapInterval(int interval)
+    public static Bool GLSetSwapInterval(int interval)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLSetSwapInterval(interval);
     }
 
-    public static bool GLGetSwapInterval(out int interval)
+    public static Bool GLGetSwapInterval(out int interval)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLGetSwapInterval(out interval);
     }
 
-    public static bool GLSwapWindow(Window window)
+    public static Bool GLSwapWindow(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLSwapWindow(window);
     }
 
-    public static bool GLDestroyContext(GLContext context)
+    public static Bool GLDestroyContext(GLContext context)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GLDestroyContext(context);

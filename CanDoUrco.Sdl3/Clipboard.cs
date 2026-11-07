@@ -15,8 +15,7 @@ public static unsafe partial class Sdl
 {
     [LibraryImport(DllName, EntryPoint = "SDL_SetClipboardText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetClipboardText(byte* text);
+    private static partial Bool _SetClipboardText(byte* text);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetClipboardText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -24,13 +23,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasClipboardText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasClipboardText();
+    private static partial Bool _HasClipboardText();
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetPrimarySelectionText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetPrimarySelectionText(byte* text);
+    private static partial Bool _SetPrimarySelectionText(byte* text);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetPrimarySelectionText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -38,13 +35,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasPrimarySelectionText")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasPrimarySelectionText();
+    private static partial Bool _HasPrimarySelectionText();
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetClipboardData")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetClipboardData(
+    private static partial Bool _SetClipboardData(
         delegate* unmanaged[Cdecl]<void*, byte*, nuint*, void*> callback,
         delegate* unmanaged[Cdecl]<void*, void> cleanup,
         void* userdata,
@@ -58,19 +53,17 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasClipboardData")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _HasClipboardData();
+    private static partial Bool _HasClipboardData();
 
     [LibraryImport(DllName, EntryPoint = "SDL_ClearClipboardData")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ClearClipboardData();
+    private static partial Bool _ClearClipboardData();
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetClipboardMimeTypes")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial byte** _GetClipboardMimeTypes(out nuint numMimeTypes);
 
-    public static bool SetClipboardText(byte* text)
+    public static Bool SetClipboardText(byte* text)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetClipboardText(text);
@@ -82,13 +75,13 @@ public static unsafe partial class Sdl
         return _GetClipboardText();
     }
 
-    public static bool HasClipboardText()
+    public static Bool HasClipboardText()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasClipboardText();
     }
 
-    public static bool SetPrimarySelectionText(byte* text)
+    public static Bool SetPrimarySelectionText(byte* text)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetPrimarySelectionText(text);
@@ -100,13 +93,13 @@ public static unsafe partial class Sdl
         return _GetPrimarySelectionText();
     }
 
-    public static bool HasPrimarySelectionText()
+    public static Bool HasPrimarySelectionText()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasPrimarySelectionText();
     }
 
-    public static bool SetClipboardData(
+    public static Bool SetClipboardData(
         delegate* unmanaged[Cdecl]<void*, byte*, nuint*, void*> callback,
         delegate* unmanaged[Cdecl]<void*, void> cleanup,
         void* userdata,
@@ -118,7 +111,7 @@ public static unsafe partial class Sdl
         return _SetClipboardData(callback, cleanup, userdata, mimeTypes, numMimeTypes);
     }
 
-    public static bool ClearClipboardData()
+    public static Bool ClearClipboardData()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ClearClipboardData();
@@ -130,7 +123,7 @@ public static unsafe partial class Sdl
         return _GetClipboardData(mimeType, out size);
     }
 
-    public static bool HasClipboardData()
+    public static Bool HasClipboardData()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HasClipboardData();

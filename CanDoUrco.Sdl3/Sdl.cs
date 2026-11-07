@@ -109,4 +109,11 @@ public static partial class Sdl
                 break;
         }
     }
+
+    public readonly record struct Bool(sbyte Value)
+    {
+        public static implicit operator bool(Bool b) => b.Value != 0;
+
+        public static implicit operator Bool(bool value) => new((sbyte)(value ? 1 : 0));
+    }
 }

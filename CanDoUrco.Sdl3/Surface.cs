@@ -51,8 +51,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetSurfaceColorspace")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetSurfaceColorspace(Surface* surface, Colorspace colorspace);
+    private static partial Bool _SetSurfaceColorspace(Surface* surface, Colorspace colorspace);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSurfaceColorspace")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -64,8 +63,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetSurfacePalette")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetSurfacePalette(Surface* surface, Palette* palette);
+    private static partial Bool _SetSurfacePalette(Surface* surface, Palette* palette);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSurfacePalette")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -73,13 +71,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_AddSurfaceAlternateImage")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _AddSurfaceAlternateImage(Surface* surface, Surface* image);
+    private static partial Bool _AddSurfaceAlternateImage(Surface* surface, Surface* image);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SurfaceHasAlternateImages")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SurfaceHasAlternateImages(Surface* surface);
+    private static partial Bool _SurfaceHasAlternateImages(Surface* surface);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSurfaceImages")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -91,8 +87,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_LockSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _LockSurface(Surface* surface);
+    private static partial Bool _LockSurface(Surface* surface);
 
     [LibraryImport(DllName, EntryPoint = "SDL_UnlockSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -100,10 +95,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadSurface_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Surface* _LoadSurfaceIO(
-        IOStream src,
-        [MarshalAs(UnmanagedType.I1)] bool closeIO
-    );
+    private static partial Surface* _LoadSurfaceIO(IOStream src, Bool closeIO);
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -111,10 +103,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadBMP_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Surface* _LoadBmpIO(
-        IOStream src,
-        [MarshalAs(UnmanagedType.I1)] bool closeIO
-    );
+    private static partial Surface* _LoadBmpIO(IOStream src, Bool closeIO);
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadBMP")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -122,24 +111,15 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SaveBMP_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SaveBmpIO(
-        Surface* surface,
-        IOStream dst,
-        [MarshalAs(UnmanagedType.I1)] bool closeIO
-    );
+    private static partial Bool _SaveBmpIO(Surface* surface, IOStream dst, Bool closeIO);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SaveBMP")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SaveBmp(Surface* surface, byte* file);
+    private static partial Bool _SaveBmp(Surface* surface, byte* file);
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadPNG_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Surface* _LoadPngIO(
-        IOStream src,
-        [MarshalAs(UnmanagedType.I1)] bool closeIO
-    );
+    private static partial Surface* _LoadPngIO(IOStream src, Bool closeIO);
 
     [LibraryImport(DllName, EntryPoint = "SDL_LoadPNG")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -147,59 +127,39 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SavePNG_IO")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SavePngIO(
-        Surface* surface,
-        IOStream dst,
-        [MarshalAs(UnmanagedType.I1)] bool closeIO
-    );
+    private static partial Bool _SavePngIO(Surface* surface, IOStream dst, Bool closeIO);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SavePNG")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SavePng(Surface* surface, byte* file);
+    private static partial Bool _SavePng(Surface* surface, byte* file);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetSurfaceRLE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetSurfaceRle(
-        Surface* surface,
-        [MarshalAs(UnmanagedType.I1)] bool enabled
-    );
+    private static partial Bool _SetSurfaceRle(Surface* surface, Bool enabled);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SurfaceHasRLE")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SurfaceHasRle(Surface* surface);
+    private static partial Bool _SurfaceHasRle(Surface* surface);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetSurfaceColorKey")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetSurfaceColorKey(
-        Surface* surface,
-        [MarshalAs(UnmanagedType.I1)] bool enabled,
-        uint key
-    );
+    private static partial Bool _SetSurfaceColorKey(Surface* surface, Bool enabled, uint key);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SurfaceHasColorKey")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SurfaceHasColorKey(Surface* surface);
+    private static partial Bool _SurfaceHasColorKey(Surface* surface);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSurfaceColorKey")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetSurfaceColorKey(Surface* surface, out uint key);
+    private static partial Bool _GetSurfaceColorKey(Surface* surface, out uint key);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetSurfaceColorMod")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetSurfaceColorMod(Surface* surface, byte r, byte g, byte b);
+    private static partial Bool _SetSurfaceColorMod(Surface* surface, byte r, byte g, byte b);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSurfaceColorMod")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetSurfaceColorMod(
+    private static partial Bool _GetSurfaceColorMod(
         Surface* surface,
         out byte r,
         out byte g,
@@ -208,38 +168,31 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetSurfaceAlphaMod")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetSurfaceAlphaMod(Surface* surface, byte alpha);
+    private static partial Bool _SetSurfaceAlphaMod(Surface* surface, byte alpha);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSurfaceAlphaMod")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetSurfaceAlphaMod(Surface* surface, out byte alpha);
+    private static partial Bool _GetSurfaceAlphaMod(Surface* surface, out byte alpha);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetSurfaceBlendMode")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetSurfaceBlendMode(Surface* surface, BlendMode blendMode);
+    private static partial Bool _SetSurfaceBlendMode(Surface* surface, BlendMode blendMode);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSurfaceBlendMode")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetSurfaceBlendMode(Surface* surface, out BlendMode blendMode);
+    private static partial Bool _GetSurfaceBlendMode(Surface* surface, out BlendMode blendMode);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetSurfaceClipRect")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _SetSurfaceClipRect(Surface* surface, Rect* rect);
+    private static partial Bool _SetSurfaceClipRect(Surface* surface, Rect* rect);
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetSurfaceClipRect")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _GetSurfaceClipRect(Surface* surface, out Rect rect);
+    private static partial Bool _GetSurfaceClipRect(Surface* surface, out Rect rect);
 
     [LibraryImport(DllName, EntryPoint = "SDL_FlipSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _FlipSurface(Surface* surface, FlipMode flip);
+    private static partial Bool _FlipSurface(Surface* surface, FlipMode flip);
 
     [LibraryImport(DllName, EntryPoint = "SDL_RotateSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -274,8 +227,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_ConvertPixels")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ConvertPixels(
+    private static partial Bool _ConvertPixels(
         int width,
         int height,
         PixelFormat srcFormat,
@@ -288,8 +240,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_ConvertPixelsAndColorspace")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ConvertPixelsAndColorspace(
+    private static partial Bool _ConvertPixelsAndColorspace(
         int width,
         int height,
         PixelFormat srcFormat,
@@ -306,8 +257,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_PremultiplyAlpha")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _PremultiplyAlpha(
+    private static partial Bool _PremultiplyAlpha(
         int width,
         int height,
         PixelFormat srcFormat,
@@ -316,31 +266,24 @@ public static unsafe partial class Sdl
         PixelFormat dstFormat,
         void* dst,
         int dstPitch,
-        [MarshalAs(UnmanagedType.I1)] bool linear
+        Bool linear
     );
 
     [LibraryImport(DllName, EntryPoint = "SDL_PremultiplySurfaceAlpha")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _PremultiplySurfaceAlpha(
-        Surface* surface,
-        [MarshalAs(UnmanagedType.I1)] bool linear
-    );
+    private static partial Bool _PremultiplySurfaceAlpha(Surface* surface, Bool linear);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ClearSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ClearSurface(Surface* surface, float r, float g, float b, float a);
+    private static partial Bool _ClearSurface(Surface* surface, float r, float g, float b, float a);
 
     [LibraryImport(DllName, EntryPoint = "SDL_FillSurfaceRect")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _FillSurfaceRect(Surface* dst, Rect* rect, uint color);
+    private static partial Bool _FillSurfaceRect(Surface* dst, Rect* rect, uint color);
 
     [LibraryImport(DllName, EntryPoint = "SDL_FillSurfaceRects")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _FillSurfaceRects(
+    private static partial Bool _FillSurfaceRects(
         Surface* dst,
         [In]
         [MarshalUsing(typeof(ArrayMarshaller<Rect, Rect>), CountElementName = nameof(count))]
@@ -351,8 +294,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_BlitSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _BlitSurface(
+    private static partial Bool _BlitSurface(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -361,8 +303,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_BlitSurfaceUnchecked")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _BlitSurfaceUnchecked(
+    private static partial Bool _BlitSurfaceUnchecked(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -371,8 +312,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_BlitSurfaceScaled")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _BlitSurfaceScaled(
+    private static partial Bool _BlitSurfaceScaled(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -382,8 +322,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_BlitSurfaceUncheckedScaled")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _BlitSurfaceUncheckedScaled(
+    private static partial Bool _BlitSurfaceUncheckedScaled(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -393,8 +332,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_StretchSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _StretchSurface(
+    private static partial Bool _StretchSurface(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -404,8 +342,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_BlitSurfaceTiled")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _BlitSurfaceTiled(
+    private static partial Bool _BlitSurfaceTiled(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -414,8 +351,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_BlitSurfaceTiledWithScale")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _BlitSurfaceTiledWithScale(
+    private static partial Bool _BlitSurfaceTiledWithScale(
         Surface* src,
         Rect* srcRect,
         float scale,
@@ -426,8 +362,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_BlitSurface9Grid")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _BlitSurface9Grid(
+    private static partial Bool _BlitSurface9Grid(
         Surface* src,
         Rect* srcRect,
         int leftWidth,
@@ -450,8 +385,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadSurfacePixel")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadSurfacePixel(
+    private static partial Bool _ReadSurfacePixel(
         Surface* surface,
         int x,
         int y,
@@ -463,8 +397,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReadSurfacePixelFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _ReadSurfacePixelFloat(
+    private static partial Bool _ReadSurfacePixelFloat(
         Surface* surface,
         int x,
         int y,
@@ -476,8 +409,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteSurfacePixel")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteSurfacePixel(
+    private static partial Bool _WriteSurfacePixel(
         Surface* surface,
         int x,
         int y,
@@ -489,8 +421,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_WriteSurfacePixelFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    private static partial bool _WriteSurfacePixelFloat(
+    private static partial Bool _WriteSurfacePixelFloat(
         Surface* surface,
         int x,
         int y,
@@ -500,7 +431,7 @@ public static unsafe partial class Sdl
         float a
     );
 
-    public static bool MustLock(Surface* s) => (s->Flags & SurfaceLockNeeded) == SurfaceLockNeeded;
+    public static Bool MustLock(Surface* s) => (s->Flags & SurfaceLockNeeded) == SurfaceLockNeeded;
 
     public static Surface* CreateSurface(int width, int height, PixelFormat format)
     {
@@ -532,7 +463,7 @@ public static unsafe partial class Sdl
         return _GetSurfaceProperties(surface);
     }
 
-    public static bool SetSurfaceColorspace(Surface* surface, Colorspace colorspace)
+    public static Bool SetSurfaceColorspace(Surface* surface, Colorspace colorspace)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetSurfaceColorspace(surface, colorspace);
@@ -550,7 +481,7 @@ public static unsafe partial class Sdl
         return _CreateSurfacePalette(surface);
     }
 
-    public static bool SetSurfacePalette(Surface* surface, Palette* palette)
+    public static Bool SetSurfacePalette(Surface* surface, Palette* palette)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetSurfacePalette(surface, palette);
@@ -562,13 +493,13 @@ public static unsafe partial class Sdl
         return _GetSurfacePalette(surface);
     }
 
-    public static bool AddSurfaceAlternateImage(Surface* surface, Surface* image)
+    public static Bool AddSurfaceAlternateImage(Surface* surface, Surface* image)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _AddSurfaceAlternateImage(surface, image);
     }
 
-    public static bool SurfaceHasAlternateImages(Surface* surface)
+    public static Bool SurfaceHasAlternateImages(Surface* surface)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SurfaceHasAlternateImages(surface);
@@ -586,7 +517,7 @@ public static unsafe partial class Sdl
         _RemoveSurfaceAlternateImages(surface);
     }
 
-    public static bool LockSurface(Surface* surface)
+    public static Bool LockSurface(Surface* surface)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _LockSurface(surface);
@@ -598,7 +529,7 @@ public static unsafe partial class Sdl
         _UnlockSurface(surface);
     }
 
-    public static Surface* LoadSurfaceIO(IOStream src, bool closeIO)
+    public static Surface* LoadSurfaceIO(IOStream src, Bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _LoadSurfaceIO(src, closeIO);
@@ -610,7 +541,7 @@ public static unsafe partial class Sdl
         return _LoadSurface(file);
     }
 
-    public static Surface* LoadBmpIO(IOStream src, bool closeIO)
+    public static Surface* LoadBmpIO(IOStream src, Bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _LoadBmpIO(src, closeIO);
@@ -622,19 +553,19 @@ public static unsafe partial class Sdl
         return _LoadBmp(file);
     }
 
-    public static bool SaveBmpIO(Surface* surface, IOStream dst, bool closeIO)
+    public static Bool SaveBmpIO(Surface* surface, IOStream dst, Bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SaveBmpIO(surface, dst, closeIO);
     }
 
-    public static bool SaveBmp(Surface* surface, byte* file)
+    public static Bool SaveBmp(Surface* surface, byte* file)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SaveBmp(surface, file);
     }
 
-    public static Surface* LoadPngIO(IOStream src, bool closeIO)
+    public static Surface* LoadPngIO(IOStream src, Bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _LoadPngIO(src, closeIO);
@@ -646,97 +577,97 @@ public static unsafe partial class Sdl
         return _LoadPng(file);
     }
 
-    public static bool SavePngIO(Surface* surface, IOStream dst, bool closeIO)
+    public static Bool SavePngIO(Surface* surface, IOStream dst, Bool closeIO)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SavePngIO(surface, dst, closeIO);
     }
 
-    public static bool SavePng(Surface* surface, byte* file)
+    public static Bool SavePng(Surface* surface, byte* file)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SavePng(surface, file);
     }
 
-    public static bool SetSurfaceRle(Surface* surface, bool enabled)
+    public static Bool SetSurfaceRle(Surface* surface, Bool enabled)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetSurfaceRle(surface, enabled);
     }
 
-    public static bool SurfaceHasRle(Surface* surface)
+    public static Bool SurfaceHasRle(Surface* surface)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SurfaceHasRle(surface);
     }
 
-    public static bool SetSurfaceColorKey(Surface* surface, bool enabled, uint key)
+    public static Bool SetSurfaceColorKey(Surface* surface, Bool enabled, uint key)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetSurfaceColorKey(surface, enabled, key);
     }
 
-    public static bool SurfaceHasColorKey(Surface* surface)
+    public static Bool SurfaceHasColorKey(Surface* surface)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SurfaceHasColorKey(surface);
     }
 
-    public static bool GetSurfaceColorKey(Surface* surface, out uint key)
+    public static Bool GetSurfaceColorKey(Surface* surface, out uint key)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetSurfaceColorKey(surface, out key);
     }
 
-    public static bool SetSurfaceColorMod(Surface* surface, byte r, byte g, byte b)
+    public static Bool SetSurfaceColorMod(Surface* surface, byte r, byte g, byte b)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetSurfaceColorMod(surface, r, g, b);
     }
 
-    public static bool GetSurfaceColorMod(Surface* surface, out byte r, out byte g, out byte b)
+    public static Bool GetSurfaceColorMod(Surface* surface, out byte r, out byte g, out byte b)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetSurfaceColorMod(surface, out r, out g, out b);
     }
 
-    public static bool SetSurfaceAlphaMod(Surface* surface, byte alpha)
+    public static Bool SetSurfaceAlphaMod(Surface* surface, byte alpha)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetSurfaceAlphaMod(surface, alpha);
     }
 
-    public static bool GetSurfaceAlphaMod(Surface* surface, out byte alpha)
+    public static Bool GetSurfaceAlphaMod(Surface* surface, out byte alpha)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetSurfaceAlphaMod(surface, out alpha);
     }
 
-    public static bool SetSurfaceBlendMode(Surface* surface, BlendMode blendMode)
+    public static Bool SetSurfaceBlendMode(Surface* surface, BlendMode blendMode)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetSurfaceBlendMode(surface, blendMode);
     }
 
-    public static bool GetSurfaceBlendMode(Surface* surface, out BlendMode blendMode)
+    public static Bool GetSurfaceBlendMode(Surface* surface, out BlendMode blendMode)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetSurfaceBlendMode(surface, out blendMode);
     }
 
-    public static bool SetSurfaceClipRect(Surface* surface, Rect* rect)
+    public static Bool SetSurfaceClipRect(Surface* surface, Rect* rect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetSurfaceClipRect(surface, rect);
     }
 
-    public static bool GetSurfaceClipRect(Surface* surface, out Rect rect)
+    public static Bool GetSurfaceClipRect(Surface* surface, out Rect rect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetSurfaceClipRect(surface, out rect);
     }
 
-    public static bool FlipSurface(Surface* surface, FlipMode flip)
+    public static Bool FlipSurface(Surface* surface, FlipMode flip)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _FlipSurface(surface, flip);
@@ -783,7 +714,7 @@ public static unsafe partial class Sdl
         return _ConvertSurfaceAndColorspace(surface, format, palette, colorspace, props);
     }
 
-    public static bool ConvertPixels(
+    public static Bool ConvertPixels(
         int width,
         int height,
         PixelFormat srcFormat,
@@ -798,7 +729,7 @@ public static unsafe partial class Sdl
         return _ConvertPixels(width, height, srcFormat, src, srcPitch, dstFormat, dst, dstPitch);
     }
 
-    public static bool ConvertPixelsAndColorspace(
+    public static Bool ConvertPixelsAndColorspace(
         int width,
         int height,
         PixelFormat srcFormat,
@@ -830,7 +761,7 @@ public static unsafe partial class Sdl
         );
     }
 
-    public static bool PremultiplyAlpha(
+    public static Bool PremultiplyAlpha(
         int width,
         int height,
         PixelFormat srcFormat,
@@ -839,7 +770,7 @@ public static unsafe partial class Sdl
         PixelFormat dstFormat,
         void* dst,
         int dstPitch,
-        bool linear
+        Bool linear
     )
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
@@ -856,37 +787,37 @@ public static unsafe partial class Sdl
         );
     }
 
-    public static bool PremultiplySurfaceAlpha(Surface* surface, bool linear)
+    public static Bool PremultiplySurfaceAlpha(Surface* surface, Bool linear)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _PremultiplySurfaceAlpha(surface, linear);
     }
 
-    public static bool ClearSurface(Surface* surface, float r, float g, float b, float a)
+    public static Bool ClearSurface(Surface* surface, float r, float g, float b, float a)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _ClearSurface(surface, r, g, b, a);
     }
 
-    public static bool FillSurfaceRect(Surface* dst, Rect* rect, uint color)
+    public static Bool FillSurfaceRect(Surface* dst, Rect* rect, uint color)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _FillSurfaceRect(dst, rect, color);
     }
 
-    public static bool FillSurfaceRects(Surface* dst, ReadOnlySpan<Rect> rects, uint color)
+    public static Bool FillSurfaceRects(Surface* dst, ReadOnlySpan<Rect> rects, uint color)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _FillSurfaceRects(dst, rects.ToArray(), rects.Length, color);
     }
 
-    public static bool BlitSurface(Surface* src, Rect* srcRect, Surface* dst, Rect* dstRect)
+    public static Bool BlitSurface(Surface* src, Rect* srcRect, Surface* dst, Rect* dstRect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _BlitSurface(src, srcRect, dst, dstRect);
     }
 
-    public static bool BlitSurfaceUnchecked(
+    public static Bool BlitSurfaceUnchecked(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -897,7 +828,7 @@ public static unsafe partial class Sdl
         return _BlitSurfaceUnchecked(src, srcRect, dst, dstRect);
     }
 
-    public static bool BlitSurfaceScaled(
+    public static Bool BlitSurfaceScaled(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -909,7 +840,7 @@ public static unsafe partial class Sdl
         return _BlitSurfaceScaled(src, srcRect, dst, dstRect, scaleMode);
     }
 
-    public static bool BlitSurfaceUncheckedScaled(
+    public static Bool BlitSurfaceUncheckedScaled(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -921,7 +852,7 @@ public static unsafe partial class Sdl
         return _BlitSurfaceUncheckedScaled(src, srcRect, dst, dstRect, scaleMode);
     }
 
-    public static bool StretchSurface(
+    public static Bool StretchSurface(
         Surface* src,
         Rect* srcRect,
         Surface* dst,
@@ -933,13 +864,13 @@ public static unsafe partial class Sdl
         return _StretchSurface(src, srcRect, dst, dstRect, scaleMode);
     }
 
-    public static bool BlitSurfaceTiled(Surface* src, Rect* srcRect, Surface* dst, Rect* dstRect)
+    public static Bool BlitSurfaceTiled(Surface* src, Rect* srcRect, Surface* dst, Rect* dstRect)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _BlitSurfaceTiled(src, srcRect, dst, dstRect);
     }
 
-    public static bool BlitSurfaceTiledWithScale(
+    public static Bool BlitSurfaceTiledWithScale(
         Surface* src,
         Rect* srcRect,
         float scale,
@@ -952,7 +883,7 @@ public static unsafe partial class Sdl
         return _BlitSurfaceTiledWithScale(src, srcRect, scale, scaleMode, dst, dstRect);
     }
 
-    public static bool BlitSurface9Grid(
+    public static Bool BlitSurface9Grid(
         Surface* src,
         Rect* srcRect,
         int leftWidth,
@@ -992,7 +923,7 @@ public static unsafe partial class Sdl
         return _MapSurfaceRgba(surface, r, g, b, a);
     }
 
-    public static bool ReadSurfacePixel(
+    public static Bool ReadSurfacePixel(
         Surface* surface,
         int x,
         int y,
@@ -1006,7 +937,7 @@ public static unsafe partial class Sdl
         return _ReadSurfacePixel(surface, x, y, out r, out g, out b, out a);
     }
 
-    public static bool ReadSurfacePixelFloat(
+    public static Bool ReadSurfacePixelFloat(
         Surface* surface,
         int x,
         int y,
@@ -1020,7 +951,7 @@ public static unsafe partial class Sdl
         return _ReadSurfacePixelFloat(surface, x, y, out r, out g, out b, out a);
     }
 
-    public static bool WriteSurfacePixel(
+    public static Bool WriteSurfacePixel(
         Surface* surface,
         int x,
         int y,
@@ -1034,7 +965,7 @@ public static unsafe partial class Sdl
         return _WriteSurfacePixel(surface, x, y, r, g, b, a);
     }
 
-    public static bool WriteSurfacePixelFloat(
+    public static Bool WriteSurfacePixelFloat(
         Surface* surface,
         int x,
         int y,
