@@ -1,0 +1,316 @@
+// CanDoUrco.Sdl - Provides SDL3 bindings for C# applications.
+// Copyright (C) 2026 CanDoUrco (Victor Matia-Cheng)
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License,
+// v. 2.0. If a copy of the MPL was not distributed with this file, You can
+// oBTain one at <https://mozilla.org/MPL/2.0/>.
+
+namespace CanDoUrco.Sdl3;
+
+public static partial class Sdl
+{
+    public static Keycode KExtendedMask => 1U << 29;
+    public static Keycode KScancodeMask => 1U << 30;
+    public static Keycode KUnknown => 0x0000_0000U;
+    public static Keycode KReturn => 0x0000_000DU;
+    public static Keycode KEscape => 0x0000_001BU;
+    public static Keycode KBackspace => 0x0000_0008U;
+    public static Keycode KTab => 0x0000_0009U;
+    public static Keycode KSpace => 0x0000_0020U;
+    public static Keycode KExclaim => 0x0000_0021U;
+    public static Keycode KDblApostrophe => 0x0000_0022U;
+    public static Keycode KHash => 0x0000_0023U;
+    public static Keycode KDollar => 0x0000_0024U;
+    public static Keycode KPercent => 0x0000_0025U;
+    public static Keycode KAmpersand => 0x0000_0026U;
+    public static Keycode KApostrophe => 0x0000_0027U;
+    public static Keycode KLeftParen => 0x0000_0028U;
+    public static Keycode KRightParen => 0x0000_0029U;
+    public static Keycode KAsterisk => 0x0000_002AU;
+    public static Keycode KPlus => 0x0000_002BU;
+    public static Keycode KComma => 0x0000_002CU;
+    public static Keycode KMinus => 0x0000_002DU;
+    public static Keycode KPeriod => 0x0000_002EU;
+    public static Keycode KSlash => 0x0000_002FU;
+    public static Keycode KNumber0 => 0x0000_0030U;
+    public static Keycode KNumber1 => 0x0000_0031U;
+    public static Keycode KNumber2 => 0x0000_0032U;
+    public static Keycode KNumber3 => 0x0000_0033U;
+    public static Keycode KNumber4 => 0x0000_0034U;
+    public static Keycode KNumber5 => 0x0000_0035U;
+    public static Keycode KNumber6 => 0x0000_0036U;
+    public static Keycode KNumber7 => 0x0000_0037U;
+    public static Keycode KNumber8 => 0x0000_0038U;
+    public static Keycode KNumber9 => 0x0000_0039U;
+    public static Keycode KColon => 0x0000_003AU;
+    public static Keycode KSemicolon => 0x0000_003BU;
+    public static Keycode KLess => 0x0000_003CU;
+    public static Keycode KEqual => 0x0000_003DU;
+    public static Keycode KGreater => 0x0000_003EU;
+    public static Keycode KQuestion => 0x0000_003FU;
+    public static Keycode KAt => 0x0000_0040U;
+    public static Keycode KLeftBracket => 0x0000_005BU;
+    public static Keycode KBackslash => 0x0000_005CU;
+    public static Keycode KRightBracket => 0x0000_005DU;
+    public static Keycode KCaret => 0x0000_005EU;
+    public static Keycode KUnderscore => 0x0000_005FU;
+    public static Keycode KGrave => 0x0000_0060U;
+    public static Keycode KA => 0x0000_0061U;
+    public static Keycode KB => 0x0000_0062U;
+    public static Keycode KC => 0x0000_0063U;
+    public static Keycode KD => 0x0000_0064U;
+    public static Keycode KE => 0x0000_0065U;
+    public static Keycode KF => 0x0000_0066U;
+    public static Keycode KG => 0x0000_0067U;
+    public static Keycode KH => 0x0000_0068U;
+    public static Keycode KI => 0x0000_0069U;
+    public static Keycode KJ => 0x0000_006AU;
+    public static Keycode KK => 0x0000_006BU;
+    public static Keycode KL => 0x0000_006CU;
+    public static Keycode KM => 0x0000_006DU;
+    public static Keycode KN => 0x0000_006EU;
+    public static Keycode KO => 0x0000_006FU;
+    public static Keycode KP => 0x0000_0070U;
+    public static Keycode KQ => 0x0000_0071U;
+    public static Keycode KR => 0x0000_0072U;
+    public static Keycode KS => 0x0000_0073U;
+    public static Keycode KT => 0x0000_0074U;
+    public static Keycode KU => 0x0000_0075U;
+    public static Keycode KV => 0x0000_0076U;
+    public static Keycode KW => 0x0000_0077U;
+    public static Keycode KX => 0x0000_0078U;
+    public static Keycode KY => 0x0000_0079U;
+    public static Keycode KZ => 0x0000_007AU;
+    public static Keycode KLeftBrace => 0x0000_007BU;
+    public static Keycode KPipe => 0x0000_007CU;
+    public static Keycode KRightBrace => 0x0000_007DU;
+    public static Keycode KTilde => 0x0000_007EU;
+    public static Keycode KDelete => 0x0000_007FU;
+    public static Keycode KPlusMinus => 0x0000_00B1U;
+    public static Keycode KCapsLock => 0x4000_0039U;
+    public static Keycode KF1 => 0x4000_003AU;
+    public static Keycode KF2 => 0x4000_003BU;
+    public static Keycode KF3 => 0x4000_003CU;
+    public static Keycode KF4 => 0x4000_003DU;
+    public static Keycode KF5 => 0x4000_003EU;
+    public static Keycode KF6 => 0x4000_003FU;
+    public static Keycode KF7 => 0x4000_0040U;
+    public static Keycode KF8 => 0x4000_0041U;
+    public static Keycode KF9 => 0x4000_0042U;
+    public static Keycode KF10 => 0x4000_0043U;
+    public static Keycode KF11 => 0x4000_0044U;
+    public static Keycode KF12 => 0x4000_0045U;
+    public static Keycode KPrintScreen => 0x4000_0046U;
+    public static Keycode KScrollLock => 0x4000_0047U;
+    public static Keycode KPause => 0x4000_0048U;
+    public static Keycode KInsert => 0x4000_0049U;
+    public static Keycode KHome => 0x4000_004AU;
+    public static Keycode KPageUp => 0x4000_004BU;
+    public static Keycode KEnd => 0x4000_004DU;
+    public static Keycode KPageDown => 0x4000_004EU;
+    public static Keycode KRight => 0x4000_004FU;
+    public static Keycode KLeft => 0x4000_0050U;
+    public static Keycode KDown => 0x4000_0051U;
+    public static Keycode KUp => 0x4000_0052U;
+    public static Keycode KNumLockClear => 0x4000_0053U;
+    public static Keycode KKPDivide => 0x4000_0054U;
+    public static Keycode KKPMultiply => 0x4000_0055U;
+    public static Keycode KKPMinus => 0x4000_0056U;
+    public static Keycode KKPPlus => 0x4000_0057U;
+    public static Keycode KKPEnter => 0x4000_0058U;
+    public static Keycode KKPNumber1 => 0x4000_0059U;
+    public static Keycode KKPNumber2 => 0x4000_005AU;
+    public static Keycode KKPNumber3 => 0x4000_005BU;
+    public static Keycode KKPNumber4 => 0x4000_005CU;
+    public static Keycode KKPNumber5 => 0x4000_005DU;
+    public static Keycode KKPNumber6 => 0x4000_005EU;
+    public static Keycode KKPNumber7 => 0x4000_005FU;
+    public static Keycode KKPNumber8 => 0x4000_0060U;
+    public static Keycode KKPNumber9 => 0x4000_0061U;
+    public static Keycode KKPNumber0 => 0x4000_0062U;
+    public static Keycode KKPPeriod => 0x4000_0063U;
+    public static Keycode KApplication => 0x4000_0065U;
+    public static Keycode KPower => 0x4000_0066U;
+    public static Keycode KKPEquals => 0x4000_0067U;
+    public static Keycode KF13 => 0x4000_0068U;
+    public static Keycode KF14 => 0x4000_0069U;
+    public static Keycode KF15 => 0x4000_006AU;
+    public static Keycode KF16 => 0x4000_006BU;
+    public static Keycode KF17 => 0x4000_006CU;
+    public static Keycode KF18 => 0x4000_006DU;
+    public static Keycode KF19 => 0x4000_006EU;
+    public static Keycode KF20 => 0x4000_006FU;
+    public static Keycode KF21 => 0x4000_0070U;
+    public static Keycode KF22 => 0x4000_0071U;
+    public static Keycode KF23 => 0x4000_0072U;
+    public static Keycode KF24 => 0x4000_0073U;
+    public static Keycode KExecute => 0x4000_0074U;
+    public static Keycode KHelp => 0x4000_0075U;
+    public static Keycode KMenu => 0x4000_0076U;
+    public static Keycode KSelect => 0x4000_0077U;
+    public static Keycode KStop => 0x4000_0078U;
+    public static Keycode KAgain => 0x4000_0079U;
+    public static Keycode KUndo => 0x4000_007AU;
+    public static Keycode KCut => 0x4000_007BU;
+    public static Keycode KCopy => 0x4000_007CU;
+    public static Keycode KPaste => 0x4000_007DU;
+    public static Keycode KFind => 0x4000_007EU;
+    public static Keycode KMute => 0x4000_007FU;
+    public static Keycode KVolumeUp => 0x4000_0080U;
+    public static Keycode KVolumeDown => 0x4000_0081U;
+    public static Keycode KKPComma => 0x4000_0085U;
+    public static Keycode KKPEqualsas400 => 0x4000_0086U;
+    public static Keycode KAltErase => 0x4000_0099U;
+    public static Keycode KSysReq => 0x4000_009AU;
+    public static Keycode KCancel => 0x4000_009BU;
+    public static Keycode KClear => 0x4000_009CU;
+    public static Keycode KPrior => 0x4000_009DU;
+    public static Keycode KReturn2 => 0x4000_009EU;
+    public static Keycode KSeparator => 0x4000_009FU;
+    public static Keycode KOut => 0x4000_00A0U;
+    public static Keycode KOper => 0x4000_00A1U;
+    public static Keycode KClearAgain => 0x4000_00A2U;
+    public static Keycode KCrSel => 0x4000_00A3U;
+    public static Keycode KExSel => 0x4000_00A4U;
+    public static Keycode KFront => 0x4000_00A5U;
+    public static Keycode KKPNumber00 => 0x4000_00B0U;
+    public static Keycode KKPNumber000 => 0x4000_00B1U;
+    public static Keycode KThousandsSeparator => 0x4000_00B2U;
+    public static Keycode KDecimalSeparator => 0x4000_00B3U;
+    public static Keycode KCurrencyUnit => 0x4000_00B4U;
+    public static Keycode KCurrencySubunit => 0x4000_00B5U;
+    public static Keycode KKPLeftParen => 0x4000_00B6U;
+    public static Keycode KKPRightParen => 0x4000_00B7U;
+    public static Keycode KKPLeftBrace => 0x4000_00B8U;
+    public static Keycode KKPRightBrace => 0x4000_00B9U;
+    public static Keycode KKPTab => 0x4000_00BAU;
+    public static Keycode KKPBackspace => 0x4000_00BBU;
+    public static Keycode KKPA => 0x4000_00BCU;
+    public static Keycode KKPB => 0x4000_00BDU;
+    public static Keycode KKPC => 0x4000_00BEU;
+    public static Keycode KKPD => 0x4000_00BFU;
+    public static Keycode KKPE => 0x4000_00C0U;
+    public static Keycode KKPF => 0x4000_00C1U;
+    public static Keycode KKPXor => 0x4000_00C2U;
+    public static Keycode KKPPower => 0x4000_00C3U;
+    public static Keycode KKPPercent => 0x4000_00C4U;
+    public static Keycode KKPLess => 0x4000_00C5U;
+    public static Keycode KKPGreater => 0x4000_00C6U;
+    public static Keycode KKPAmpersand => 0x4000_00C7U;
+    public static Keycode KKPDblAmpersand => 0x4000_00C8U;
+    public static Keycode KKPVerticalBar => 0x4000_00C9U;
+    public static Keycode KKPDblVerticalBar => 0x4000_00CAU;
+    public static Keycode KKPColon => 0x4000_00CBU;
+    public static Keycode KKPHash => 0x4000_00CCU;
+    public static Keycode KKPSpace => 0x4000_00CDU;
+    public static Keycode KKPAt => 0x4000_00CEU;
+    public static Keycode KKPExclam => 0x4000_00CFU;
+    public static Keycode KKPMemStore => 0x4000_00D0U;
+    public static Keycode KKPMemRecall => 0x4000_00D1U;
+    public static Keycode KKPMemClear => 0x4000_00D2U;
+    public static Keycode KKPMemAdd => 0x4000_00D3U;
+    public static Keycode KKPMemSubtract => 0x4000_00D4U;
+    public static Keycode KKPMemMultiply => 0x4000_00D5U;
+    public static Keycode KKPMemDivide => 0x4000_00D6U;
+    public static Keycode KKPPlusMinus => 0x4000_00D7U;
+    public static Keycode KKPClear => 0x4000_00D8U;
+    public static Keycode KKPClearEntry => 0x4000_00D9U;
+    public static Keycode KKPBinary => 0x4000_00DAU;
+    public static Keycode KKPOctal => 0x4000_00DBU;
+    public static Keycode KKPDecimal => 0x4000_00DCU;
+    public static Keycode KKPHexadecimal => 0x4000_00DDU;
+    public static Keycode KLCtrl => 0x4000_00E0U;
+    public static Keycode KLShift => 0x4000_00E1U;
+    public static Keycode KLAlt => 0x4000_00E2U;
+    public static Keycode KLGui => 0x4000_00E3U;
+    public static Keycode KRCtrl => 0x4000_00E4U;
+    public static Keycode KRShift => 0x4000_00E5U;
+    public static Keycode KRAlt => 0x4000_00E6U;
+    public static Keycode KRGui => 0x4000_00E7U;
+    public static Keycode KMode => 0x4000_0101U;
+    public static Keycode KSleep => 0x4000_0102U;
+    public static Keycode KWake => 0x4000_0103U;
+    public static Keycode KChannelIncrement => 0x4000_0104U;
+    public static Keycode KChannelDecrement => 0x4000_0105U;
+    public static Keycode KMediaPlay => 0x4000_0106U;
+    public static Keycode KMediaPause => 0x4000_0107U;
+    public static Keycode KMediaRecord => 0x4000_0108U;
+    public static Keycode KMediaFastForward => 0x4000_0109U;
+    public static Keycode KMediaRewind => 0x4000_010AU;
+    public static Keycode KMediaNextTrack => 0x4000_010BU;
+    public static Keycode KMediaPreviousTrack => 0x4000_010CU;
+    public static Keycode KMediaStop => 0x4000_010DU;
+    public static Keycode KMediaEject => 0x4000_010EU;
+    public static Keycode KMediaPlayPause => 0x4000_010FU;
+    public static Keycode KMediaSelect => 0x4000_0110U;
+    public static Keycode KACNew => 0x4000_0111U;
+    public static Keycode KACOpen => 0x4000_0112U;
+    public static Keycode KACClose => 0x4000_0113U;
+    public static Keycode KACExit => 0x4000_0114U;
+    public static Keycode KACSave => 0x4000_0115U;
+    public static Keycode KACPrint => 0x4000_0116U;
+    public static Keycode KACProperties => 0x4000_0117U;
+    public static Keycode KACSearch => 0x4000_0118U;
+    public static Keycode KACHome => 0x4000_0119U;
+    public static Keycode KACBack => 0x4000_011AU;
+    public static Keycode KACForward => 0x4000_011BU;
+    public static Keycode KACStop => 0x4000_011CU;
+    public static Keycode KACRefresh => 0x4000_011DU;
+    public static Keycode KACBookmarks => 0x4000_011EU;
+    public static Keycode KSoftLeft => 0x4000_011FU;
+    public static Keycode KSoftRight => 0x4000_0120U;
+    public static Keycode KCall => 0x4000_0121U;
+    public static Keycode KEndCall => 0x4000_0122U;
+    public static Keycode KLeftTab => 0x2000_0001U;
+    public static Keycode KLevel5Shift => 0x2000_0002U;
+    public static Keycode KMultiKeyCompose => 0x2000_0003U;
+    public static Keycode KLMeta => 0x2000_0004U;
+    public static Keycode KRMeta => 0x2000_0005U;
+    public static Keycode KLHyper => 0x2000_0006U;
+    public static Keycode KRHyper => 0x2000_0007U;
+
+    public static Keymod KmodNone => 0x0000;
+    public static Keymod KmodLShift => 0x0001;
+    public static Keymod KmodRShift => 0x0002;
+    public static Keymod KmodLCtrl => 0x0040;
+    public static Keymod KmodRCtrl => 0x0080;
+    public static Keymod KmodLAlt => 0x0100;
+    public static Keymod KmodRAlt => 0x0200;
+    public static Keymod KmodLGui => 0x0400;
+    public static Keymod KmodRGui => 0x0800;
+    public static Keymod KmodNum => 0x1000;
+    public static Keymod KmodCaps => 0x2000;
+    public static Keymod KmodMode => 0x4000;
+    public static Keymod KmodScroll => 0x8000;
+    public static Keymod KmodCtrl => KmodLCtrl | KmodRCtrl;
+    public static Keymod KmodShift => KmodLShift | KmodRShift;
+    public static Keymod KmodAlt => KmodLAlt | KmodRAlt;
+    public static Keymod KmodGui => KmodLGui | KmodRGui;
+
+    public static Keycode ScancodeToKeycode(Scancode x) => (uint)x | KScancodeMask;
+
+    public readonly record struct Keycode(uint Value)
+    {
+        public static implicit operator Keycode(uint value) => new Keycode(value);
+
+        public static implicit operator uint(Keycode keycode) => keycode.Value;
+    }
+
+    public readonly record struct Keymod(ushort Value)
+    {
+        public static Keymod operator &(Keymod left, Keymod right) =>
+            new((ushort)(left.Value & right.Value));
+
+        public static Keymod operator |(Keymod left, Keymod right) =>
+            new((ushort)(left.Value | right.Value));
+
+        public static Keymod operator ^(Keymod left, Keymod right) =>
+            new((ushort)(left.Value ^ right.Value));
+
+        public static Keymod operator ~(Keymod value) => new((ushort)(~value.Value));
+
+        public static implicit operator Keymod(ushort value) => new Keymod(value);
+
+        public static implicit operator ushort(Keymod keymod) => keymod.Value;
+    }
+}
