@@ -7,7 +7,6 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl3;
@@ -283,14 +282,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_FillSurfaceRects")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Bool _FillSurfaceRects(
-        Surface* dst,
-        [In]
-        [MarshalUsing(typeof(ArrayMarshaller<Rect, Rect>), CountElementName = nameof(count))]
-            Rect[] rects,
-        int count,
-        uint color
-    );
+    private static partial Bool _FillSurfaceRects(Surface* dst, Rect* rects, int count, uint color);
 
     [LibraryImport(DllName, EntryPoint = "SDL_BlitSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -805,10 +797,10 @@ public static unsafe partial class Sdl
         return _FillSurfaceRect(dst, rect, color);
     }
 
-    public static Bool FillSurfaceRects(Surface* dst, ReadOnlySpan<Rect> rects, uint color)
+    public static Bool FillSurfaceRects(Surface* dst, Rect* rects, int count, uint color)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        return _FillSurfaceRects(dst, rects.ToArray(), rects.Length, color);
+        return _FillSurfaceRects(dst, rects, count, color);
     }
 
     public static Bool BlitSurface(Surface* src, Rect* srcRect, Surface* dst, Rect* dstRect)

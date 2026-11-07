@@ -7,7 +7,6 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 
 namespace CanDoUrco.Sdl3;
@@ -29,9 +28,7 @@ public static unsafe partial class Sdl
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectEnclosingPoints")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial Bool _GetRectEnclosingPoints(
-        [In]
-        [MarshalUsing(typeof(ArrayMarshaller<Point, Point>), CountElementName = nameof(count))]
-            Point[] points,
+        Point* points,
         int count,
         Rect* clip,
         out Rect result
@@ -62,9 +59,7 @@ public static unsafe partial class Sdl
     [LibraryImport(DllName, EntryPoint = "SDL_GetRectEnclosingPointsFloat")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial Bool _GetRectEnclosingPointsFloat(
-        [In]
-        [MarshalUsing(typeof(ArrayMarshaller<Point, Point>), CountElementName = nameof(count))]
-            Point[] points,
+        Point* points,
         int count,
         FRect* clip,
         out FRect result
@@ -128,12 +123,7 @@ public static unsafe partial class Sdl
         _GetRectUnion(a, b, out result);
     }
 
-    public static Bool GetRectEnclosingPoints(
-        Point[] points,
-        int count,
-        Rect* clip,
-        out Rect result
-    )
+    public static Bool GetRectEnclosingPoints(Point* points, int count, Rect* clip, out Rect result)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetRectEnclosingPoints(points, count, clip, out result);
@@ -197,7 +187,7 @@ public static unsafe partial class Sdl
     }
 
     public static Bool GetRectEnclosingPointsFloat(
-        Point[] points,
+        Point* points,
         int count,
         FRect* clip,
         out FRect result

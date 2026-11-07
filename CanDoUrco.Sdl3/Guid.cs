@@ -21,22 +21,16 @@ public static unsafe partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial Guid _StringToGuid(byte* pszGuid);
 
-    public static void GuidToString(Guid guid, Span<byte> buffer, int count)
+    public static void GuidToString(Guid guid, byte* buffer, int count)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        fixed (byte* pBuffer = buffer)
-        {
-            _GuidToString(guid, pBuffer, count);
-        }
+        _GuidToString(guid, buffer, count);
     }
 
-    public static Guid StringToGuid(ReadOnlySpan<byte> buffer)
+    public static Guid StringToGuid(byte* buffer)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
-        fixed (byte* pBuffer = buffer)
-        {
-            return _StringToGuid(pBuffer);
-        }
+        return _StringToGuid(buffer);
     }
 
     [StructLayout(LayoutKind.Sequential)]
