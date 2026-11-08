@@ -735,6 +735,16 @@ public static unsafe partial class Sdl
         }
     }
 
+    public static void InitInterface(ref VirtualJoystickDesc iface)
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        fixed (VirtualJoystickDesc* pIface = &iface)
+        {
+            ZeroP<VirtualJoystickDesc>(pIface);
+            pIface->Version = (uint)sizeof(VirtualJoystickDesc);
+        }
+    }
+
     public static void* MAlloc(nuint size)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
