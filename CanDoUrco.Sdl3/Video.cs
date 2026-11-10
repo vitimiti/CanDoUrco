@@ -368,7 +368,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowIcon")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Bool _SetWindowIcon(Window window, Surface icon);
+    private static partial Bool _SetWindowIcon(Window window, Surface* icon);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowPosition")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -490,7 +490,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetWindowSurface")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Surface _GetWindowSurface(Window window);
+    private static partial Surface* _GetWindowSurface(Window window);
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowSurfaceVSync")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -574,7 +574,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_SetWindowShape")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Bool _SetWindowShape(Window window, Surface shape);
+    private static partial Bool _SetWindowShape(Window window, Surface* shape);
 
     [LibraryImport(DllName, EntryPoint = "SDL_FlashWindow")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -948,7 +948,7 @@ public static unsafe partial class Sdl
         return _GetWindowTitle(window);
     }
 
-    public static Bool SetWindowIcon(Window window, Surface icon)
+    public static Bool SetWindowIcon(Window window, Surface* icon)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowIcon(window, icon);
@@ -1116,7 +1116,7 @@ public static unsafe partial class Sdl
         return _WindowHasSurface(window);
     }
 
-    public static Surface GetWindowSurface(Window window)
+    public static Surface* GetWindowSurface(Window window)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetWindowSurface(window);
@@ -1240,7 +1240,7 @@ public static unsafe partial class Sdl
         return _SetWindowHitTest(window, callback, callbackData);
     }
 
-    public static Bool SetWindowShape(Window window, Surface shape)
+    public static Bool SetWindowShape(Window window, Surface* shape)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _SetWindowShape(window, shape);

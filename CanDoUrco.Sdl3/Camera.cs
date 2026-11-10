@@ -66,11 +66,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_AcquireCameraFrame")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial Surface _AcquireCameraFrame(Camera camera, out ulong timestampNS);
+    private static partial Surface* _AcquireCameraFrame(Camera camera, out ulong timestampNS);
 
     [LibraryImport(DllName, EntryPoint = "SDL_ReleaseCameraFrame")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial void _ReleaseCameraFrame(Camera camera, Surface frame);
+    private static partial void _ReleaseCameraFrame(Camera camera, Surface* frame);
 
     [LibraryImport(DllName, EntryPoint = "SDL_CloseCamera")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -148,13 +148,13 @@ public static unsafe partial class Sdl
         return _GetCameraProperties(camera);
     }
 
-    public static Surface AcquireCameraFrame(Camera camera, out ulong timestampNS)
+    public static Surface* AcquireCameraFrame(Camera camera, out ulong timestampNS)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _AcquireCameraFrame(camera, out timestampNS);
     }
 
-    public static void ReleaseCameraFrame(Camera camera, Surface frame)
+    public static void ReleaseCameraFrame(Camera camera, Surface* frame)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         _ReleaseCameraFrame(camera, frame);
