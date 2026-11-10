@@ -120,35 +120,16 @@ public static unsafe partial class Sdl
         public byte B;
     }
 
-    /// <summary>
-    /// Stores five RGB colors as 15 consecutive bytes: three bytes (R, G, B) per color.
-    /// </summary>
-    /// <remarks>
-    /// <see cref="MessageBoxColorScheme.Colors"/> is a flat byte buffer, not an array of <see cref="MessageBoxColor"/>.
-    /// For color type <c>type</c>, its RGB bytes start at offset <c>(int)type * 3</c>.
-    /// Pin the buffer before taking a pointer. Casting that pointer to
-    /// <see cref="MessageBoxColor"/>* reinterprets the same three-byte groups; it does not
-    /// perform a conversion.
-    /// <code>
-    /// MessageBoxColorScheme scheme = default;
-    /// fixed (byte* colors = scheme.Colors)
-    /// {
-    ///     int offset = (int)MessageBoxColorType.Background * 3;
-    ///     colors[offset] = 0;     // R
-    ///     colors[offset + 1] = 0; // G
-    ///     colors[offset + 2] = 0; // B
-    ///
-    ///     MessageBoxColor* entries = (MessageBoxColor*)colors;
-    ///     entries[(int)MessageBoxColorType.Background].R = 0;
-    ///     entries[(int)MessageBoxColorType.Background].G = 0;
-    ///     entries[(int)MessageBoxColorType.Background].B = 0;
-    /// }
-    /// </code>
-    /// </remarks>
+    [InlineArray(5)]
+    public struct MessageBoxColorArray
+    {
+        private MessageBoxColor _element0;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct MessageBoxColorScheme
     {
-        public fixed byte Colors[((int)MessageBoxColorType.ButtonSelected + 1) * 3];
+        public MessageBoxColorArray Colors;
     }
 
     [StructLayout(LayoutKind.Sequential)]
