@@ -13,15 +13,15 @@ namespace CanDoUrco.Sdl3;
 
 public static unsafe partial class Sdl
 {
-    public static ReadOnlySpan<byte> PropAppMetadataNameString => "SDL.app.metadata.name"u8;
-    public static ReadOnlySpan<byte> PropAppMetadataVersionString => "SDL.app.metadata.version"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataNameString => "SDL.app.metadata.name\0"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataVersionString => "SDL.app.metadata.version\0"u8;
     public static ReadOnlySpan<byte> PropAppMetadataIdentifierString =>
-        "SDL.app.metadata.identifier"u8;
-    public static ReadOnlySpan<byte> PropAppMetadataCreatorString => "SDL.app.metadata.creator"u8;
+        "SDL.app.metadata.identifier\0"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataCreatorString => "SDL.app.metadata.creator\0"u8;
     public static ReadOnlySpan<byte> PropAppMetadataCopyrightString =>
-        "SDL.app.metadata.copyright"u8;
-    public static ReadOnlySpan<byte> PropAppMetadataUrlString => "SDL.app.metadata.url"u8;
-    public static ReadOnlySpan<byte> PropAppMetadataTypeString => "SDL.app.metadata.type"u8;
+        "SDL.app.metadata.copyright\0"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataUrlString => "SDL.app.metadata.url\0"u8;
+    public static ReadOnlySpan<byte> PropAppMetadataTypeString => "SDL.app.metadata.type\0"u8;
 
     public static InitFlags InitAudio => new(0x0000_0010U);
 

@@ -19,7 +19,7 @@ public static unsafe partial class Sdl
     public const int WindowSurfaceVSyncAdaptive = -1;
 
     public static ReadOnlySpan<byte> PropGlobalVideoWaylandWLDisplayPointer =>
-        "SDL.video.wayland.wl_display"u8;
+        "SDL.video.wayland.wl_display\0"u8;
 
     public static WindowFlags WindowFullscreen => 0x0000_0000_0000_0001UL;
     public static WindowFlags WindowOpenGL => 0x0000_0000_0000_0002UL;
@@ -66,140 +66,146 @@ public static unsafe partial class Sdl
     public static GLContextResetNotification GLContextResetNoNotification => 0x0000;
     public static GLContextResetNotification GLContextResetLoseContext => 0x0001;
 
-    public static ReadOnlySpan<byte> PropDisplayHdrEnabledBoolean => "SDL.displayID.HDR_enabled"u8;
+    public static ReadOnlySpan<byte> PropDisplayHdrEnabledBoolean =>
+        "SDL.displayID.HDR_enabled\0"u8;
     public static ReadOnlySpan<byte> PropDisplayKmsDrmPanelOrientationNumber =>
-        "SDL.displayID.KMSDRM.panel_orientation"u8;
+        "SDL.displayID.KMSDRM.panel_orientation\0"u8;
     public static ReadOnlySpan<byte> PropDisplayWaylandWLOutputPointer =>
-        "SDL.displayID.wayland.wl_output"u8;
+        "SDL.displayID.wayland.wl_output\0"u8;
     public static ReadOnlySpan<byte> PropDisplayWindowsHMonitorPointer =>
-        "SDL.displayID.windows.hmonitor"u8;
+        "SDL.displayID.windows.hmonitor\0"u8;
 
     public static ReadOnlySpan<byte> PropWindowCreateAlwaysOnTopBoolean =>
-        "SDL.window.create.always_on_top"u8;
+        "SDL.window.create.always_on_top\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateBorderlessBoolean =>
-        "SDL.window.create.borderless"u8;
+        "SDL.window.create.borderless\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateConstrainPopupBoolean =>
-        "SDL.window.create.constrain_popup"u8;
+        "SDL.window.create.constrain_popup\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateFocusableBoolean =>
-        "SDL.window.create.focusable"u8;
+        "SDL.window.create.focusable\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateExternalGraphicsContextBoolean =>
-        "SDL.window.create.external_graphics_context"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateFlagsNumber => "SDL.window.create.flags"u8;
+        "SDL.window.create.external_graphics_context\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateFlagsNumber => "SDL.window.create.flags\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateFullscreenBoolean =>
-        "SDL.window.create.fullscreen"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateHeightNumber => "SDL.window.create.height"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateHiddenBoolean => "SDL.window.create.hidden"u8;
+        "SDL.window.create.fullscreen\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateHeightNumber => "SDL.window.create.height\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateHiddenBoolean =>
+        "SDL.window.create.hidden\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateHighPixelDensityBoolean =>
-        "SDL.window.create.high_pixel_density"u8;
+        "SDL.window.create.high_pixel_density\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateMaximizedBoolean =>
-        "SDL.window.create.maximized"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateMenuBoolean => "SDL.window.create.menu"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateMetalBoolean => "SDL.window.create.metal"u8;
+        "SDL.window.create.maximized\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateMenuBoolean => "SDL.window.create.menu\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateMetalBoolean => "SDL.window.create.metal\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateMinimizedBoolean =>
-        "SDL.window.create.minimized"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateModalBoolean => "SDL.window.create.modal"u8;
+        "SDL.window.create.minimized\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateModalBoolean => "SDL.window.create.modal\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateMouseGrabbedBoolean =>
-        "SDL.window.create.mouse_grabbed"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateOpenGLBoolean => "SDL.window.create.opengl"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateParentPointer => "SDL.window.create.parent"u8;
+        "SDL.window.create.mouse_grabbed\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateOpenGLBoolean =>
+        "SDL.window.create.opengl\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateParentPointer =>
+        "SDL.window.create.parent\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateResizableBoolean =>
-        "SDL.window.create.resizable"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateTitleString => "SDL.window.create.title"u8;
+        "SDL.window.create.resizable\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateTitleString => "SDL.window.create.title\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateTransparentBoolean =>
-        "SDL.window.create.transparent"u8;
+        "SDL.window.create.transparent\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateTooltipBoolean =>
-        "SDL.window.create.tooltip"u8;
+        "SDL.window.create.tooltip\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateUtilityBoolean =>
-        "SDL.window.create.utility"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateVulkanBoolean => "SDL.window.create.vulkan"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateWidthNumber => "SDL.window.create.width"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateXNumber => "SDL.window.create.x"u8;
-    public static ReadOnlySpan<byte> PropWindowCreateYNumber => "SDL.window.create.y"u8;
+        "SDL.window.create.utility\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateVulkanBoolean =>
+        "SDL.window.create.vulkan\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateWidthNumber => "SDL.window.create.width\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateXNumber => "SDL.window.create.x\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCreateYNumber => "SDL.window.create.y\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateCocoaWindowPointer =>
-        "SDL.window.create.cocoa.window"u8;
+        "SDL.window.create.cocoa.window\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateCocoaViewPointer =>
-        "SDL.window.create.cocoa.view"u8;
+        "SDL.window.create.cocoa.view\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateWindowScenePointer =>
-        "SDL.window.create.uikit.windowscene"u8;
+        "SDL.window.create.uikit.windowscene\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateWaylandSurfaceRoleCustomBoolean =>
-        "SDL.window.create.wayland.surface_role_custom"u8;
+        "SDL.window.create.wayland.surface_role_custom\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateWaylandCreateEglWindowBoolean =>
-        "SDL.window.create.wayland.create_egl_window"u8;
+        "SDL.window.create.wayland.create_egl_window\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateWaylandWLSurfacePointer =>
-        "SDL.window.create.wayland.wl_surface"u8;
+        "SDL.window.create.wayland.wl_surface\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateWin32HwndPointer =>
-        "SDL.window.create.win32.hwnd"u8;
+        "SDL.window.create.win32.hwnd\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateWin32PixelFormatHwndPointer =>
-        "SDL.window.create.win32.pixel_format_hwnd"u8;
+        "SDL.window.create.win32.pixel_format_hwnd\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateX11WindowNumber =>
-        "SDL.window.create.x11.window"u8;
+        "SDL.window.create.x11.window\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateEmscriptenCanvasIDString =>
-        "SDL.window.create.emscripten.canvas_id"u8;
+        "SDL.window.create.emscripten.canvas_id\0"u8;
     public static ReadOnlySpan<byte> PropWindowCreateEmscriptenKeyboardElementString =>
-        "SDL.window.create.emscripten.keyboard_element"u8;
+        "SDL.window.create.emscripten.keyboard_element\0"u8;
 
-    public static ReadOnlySpan<byte> PropWindowShapePointer => "SDL.window.shape"u8;
-    public static ReadOnlySpan<byte> PropWindowHdrEnabledBoolean => "SDL.window.HDR_enabled"u8;
-    public static ReadOnlySpan<byte> PropWindowSdrWhiteLevelFloat => "SDL.window.SDR_white_level"u8;
-    public static ReadOnlySpan<byte> PropWindowHdrHeadroomFloat => "SDL.window.HDR_headroom"u8;
+    public static ReadOnlySpan<byte> PropWindowShapePointer => "SDL.window.shape\0"u8;
+    public static ReadOnlySpan<byte> PropWindowHdrEnabledBoolean => "SDL.window.HDR_enabled\0"u8;
+    public static ReadOnlySpan<byte> PropWindowSdrWhiteLevelFloat =>
+        "SDL.window.SDR_white_level\0"u8;
+    public static ReadOnlySpan<byte> PropWindowHdrHeadroomFloat => "SDL.window.HDR_headroom\0"u8;
     public static ReadOnlySpan<byte> PropWindowAndroidWIndowPointer =>
-        "SDL.window.android.window"u8;
+        "SDL.window.android.window\0"u8;
     public static ReadOnlySpan<byte> PropWindowAndroidSurfacePointer =>
-        "SDL.window.android.surface"u8;
-    public static ReadOnlySpan<byte> PropWindowUIKitWindowPointer => "SDL.window.uikit.window"u8;
+        "SDL.window.android.surface\0"u8;
+    public static ReadOnlySpan<byte> PropWindowUIKitWindowPointer => "SDL.window.uikit.window\0"u8;
     public static ReadOnlySpan<byte> PropWindowUIKitMetalViewTagNumber =>
-        "SDL.window.uikit.metal_view_tag"u8;
+        "SDL.window.uikit.metal_view_tag\0"u8;
     public static ReadOnlySpan<byte> PropWindowUIKitOpenGLFrameBufferNumber =>
-        "SDL.window.uikit.opengl.framebuffer"u8;
+        "SDL.window.uikit.opengl.framebuffer\0"u8;
     public static ReadOnlySpan<byte> PropWindowUIKitOpenGLRenderBufferNumber =>
-        "SDL.window.uikit.opengl.renderbuffer"u8;
+        "SDL.window.uikit.opengl.renderbuffer\0"u8;
     public static ReadOnlySpan<byte> PropWindowUIKitOpenGLResolveFrameBufferNumber =>
-        "SDL.window.uikit.opengl.resolve_framebuffer"u8;
+        "SDL.window.uikit.opengl.resolve_framebuffer\0"u8;
     public static ReadOnlySpan<byte> PropWindowKmsDrmDeviceIndexNumber =>
-        "SDL.window.kmsdrm.dev_index"u8;
-    public static ReadOnlySpan<byte> PropWindowKmsDrmDrmFDNumber => "SDL.window.kmsdrm.drm_fd"u8;
+        "SDL.window.kmsdrm.dev_index\0"u8;
+    public static ReadOnlySpan<byte> PropWindowKmsDrmDrmFDNumber => "SDL.window.kmsdrm.drm_fd\0"u8;
     public static ReadOnlySpan<byte> PropWindowKmsDrmGbmDevicePointer =>
-        "SDL.window.kmsdrm.gbm_dev"u8;
-    public static ReadOnlySpan<byte> PropWindowCocoaWindowPointer => "SDL.window.cocoa.window"u8;
+        "SDL.window.kmsdrm.gbm_dev\0"u8;
+    public static ReadOnlySpan<byte> PropWindowCocoaWindowPointer => "SDL.window.cocoa.window\0"u8;
     public static ReadOnlySpan<byte> PropWindowCocoaMetalViewTagNumber =>
-        "SDL.window.cocoa.metal_view_tag"u8;
+        "SDL.window.cocoa.metal_view_tag\0"u8;
     public static ReadOnlySpan<byte> PropWindowOpenVROverlayIDNumber =>
-        "SDL.window.openvr.overlay_id"u8;
+        "SDL.window.openvr.overlay_id\0"u8;
     public static ReadOnlySpan<byte> PropWindowVivanteDisplayPointer =>
-        "SDL.window.vivante.display"u8;
+        "SDL.window.vivante.display\0"u8;
     public static ReadOnlySpan<byte> PropWindowVivanteWindowPointer =>
-        "SDL.window.vivante.window"u8;
+        "SDL.window.vivante.window\0"u8;
     public static ReadOnlySpan<byte> PropWindowVivanteSurfacePointer =>
-        "SDL.window.vivante.surface"u8;
-    public static ReadOnlySpan<byte> PropWindowWin32HwndPointer => "SDL.window.win32.hwnd"u8;
-    public static ReadOnlySpan<byte> PropWindowWin32HdcPointer => "SDL.window.win32.hdc"u8;
+        "SDL.window.vivante.surface\0"u8;
+    public static ReadOnlySpan<byte> PropWindowWin32HwndPointer => "SDL.window.win32.hwnd\0"u8;
+    public static ReadOnlySpan<byte> PropWindowWin32HdcPointer => "SDL.window.win32.hdc\0"u8;
     public static ReadOnlySpan<byte> PropWindowWin32InstancePointer =>
-        "SDL.window.win32.instance"u8;
+        "SDL.window.win32.instance\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandDisplayPointer =>
-        "SDL.window.wayland.display"u8;
+        "SDL.window.wayland.display\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandSurfacePointer =>
-        "SDL.window.wayland.surface"u8;
+        "SDL.window.wayland.surface\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandViewportPointer =>
-        "SDL.window.wayland.viewport"u8;
+        "SDL.window.wayland.viewport\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandEglWindowPointer =>
-        "SDL.window.wayland.egl_window"u8;
+        "SDL.window.wayland.egl_window\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandXdgSurfacePointer =>
-        "SDL.window.wayland.xdg_surface"u8;
+        "SDL.window.wayland.xdg_surface\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandXdgToplevelPointer =>
-        "SDL.window.wayland.xdg_toplevel"u8;
+        "SDL.window.wayland.xdg_toplevel\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandXdgToplevelExportHandleString =>
-        "SDL.window.wayland.xdg_toplevel_export_handle"u8;
+        "SDL.window.wayland.xdg_toplevel_export_handle\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandXdgPopupPointer =>
-        "SDL.window.wayland.xdg_popup"u8;
+        "SDL.window.wayland.xdg_popup\0"u8;
     public static ReadOnlySpan<byte> PropWindowWaylandXdgPositionerPointer =>
-        "SDL.window.wayland.xdg_positioner"u8;
-    public static ReadOnlySpan<byte> PropWindowX11DisplayPointer => "SDL.window.x11.display"u8;
-    public static ReadOnlySpan<byte> PropWindowX11ScreenNumber => "SDL.window.x11.screen"u8;
-    public static ReadOnlySpan<byte> PropWindowX11WindowNumber => "SDL.window.x11.window"u8;
+        "SDL.window.wayland.xdg_positioner\0"u8;
+    public static ReadOnlySpan<byte> PropWindowX11DisplayPointer => "SDL.window.x11.display\0"u8;
+    public static ReadOnlySpan<byte> PropWindowX11ScreenNumber => "SDL.window.x11.screen\0"u8;
+    public static ReadOnlySpan<byte> PropWindowX11WindowNumber => "SDL.window.x11.window\0"u8;
     public static ReadOnlySpan<byte> PropWindowEmscriptenCanvasIDString =>
-        "SDL.window.emscripten.canvas_id"u8;
+        "SDL.window.emscripten.canvas_id\0"u8;
     public static ReadOnlySpan<byte> PropWindowEmscriptenKeyboardElementString =>
-        "SDL.window.emscripten.keyboard_element"u8;
+        "SDL.window.emscripten.keyboard_element\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetNumVideoDrivers")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

@@ -14,20 +14,20 @@ namespace CanDoUrco.Sdl3;
 public static unsafe partial class Sdl
 {
     public static ReadOnlySpan<byte> PropIOStreamWindowsHandlePointer =>
-        "SDL.iostream.windows.handle"u8;
-    public static ReadOnlySpan<byte> PropIOStreamStdIOFilePointer => "SDL.iostream.stdio.file"u8;
+        "SDL.iostream.windows.handle\0"u8;
+    public static ReadOnlySpan<byte> PropIOStreamStdIOFilePointer => "SDL.iostream.stdio.file\0"u8;
     public static ReadOnlySpan<byte> PropIOStreamFileDescriptorNumber =>
-        "SDL.iostream.file_descriptor"u8;
+        "SDL.iostream.file_descriptor\0"u8;
     public static ReadOnlySpan<byte> PropIOStreamAndroidAAssetPointer =>
-        "SDL.iostream.android.aasset"u8;
-    public static ReadOnlySpan<byte> PropIOStreamMemoryPointer => "SDL.iostream.memory.base"u8;
-    public static ReadOnlySpan<byte> PropIOStreamMemorySizeNumber => "SDL.iostream.memory.size"u8;
+        "SDL.iostream.android.aasset\0"u8;
+    public static ReadOnlySpan<byte> PropIOStreamMemoryPointer => "SDL.iostream.memory.base\0"u8;
+    public static ReadOnlySpan<byte> PropIOStreamMemorySizeNumber => "SDL.iostream.memory.size\0"u8;
     public static ReadOnlySpan<byte> PropIOStreamMemoryFreeFuncPointer =>
-        "SDL.iostream.memory.free"u8;
+        "SDL.iostream.memory.free\0"u8;
     public static ReadOnlySpan<byte> PropIOStreamDynamicMemoryPointer =>
-        "SDL.iostream.dynamic.memory"u8;
+        "SDL.iostream.dynamic.memory\0"u8;
     public static ReadOnlySpan<byte> PropIOStreamDynamicChunkSizeNumber =>
-        "SDL.iostream.dynamic.chunksize"u8;
+        "SDL.iostream.dynamic.chunksize\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_IOFromFile")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

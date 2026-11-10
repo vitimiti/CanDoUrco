@@ -16,13 +16,14 @@ public static unsafe partial class Sdl
     public const short JoystickAxisMax = 32767;
     public const short JoystickAxisMin = -32768;
 
-    public static ReadOnlySpan<byte> PropJoystickCapMonoLedBoolean => "SDL.joystick.cap.mono_led"u8;
-    public static ReadOnlySpan<byte> PropJoystickCapRgbLedBoolean => "SDL.joystick.cap.rgb_led"u8;
+    public static ReadOnlySpan<byte> PropJoystickCapMonoLedBoolean =>
+        "SDL.joystick.cap.mono_led\0"u8;
+    public static ReadOnlySpan<byte> PropJoystickCapRgbLedBoolean => "SDL.joystick.cap.rgb_led\0"u8;
     public static ReadOnlySpan<byte> PropJoystickCapPlayerLedBoolean =>
-        "SDL.joystick.cap.player_led"u8;
-    public static ReadOnlySpan<byte> PropJoystickCapRumbleBoolean => "SDL.joystick.cap.rumble"u8;
+        "SDL.joystick.cap.player_led\0"u8;
+    public static ReadOnlySpan<byte> PropJoystickCapRumbleBoolean => "SDL.joystick.cap.rumble\0"u8;
     public static ReadOnlySpan<byte> PropJoystickCapTriggerRumbleBoolean =>
-        "SDL.joystick.cap.trigger_rumble"u8;
+        "SDL.joystick.cap.trigger_rumble\0"u8;
 
     public static Hat HatCentered => 0x00;
     public static Hat HatUp => 0x01;

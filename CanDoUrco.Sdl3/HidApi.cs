@@ -14,7 +14,7 @@ namespace CanDoUrco.Sdl3;
 public static unsafe partial class Sdl
 {
     public static ReadOnlySpan<byte> PropHidApiLibUsbDeviceHandlePointer =>
-        "SDL.hidapi.libusb.device.handle"u8;
+        "SDL.hidapi.libusb.device.handle\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_init")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

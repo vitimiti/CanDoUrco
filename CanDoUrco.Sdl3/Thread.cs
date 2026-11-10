@@ -14,12 +14,12 @@ namespace CanDoUrco.Sdl3;
 public static unsafe partial class Sdl
 {
     public static ReadOnlySpan<byte> PropThreadCreateEntryFunctionPointer =>
-        "SDL.thread.create.entry_function"u8;
-    public static ReadOnlySpan<byte> PropThreadCreateNameString => "SDL.thread.create.name"u8;
+        "SDL.thread.create.entry_function\0"u8;
+    public static ReadOnlySpan<byte> PropThreadCreateNameString => "SDL.thread.create.name\0"u8;
     public static ReadOnlySpan<byte> PropThreadCreateUserdataPointer =>
-        "SDL.thread.create.userdata"u8;
+        "SDL.thread.create.userdata\0"u8;
     public static ReadOnlySpan<byte> PropThreadCreateStackSizeNumber =>
-        "SDL.thread.create.stacksize"u8;
+        "SDL.thread.create.stacksize\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreateThread")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

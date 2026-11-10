@@ -43,88 +43,88 @@ public static unsafe partial class Sdl
     public static GpuColorComponentFlags GpuColorComponentA => 1 << 3;
 
     public static ReadOnlySpan<byte> PropGpuDeviceCreateDebugModeBoolean =>
-        "SDL.gpu.device.create.debugmode"u8;
+        "SDL.gpu.device.create.debugmode\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreatePreferLowPowerBoolean =>
-        "SDL.gpu.device.create.preferlowpoer"u8;
+        "SDL.gpu.device.create.preferlowpoer\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateVerboseBoolean =>
-        "SDL.gpu.device.create.verbose"u8;
+        "SDL.gpu.device.create.verbose\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateNameString =>
-        "SDL.gpu.device.create.name"u8;
+        "SDL.gpu.device.create.name\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateFreatureClipDistanceBoolean =>
-        "SDL.gpu.device.create.feature.clip_distance"u8;
+        "SDL.gpu.device.create.feature.clip_distance\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateFeatureDepthCalmpingBoolean =>
-        "SDL.gpu.device.create.feature.depth_clamping"u8;
+        "SDL.gpu.device.create.feature.depth_clamping\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateFeatureIndirectDrawFirstInstanceBoolean =>
-        "SDL.gpu.device.create.feature.indirect_draw_first_instance"u8;
+        "SDL.gpu.device.create.feature.indirect_draw_first_instance\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateFeatureAnisotropyBoolean =>
-        "SDL.gpu.device.create.feature.anisotropy"u8;
+        "SDL.gpu.device.create.feature.anisotropy\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateShadersPrivateBoolean =>
-        "SDL.gpu.device.create.shaders.private"u8;
+        "SDL.gpu.device.create.shaders.private\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateShadersSpirvBoolean =>
-        "SDL.gpu.device.create.shaders.spirv"u8;
+        "SDL.gpu.device.create.shaders.spirv\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateShadersDxbcBoolean =>
-        "SDL.gpu.device.create.shaders.dxbc"u8;
+        "SDL.gpu.device.create.shaders.dxbc\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateShadersDxilBoolean =>
-        "SDL.gpu.device.create.shaders.dxil"u8;
+        "SDL.gpu.device.create.shaders.dxil\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateShadersMslBoolean =>
-        "SDL.gpu.device.create.shaders.msl"u8;
+        "SDL.gpu.device.create.shaders.msl\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateShadersMetalLibBoolean =>
-        "SDL.gpu.device.create.shaders.metallib"u8;
+        "SDL.gpu.device.create.shaders.metallib\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateD3D12AllowFewerResourceSlotsBoolean =>
-        "SDL.gpu.device.create.d3d12.allowtier1resourcebinding"u8;
+        "SDL.gpu.device.create.d3d12.allowtier1resourcebinding\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateD3D12SemanticNameString =>
-        "SDL.gpu.device.create.d3d12.semantic"u8;
+        "SDL.gpu.device.create.d3d12.semantic\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateD3D12AgilitySdkVersionNumber =>
-        "SDL.gpu.device.create.d3d12.agility_sdk_version"u8;
+        "SDL.gpu.device.create.d3d12.agility_sdk_version\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateD3D12AgilitySdkPathString =>
-        "SDL.gpu.device.create.d3d12.agility_sdk_path"u8;
+        "SDL.gpu.device.create.d3d12.agility_sdk_path\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateVulkanRequireHardwareAccelerationBoolean =>
-        "SDL.gpu.device.create.vulkan.requirehardwareacceleration"u8;
+        "SDL.gpu.device.create.vulkan.requirehardwareacceleration\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateVulkanOptionsPointer =>
-        "SDL.gpu.device.create.vulkan.options"u8;
+        "SDL.gpu.device.create.vulkan.options\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceCreateMetalAllowMacFamily1Boolean =>
-        "SDL.gpu.device.create.metal.allowmacfamily1"u8;
+        "SDL.gpu.device.create.metal.allowmacfamily1\0"u8;
 
-    public static ReadOnlySpan<byte> PropGpuDeviceNameString => "SDL.gpu.device.name"u8;
+    public static ReadOnlySpan<byte> PropGpuDeviceNameString => "SDL.gpu.device.name\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceDriverNameString =>
-        "SDL.gpu.device.driver_name"u8;
+        "SDL.gpu.device.driver_name\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceDriverVersionString =>
-        "SDL.gpu.device.driver_version"u8;
+        "SDL.gpu.device.driver_version\0"u8;
     public static ReadOnlySpan<byte> PropGpuDeviceDriverInfoString =>
-        "SDL.gpu.device.driver_info"u8;
+        "SDL.gpu.device.driver_info\0"u8;
 
     public static ReadOnlySpan<byte> PropGpuComputePipelineCreateNameString =>
-        "SDL.gpu.computepipeline.create.name"u8;
+        "SDL.gpu.computepipeline.create.name\0"u8;
 
     public static ReadOnlySpan<byte> PropGpuGraphicsPipelineCreateNameString =>
-        "SDL.gpu.graphicspipeline.create.name"u8;
+        "SDL.gpu.graphicspipeline.create.name\0"u8;
 
     public static ReadOnlySpan<byte> PropGpuSamplerCreateNameString =>
-        "SDL.gpu.sampler.create.name"u8;
+        "SDL.gpu.sampler.create.name\0"u8;
 
     public static ReadOnlySpan<byte> PropGpuShaderCreateNameString =>
-        "SDL.gpu.shader.create.name"u8;
+        "SDL.gpu.shader.create.name\0"u8;
 
     public static ReadOnlySpan<byte> PropGpuTextureCreateD3D12ClearRFloat =>
-        "SDL.gpu.texture.create.d3d12.clear.r"u8;
+        "SDL.gpu.texture.create.d3d12.clear.r\0"u8;
     public static ReadOnlySpan<byte> PropGpuTextureCreateD3D12ClearGFloat =>
-        "SDL.gpu.texture.create.d3d12.clear.g"u8;
+        "SDL.gpu.texture.create.d3d12.clear.g\0"u8;
     public static ReadOnlySpan<byte> PropGpuTextureCreateD3D12ClearBFloat =>
-        "SDL.gpu.texture.create.d3d12.clear.b"u8;
+        "SDL.gpu.texture.create.d3d12.clear.b\0"u8;
     public static ReadOnlySpan<byte> PropGpuTextureCreateD3D12ClearAFloat =>
-        "SDL.gpu.texture.create.d3d12.clear.a"u8;
+        "SDL.gpu.texture.create.d3d12.clear.a\0"u8;
     public static ReadOnlySpan<byte> PropGpuTextureCreateD3D12ClearDepthFloat =>
-        "SDL.gpu.texture.create.d3d12.clear.depth"u8;
+        "SDL.gpu.texture.create.d3d12.clear.depth\0"u8;
     public static ReadOnlySpan<byte> PropGpuTextureCreateD3D12ClearStencilNumber =>
-        "SDL.gpu.texture.create.d3d12.clear.stencil"u8;
+        "SDL.gpu.texture.create.d3d12.clear.stencil\0"u8;
     public static ReadOnlySpan<byte> PropGpuTextureCreateNameString =>
-        "SDL.gpu.texture.create.name"u8;
+        "SDL.gpu.texture.create.name\0"u8;
 
     public static ReadOnlySpan<byte> PropGpuBufferCreateNameString =>
-        "SDL.gpu.buffer.create.name"u8;
+        "SDL.gpu.buffer.create.name\0"u8;
 
     public static ReadOnlySpan<byte> PropGpuTransferBufferCreateNameString =>
-        "SDL.gpu.transferbuffer.create.name"u8;
+        "SDL.gpu.transferbuffer.create.name\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_GPUSupportsShaderFormats")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

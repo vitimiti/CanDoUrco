@@ -13,14 +13,14 @@ namespace CanDoUrco.Sdl3;
 
 public static unsafe partial class Sdl
 {
-    public static ReadOnlySpan<byte> PropTextInputTypeNumber => "SDL.textinput.type"u8;
+    public static ReadOnlySpan<byte> PropTextInputTypeNumber => "SDL.textinput.type\0"u8;
     public static ReadOnlySpan<byte> PropTextInputCapitalizationNumber =>
-        "SDL.textinput.capitalization"u8;
+        "SDL.textinput.capitalization\0"u8;
     public static ReadOnlySpan<byte> PropTextInputAutocorrectBoolean =>
-        "SDL.textinput.autocorrect"u8;
-    public static ReadOnlySpan<byte> PropTextInputMultilineBoolean => "SDL.textinput.multiline"u8;
+        "SDL.textinput.autocorrect\0"u8;
+    public static ReadOnlySpan<byte> PropTextInputMultilineBoolean => "SDL.textinput.multiline\0"u8;
     public static ReadOnlySpan<byte> PropTextInputAndroidInputTypeNumber =>
-        "SDL.textinput.android.inputtype"u8;
+        "SDL.textinput.android.inputtype\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_HasKeyboard")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

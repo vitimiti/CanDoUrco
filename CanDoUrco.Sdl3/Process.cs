@@ -13,34 +13,34 @@ namespace CanDoUrco.Sdl3;
 
 public static partial class Sdl
 {
-    public static ReadOnlySpan<byte> PropProcessCreateArgsPointer => "SDL.process.create.args"u8;
+    public static ReadOnlySpan<byte> PropProcessCreateArgsPointer => "SDL.process.create.args\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateEnvironmentPointer =>
-        "SDL.process.create.environment"u8;
+        "SDL.process.create.environment\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateWorkingDirectoryString =>
-        "SDL.process.create.working_directory"u8;
+        "SDL.process.create.working_directory\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateStdInNumber =>
-        "SDL.process.create.stdin_option"u8;
+        "SDL.process.create.stdin_option\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateStdInPointer =>
-        "SDL.process.create.stdin_source"u8;
+        "SDL.process.create.stdin_source\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateStdOutNumber =>
-        "SDL.process.create.stdout_option"u8;
+        "SDL.process.create.stdout_option\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateStdOutPointer =>
-        "SDL.process.create.stdout_source"u8;
+        "SDL.process.create.stdout_source\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateStdErrNumber =>
-        "SDL.process.create.stderr_option"u8;
+        "SDL.process.create.stderr_option\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateStdErrPointer =>
-        "SDL.process.create.stderr_source"u8;
+        "SDL.process.create.stderr_source\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateStdErrToStdOutBoolean =>
-        "SDL.process.create.stderr_to_stdout"u8;
+        "SDL.process.create.stderr_to_stdout\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateBackgroundBoolean =>
-        "SDL.process.create.background"u8;
+        "SDL.process.create.background\0"u8;
     public static ReadOnlySpan<byte> PropProcessCreateCmdLineString =>
-        "SDL.process.create.cmdline"u8;
-    public static ReadOnlySpan<byte> PropProcessPidNumber => "SDL.process.pid"u8;
-    public static ReadOnlySpan<byte> PropProcessStdInPointer => "SDL.process.stdin"u8;
-    public static ReadOnlySpan<byte> PropProcessStdOutPointer => "SDL.process.stdout"u8;
-    public static ReadOnlySpan<byte> PropProcessStdErrPointer => "SDL.process.stderr"u8;
-    public static ReadOnlySpan<byte> PropProcessBackgroundBoolean => "SDL.process.background"u8;
+        "SDL.process.create.cmdline\0"u8;
+    public static ReadOnlySpan<byte> PropProcessPidNumber => "SDL.process.pid\0"u8;
+    public static ReadOnlySpan<byte> PropProcessStdInPointer => "SDL.process.stdin\0"u8;
+    public static ReadOnlySpan<byte> PropProcessStdOutPointer => "SDL.process.stdout\0"u8;
+    public static ReadOnlySpan<byte> PropProcessStdErrPointer => "SDL.process.stderr\0"u8;
+    public static ReadOnlySpan<byte> PropProcessBackgroundBoolean => "SDL.process.background\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_CreateProcess")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

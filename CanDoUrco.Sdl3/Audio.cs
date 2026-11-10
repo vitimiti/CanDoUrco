@@ -35,7 +35,7 @@ public static unsafe partial class Sdl
     public static AudioDeviceID AudioDeviceDefaultRecording => 0xFFFF_FFFEU;
 
     public static ReadOnlySpan<byte> PropAudioStreamAutoCleanupBoolean =>
-        "SDL.audiostream.auto_cleanup"u8;
+        "SDL.audiostream.auto_cleanup\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetNumAudioDrivers")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

@@ -13,14 +13,14 @@ namespace CanDoUrco.Sdl3;
 
 public static unsafe partial class Sdl
 {
-    public static ReadOnlySpan<byte> PropFileDialogFiltersPointer => "SDL.filedialog.filters"u8;
-    public static ReadOnlySpan<byte> PropFileDialogNFiltersNumber => "SDL.filedialog.nfilters"u8;
-    public static ReadOnlySpan<byte> PropFileDialogWindowPointer => "SDL.filedialog.window"u8;
-    public static ReadOnlySpan<byte> PropFileDialogLocationString => "SDL.filedialog.location"u8;
-    public static ReadOnlySpan<byte> PropFileDialogManyBoolean => "SDL.filedialog.many"u8;
-    public static ReadOnlySpan<byte> PropFileDialogTitleString => "SDL.filedialog.title"u8;
-    public static ReadOnlySpan<byte> PropFileDialogAcceptString => "SDL.filedialog.accept"u8;
-    public static ReadOnlySpan<byte> PropFileDialogCancelString => "SDL.filedialog.cancel"u8;
+    public static ReadOnlySpan<byte> PropFileDialogFiltersPointer => "SDL.filedialog.filters\0"u8;
+    public static ReadOnlySpan<byte> PropFileDialogNFiltersNumber => "SDL.filedialog.nfilters\0"u8;
+    public static ReadOnlySpan<byte> PropFileDialogWindowPointer => "SDL.filedialog.window\0"u8;
+    public static ReadOnlySpan<byte> PropFileDialogLocationString => "SDL.filedialog.location\0"u8;
+    public static ReadOnlySpan<byte> PropFileDialogManyBoolean => "SDL.filedialog.many\0"u8;
+    public static ReadOnlySpan<byte> PropFileDialogTitleString => "SDL.filedialog.title\0"u8;
+    public static ReadOnlySpan<byte> PropFileDialogAcceptString => "SDL.filedialog.accept\0"u8;
+    public static ReadOnlySpan<byte> PropFileDialogCancelString => "SDL.filedialog.cancel\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_ShowOpenFileDialog")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

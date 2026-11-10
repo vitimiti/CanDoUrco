@@ -13,7 +13,7 @@ namespace CanDoUrco.Sdl3;
 
 public static unsafe partial class Sdl
 {
-    public static ReadOnlySpan<byte> PropNameString => "SDL.name"u8;
+    public static ReadOnlySpan<byte> PropNameString => "SDL.name\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetGlobalProperties")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]

@@ -14,12 +14,12 @@ namespace CanDoUrco.Sdl3;
 public static unsafe partial class Sdl
 {
     public static ReadOnlySpan<byte> PropSurfaceSdrWhitePointFloat =>
-        "SDL.surface.SDR_white_point"u8;
-    public static ReadOnlySpan<byte> PropSurfaceHdrHeadroomFloat => "SDL.surface.HDR_headroom"u8;
-    public static ReadOnlySpan<byte> PropSurfaceTonemapOperatorString => "SDL.surface.tonemap"u8;
-    public static ReadOnlySpan<byte> PropSurfaceHotspotXNumber => "SDL.surface.hotspot.x"u8;
-    public static ReadOnlySpan<byte> PropSurfaceHotspotYNumber => "SDL.surface.hotspot.y"u8;
-    public static ReadOnlySpan<byte> PropSurfaceRotationFloat => "SDL.surface.rotation"u8;
+        "SDL.surface.SDR_white_point\0"u8;
+    public static ReadOnlySpan<byte> PropSurfaceHdrHeadroomFloat => "SDL.surface.HDR_headroom\0"u8;
+    public static ReadOnlySpan<byte> PropSurfaceTonemapOperatorString => "SDL.surface.tonemap\0"u8;
+    public static ReadOnlySpan<byte> PropSurfaceHotspotXNumber => "SDL.surface.hotspot.x\0"u8;
+    public static ReadOnlySpan<byte> PropSurfaceHotspotYNumber => "SDL.surface.hotspot.y\0"u8;
+    public static ReadOnlySpan<byte> PropSurfaceRotationFloat => "SDL.surface.rotation\0"u8;
 
     public static SurfaceFlags SurfacePreAllocated => 0x0000_0001U;
     public static SurfaceFlags SurfaceLockNeeded => 0x0000_0002U;

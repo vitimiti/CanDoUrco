@@ -17,186 +17,194 @@ public static unsafe partial class Sdl
     public const int RendererVSyncAdaptive = -1;
     public const int DebugTextFontCharacterSize = 8;
 
-    public static ReadOnlySpan<byte> SoftwareRender => "software"u8;
-    public static ReadOnlySpan<byte> GpuRenderer => "gpu"u8;
+    public static ReadOnlySpan<byte> SoftwareRender => "software\0"u8;
+    public static ReadOnlySpan<byte> GpuRenderer => "gpu\0"u8;
 
-    public static ReadOnlySpan<byte> PropRendererCreateNameString => "SDL.renderer.create.name"u8;
+    public static ReadOnlySpan<byte> PropRendererCreateNameString => "SDL.renderer.create.name\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateWindowPointer =>
-        "SDL.renderer.create.window"u8;
+        "SDL.renderer.create.window\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateSurfacePointer =>
-        "SDL.renderer.create.surface"u8;
+        "SDL.renderer.create.surface\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateOutputColorspaceNumber =>
-        "SDL.renderer.create.output_colorspace"u8;
+        "SDL.renderer.create.output_colorspace\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreatePresentVSyncNumber =>
-        "SDL.renderer.create.present_vsync"u8;
+        "SDL.renderer.create.present_vsync\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateGpuDevicePointer =>
-        "SDL.renderer.create.gpu.device"u8;
+        "SDL.renderer.create.gpu.device\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateGpuShadersSpirvBoolean =>
-        "SDL.renderer.create.gpu.shaders_spirv"u8;
+        "SDL.renderer.create.gpu.shaders_spirv\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateGpuShadersDxilBoolean =>
-        "SDL.renderer.create.gpu.shaders_dxil"u8;
+        "SDL.renderer.create.gpu.shaders_dxil\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateGpuShadersMslBoolean =>
-        "SDL.renderer.create.gpu.shaders_msl"u8;
+        "SDL.renderer.create.gpu.shaders_msl\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateVulkanInstancePointer =>
-        "SDL.renderer.create.vulkan.instance"u8;
+        "SDL.renderer.create.vulkan.instance\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateVulkanSurfaceNumber =>
-        "SDL.renderer.create.vulkan.surface"u8;
+        "SDL.renderer.create.vulkan.surface\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateVulkanPhysicalDevicePointer =>
-        "SDL.renderer.create.vulkan.physical_device"u8;
+        "SDL.renderer.create.vulkan.physical_device\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateVulkanDevicePointer =>
-        "SDL.renderer.create.vulkan.device"u8;
+        "SDL.renderer.create.vulkan.device\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateVulkanGraphicsQueueFamilyIndexNumber =>
-        "SDL.renderer.create.vulkan.graphics_queue_family_index"u8;
+        "SDL.renderer.create.vulkan.graphics_queue_family_index\0"u8;
     public static ReadOnlySpan<byte> PropRendererCreateVulkanPresentQueueFamilyIndexNumber =>
-        "SDL.renderer.create.vulkan.present_queue_family_index"u8;
+        "SDL.renderer.create.vulkan.present_queue_family_index\0"u8;
 
-    public static ReadOnlySpan<byte> PropRendererNameString => "SDL.renderer.name"u8;
-    public static ReadOnlySpan<byte> PropRendererWindowPointer => "SDL.renderer.window"u8;
-    public static ReadOnlySpan<byte> PropRendererSurfacePointer => "SDL.renderer.surface"u8;
-    public static ReadOnlySpan<byte> PropRendererVSyncNumber => "SDL.renderer.vsync"u8;
+    public static ReadOnlySpan<byte> PropRendererNameString => "SDL.renderer.name\0"u8;
+    public static ReadOnlySpan<byte> PropRendererWindowPointer => "SDL.renderer.window\0"u8;
+    public static ReadOnlySpan<byte> PropRendererSurfacePointer => "SDL.renderer.surface\0"u8;
+    public static ReadOnlySpan<byte> PropRendererVSyncNumber => "SDL.renderer.vsync\0"u8;
     public static ReadOnlySpan<byte> PropRendererMaxTextureSizeNumber =>
-        "SDL.renderer.max_texture_size"u8;
+        "SDL.renderer.max_texture_size\0"u8;
     public static ReadOnlySpan<byte> PropRendererTextureFormatsPointer =>
-        "SDL.renderer.texture_formats"u8;
+        "SDL.renderer.texture_formats\0"u8;
     public static ReadOnlySpan<byte> PropRendererTextureWrappingBoolean =>
-        "SDL.renderer.texture_wrapping"u8;
+        "SDL.renderer.texture_wrapping\0"u8;
     public static ReadOnlySpan<byte> PropRendererOutputColorspaceNumber =>
-        "SDL.renderer.output_colorspace"u8;
-    public static ReadOnlySpan<byte> PropRendererHdrEnabledBoolean => "SDL.renderer.HDR_enabled"u8;
+        "SDL.renderer.output_colorspace\0"u8;
+    public static ReadOnlySpan<byte> PropRendererHdrEnabledBoolean =>
+        "SDL.renderer.HDR_enabled\0"u8;
     public static ReadOnlySpan<byte> PropRendererSdrWhitePointFloat =>
-        "SDL.renderer.SDR_white_point"u8;
-    public static ReadOnlySpan<byte> PropRendererHdrHeadroomFloat => "SDL.renderer.HDR_headroom"u8;
-    public static ReadOnlySpan<byte> PropRendererD3D9DevicePointer => "SDL.renderer.d3d9.device"u8;
+        "SDL.renderer.SDR_white_point\0"u8;
+    public static ReadOnlySpan<byte> PropRendererHdrHeadroomFloat =>
+        "SDL.renderer.HDR_headroom\0"u8;
+    public static ReadOnlySpan<byte> PropRendererD3D9DevicePointer =>
+        "SDL.renderer.d3d9.device\0"u8;
     public static ReadOnlySpan<byte> PropRendererD3D11DevicePointer =>
-        "SDL.renderer.d3d11.device"u8;
+        "SDL.renderer.d3d11.device\0"u8;
     public static ReadOnlySpan<byte> PropRendererD3D11SwapchainPointer =>
-        "SDL.renderer.d3d11.swap_chain"u8;
+        "SDL.renderer.d3d11.swap_chain\0"u8;
     public static ReadOnlySpan<byte> PropRendererD3D12DevicePointer =>
-        "SDL.renderer.d3d12.device"u8;
+        "SDL.renderer.d3d12.device\0"u8;
     public static ReadOnlySpan<byte> PropRendererD3D12SwapchainPointer =>
-        "SDL.renderer.d3d12.swap_chain"u8;
+        "SDL.renderer.d3d12.swap_chain\0"u8;
     public static ReadOnlySpan<byte> PropRendererD3D12CommandQueuePointer =>
-        "SDL.renderer.d3d12.command_queue"u8;
+        "SDL.renderer.d3d12.command_queue\0"u8;
     public static ReadOnlySpan<byte> PropRendererVulkanInstancePointer =>
-        "SDL.renderer.vulkan.instance"u8;
+        "SDL.renderer.vulkan.instance\0"u8;
     public static ReadOnlySpan<byte> PropRendererVulkanSurfaceNumber =>
-        "SDL.renderer.vulkan.surface"u8;
+        "SDL.renderer.vulkan.surface\0"u8;
     public static ReadOnlySpan<byte> PropRendererVulkanPhysicalDevicePointer =>
-        "SDL.renderer.vulkan.physical_device"u8;
+        "SDL.renderer.vulkan.physical_device\0"u8;
     public static ReadOnlySpan<byte> PropRendererVulkanDevicePointer =>
-        "SDL.renderer.vulkan.device"u8;
+        "SDL.renderer.vulkan.device\0"u8;
     public static ReadOnlySpan<byte> PropRendererVulkanGraphicsQueueFamilyIndexNumber =>
-        "SDL.renderer.vulkan.graphics_queue_family_index"u8;
+        "SDL.renderer.vulkan.graphics_queue_family_index\0"u8;
     public static ReadOnlySpan<byte> PropRendererVulkanPresentQueueFamilyIndexNumber =>
-        "SDL.renderer.vulkan.present_queue_family_index"u8;
+        "SDL.renderer.vulkan.present_queue_family_index\0"u8;
     public static ReadOnlySpan<byte> PropRendererVulkanSwapchainImageCountNumber =>
-        "SDL.renderer.vulkan.swapchain_image_count"u8;
-    public static ReadOnlySpan<byte> PropRendererGpuDevicePointer => "SDL.renderer.gpu.device"u8;
+        "SDL.renderer.vulkan.swapchain_image_count\0"u8;
+    public static ReadOnlySpan<byte> PropRendererGpuDevicePointer => "SDL.renderer.gpu.device\0"u8;
 
     public static ReadOnlySpan<byte> PropTextureCreateColorspaceNumber =>
-        "SDL.texture.create.colorspace"u8;
-    public static ReadOnlySpan<byte> PropTextureCreateFormatNumber => "SDL.texture.create.format"u8;
-    public static ReadOnlySpan<byte> PropTextureCreateAccessNumber => "SDL.texture.create.access"u8;
-    public static ReadOnlySpan<byte> PropTextureCreateWidthNumber => "SDL.texture.create.width"u8;
-    public static ReadOnlySpan<byte> PropTextureCreateHeightNumber => "SDL.texture.create.height"u8;
+        "SDL.texture.create.colorspace\0"u8;
+    public static ReadOnlySpan<byte> PropTextureCreateFormatNumber =>
+        "SDL.texture.create.format\0"u8;
+    public static ReadOnlySpan<byte> PropTextureCreateAccessNumber =>
+        "SDL.texture.create.access\0"u8;
+    public static ReadOnlySpan<byte> PropTextureCreateWidthNumber => "SDL.texture.create.width\0"u8;
+    public static ReadOnlySpan<byte> PropTextureCreateHeightNumber =>
+        "SDL.texture.create.height\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreatePalettePointer =>
-        "SDL.texture.create.palette"u8;
+        "SDL.texture.create.palette\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateSdrWhitePointFloat =>
-        "SDL.texture.create.SDR_white_point"u8;
+        "SDL.texture.create.SDR_white_point\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateHdrHeadroomFloat =>
-        "SDL.texture.create.HDR_headroom"u8;
+        "SDL.texture.create.HDR_headroom\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateD3D11TexturePointer =>
-        "SDL.texture.create.d3d11.texture"u8;
+        "SDL.texture.create.d3d11.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateD3D11TextureUPointer =>
-        "SDL.texture.create.d3d11.texture_u"u8;
+        "SDL.texture.create.d3d11.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateD3D11TextureVPointer =>
-        "SDL.texture.create.d3d11.texture_v"u8;
+        "SDL.texture.create.d3d11.texture_v\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateD3D12TexturePointer =>
-        "SDL.texture.create.d3d12.texture"u8;
+        "SDL.texture.create.d3d12.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateD3D12TextureUPointer =>
-        "SDL.texture.create.d3d12.texture_u"u8;
+        "SDL.texture.create.d3d12.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateD3D12TextureVPointer =>
-        "SDL.texture.create.d3d12.texture_v"u8;
+        "SDL.texture.create.d3d12.texture_v\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateMetalPixelBufferPointer =>
-        "SDL.texture.create.metal.pixelbuffer"u8;
+        "SDL.texture.create.metal.pixelbuffer\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateOpenGLTextureNumber =>
-        "SDL.texture.create.opengl.texture"u8;
+        "SDL.texture.create.opengl.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateOpenGLTextureUVNumber =>
-        "SDL.texture.create.opengl.texture_uv"u8;
+        "SDL.texture.create.opengl.texture_uv\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateOpenGLTextureUNumber =>
-        "SDL.texture.create.opengl.texture_u"u8;
+        "SDL.texture.create.opengl.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateOpenGLTextureVNumber =>
-        "SDL.texture.create.opengl.texture_v"u8;
+        "SDL.texture.create.opengl.texture_v\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateOpenGLES2TextureNumber =>
-        "SDL.texture.create.opengles2.texture"u8;
+        "SDL.texture.create.opengles2.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateOpenGLES2TextureUVNumber =>
-        "SDL.texture.create.opengles2.texture_uv"u8;
+        "SDL.texture.create.opengles2.texture_uv\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateOpenGLES2TextureUNumber =>
-        "SDL.texture.create.opengles2.texture_u"u8;
+        "SDL.texture.create.opengles2.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateOpenGLES2TextureVNumber =>
-        "SDL.texture.create.opengles2.texture_v"u8;
+        "SDL.texture.create.opengles2.texture_v\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateVulkanTextureNumber =>
-        "SDL.texture.create.vulkan.texture"u8;
+        "SDL.texture.create.vulkan.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateVulkanLayoutNumber =>
-        "SDL.texture.create.vulkan.layout"u8;
+        "SDL.texture.create.vulkan.layout\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateGpuTexturePointer =>
-        "SDL.texture.create.gpu.texture"u8;
+        "SDL.texture.create.gpu.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateGpuTextureUVPointer =>
-        "SDL.texture.create.gpu.texture_uv"u8;
+        "SDL.texture.create.gpu.texture_uv\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateGpuTextureUPointer =>
-        "SDL.texture.create.gpu.texture_u"u8;
+        "SDL.texture.create.gpu.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureCreateGpuTextureVPointer =>
-        "SDL.texture.create.gpu.texture_v"u8;
+        "SDL.texture.create.gpu.texture_v\0"u8;
 
-    public static ReadOnlySpan<byte> PropTextureColorspaceNumber => "SDL.texture.colorspace"u8;
-    public static ReadOnlySpan<byte> PropTextureFormatNumber => "SDL.texture.format"u8;
-    public static ReadOnlySpan<byte> PropTextureAccessNumber => "SDL.texture.access"u8;
-    public static ReadOnlySpan<byte> PropTextureWidthNumber => "SDL.texture.width"u8;
-    public static ReadOnlySpan<byte> PropTextureHeightNumber => "SDL.texture.height"u8;
+    public static ReadOnlySpan<byte> PropTextureColorspaceNumber => "SDL.texture.colorspace\0"u8;
+    public static ReadOnlySpan<byte> PropTextureFormatNumber => "SDL.texture.format\0"u8;
+    public static ReadOnlySpan<byte> PropTextureAccessNumber => "SDL.texture.access\0"u8;
+    public static ReadOnlySpan<byte> PropTextureWidthNumber => "SDL.texture.width\0"u8;
+    public static ReadOnlySpan<byte> PropTextureHeightNumber => "SDL.texture.height\0"u8;
     public static ReadOnlySpan<byte> PropTextureSdrWhitePointFloat =>
-        "SDL.texture.SDR_white_point"u8;
-    public static ReadOnlySpan<byte> PropTextureHdrHeadroomFloat => "SDL.texture.HDR_headroom"u8;
+        "SDL.texture.SDR_white_point\0"u8;
+    public static ReadOnlySpan<byte> PropTextureHdrHeadroomFloat => "SDL.texture.HDR_headroom\0"u8;
     public static ReadOnlySpan<byte> PropTextureD3D11TexturePointer =>
-        "SDL.texture.d3d11.texture"u8;
+        "SDL.texture.d3d11.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureD3D11TextureUPointer =>
-        "SDL.texture.d3d11.texture_u"u8;
+        "SDL.texture.d3d11.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureD3D11TextureVPointer =>
-        "SDL.texture.d3d11.texture_v"u8;
+        "SDL.texture.d3d11.texture_v\0"u8;
     public static ReadOnlySpan<byte> PropTextureD3D12TexturePointer =>
-        "SDL.texture.d3d12.texture"u8;
+        "SDL.texture.d3d12.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureD3D12TextureUPointer =>
-        "SDL.texture.d3d12.texture_u"u8;
+        "SDL.texture.d3d12.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureD3D12TextureVPointer =>
-        "SDL.texture.d3d12.texture_v"u8;
+        "SDL.texture.d3d12.texture_v\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGLTextureNumber =>
-        "SDL.texture.opengl.texture"u8;
+        "SDL.texture.opengl.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGLTextureUVNumber =>
-        "SDL.texture.opengl.texture_uv"u8;
+        "SDL.texture.opengl.texture_uv\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGLTextureUNumber =>
-        "SDL.texture.opengl.texture_u"u8;
+        "SDL.texture.opengl.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGLTextureVNumber =>
-        "SDL.texture.opengl.texture_v"u8;
+        "SDL.texture.opengl.texture_v\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGLTextureTargetNumber =>
-        "SDL.texture.opengl.target"u8;
-    public static ReadOnlySpan<byte> PropTextureOpenGLTexWFloat => "SDL.texture.opengl.tex_w"u8;
-    public static ReadOnlySpan<byte> PropTextureOpenGLTexHFloat => "SDL.texture.opengl.tex_h"u8;
+        "SDL.texture.opengl.target\0"u8;
+    public static ReadOnlySpan<byte> PropTextureOpenGLTexWFloat => "SDL.texture.opengl.tex_w\0"u8;
+    public static ReadOnlySpan<byte> PropTextureOpenGLTexHFloat => "SDL.texture.opengl.tex_h\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGles2TextureNumber =>
-        "SDL.texture.opengles2.texture"u8;
+        "SDL.texture.opengles2.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGles2TextureUVNumber =>
-        "SDL.texture.opengles2.texture_uv"u8;
+        "SDL.texture.opengles2.texture_uv\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGles2TextureUNumber =>
-        "SDL.texture.opengles2.texture_u"u8;
+        "SDL.texture.opengles2.texture_u\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGles2TextureVNumber =>
-        "SDL.texture.opengles2.texture_v"u8;
+        "SDL.texture.opengles2.texture_v\0"u8;
     public static ReadOnlySpan<byte> PropTextureOpenGles2TextureTargetNumber =>
-        "SDL.texture.opengles2.target"u8;
+        "SDL.texture.opengles2.target\0"u8;
     public static ReadOnlySpan<byte> PropTextureVulkanTextureNumber =>
-        "SDL.texture.vulkan.texture"u8;
-    public static ReadOnlySpan<byte> PropTextureGpuTexturePointer => "SDL.texture.gpu.texture"u8;
+        "SDL.texture.vulkan.texture\0"u8;
+    public static ReadOnlySpan<byte> PropTextureGpuTexturePointer => "SDL.texture.gpu.texture\0"u8;
     public static ReadOnlySpan<byte> PropTextureGpuTextureUVPointer =>
-        "SDL.texture.gpu.texture_uv"u8;
-    public static ReadOnlySpan<byte> PropTextureGpuTextureUPointer => "SDL.texture.gpu.texture_u"u8;
-    public static ReadOnlySpan<byte> PropTextureGpuTextureVPointer => "SDL.texture.gpu.texture_v"u8;
+        "SDL.texture.gpu.texture_uv\0"u8;
+    public static ReadOnlySpan<byte> PropTextureGpuTextureUPointer =>
+        "SDL.texture.gpu.texture_u\0"u8;
+    public static ReadOnlySpan<byte> PropTextureGpuTextureVPointer =>
+        "SDL.texture.gpu.texture_v\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetNumRenderDrivers")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
