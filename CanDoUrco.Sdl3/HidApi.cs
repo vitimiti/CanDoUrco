@@ -18,7 +18,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_init")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial BoolInverted _HidInit();
+    private static partial ErrorCodeBool _HidInit();
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_exit")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -71,7 +71,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_set_nonblocking")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial BoolInverted _HidSetNonBlocking(HidDevice dev, Bool nonblock);
+    private static partial ErrorCodeBool _HidSetNonBlocking(HidDevice dev, Bool nonblock);
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_send_feature_report")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -87,11 +87,11 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_close")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial BoolInverted _HidClose(HidDevice dev);
+    private static partial ErrorCodeBool _HidClose(HidDevice dev);
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_get_manufacturer_string")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial BoolInverted _HidGetManufacturerString(
+    private static partial ErrorCodeBool _HidGetManufacturerString(
         HidDevice dev,
         char* @string,
         nuint maxLen
@@ -99,7 +99,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_get_product_string")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial BoolInverted _HidGetProductString(
+    private static partial ErrorCodeBool _HidGetProductString(
         HidDevice dev,
         char* @string,
         nuint maxLen
@@ -107,7 +107,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_get_serial_number_string")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial BoolInverted _HidGetSerialNumberString(
+    private static partial ErrorCodeBool _HidGetSerialNumberString(
         HidDevice dev,
         char* @string,
         nuint maxLen
@@ -115,7 +115,7 @@ public static unsafe partial class Sdl
 
     [LibraryImport(DllName, EntryPoint = "SDL_hid_get_indexed_string")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    private static partial BoolInverted _HidGetIndexedString(
+    private static partial ErrorCodeBool _HidGetIndexedString(
         HidDevice dev,
         int stringIndex,
         char* @string,
@@ -134,7 +134,7 @@ public static unsafe partial class Sdl
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial void _HidBleScan(Bool active);
 
-    public static BoolInverted HidInit()
+    public static ErrorCodeBool HidInit()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HidInit();
@@ -200,7 +200,7 @@ public static unsafe partial class Sdl
         return _HidRead(dev, data, length);
     }
 
-    public static BoolInverted HidSetNonBlocking(HidDevice dev, Bool nonblock)
+    public static ErrorCodeBool HidSetNonBlocking(HidDevice dev, Bool nonblock)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HidSetNonBlocking(dev, nonblock);
@@ -224,31 +224,31 @@ public static unsafe partial class Sdl
         return _HidGetInputReport(dev, data, length);
     }
 
-    public static BoolInverted HidClose(HidDevice dev)
+    public static ErrorCodeBool HidClose(HidDevice dev)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HidClose(dev);
     }
 
-    public static BoolInverted HidGetManufacturerString(HidDevice dev, char* @string, nuint maxLen)
+    public static ErrorCodeBool HidGetManufacturerString(HidDevice dev, char* @string, nuint maxLen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HidGetManufacturerString(dev, @string, maxLen);
     }
 
-    public static BoolInverted HidGetProductString(HidDevice dev, char* @string, nuint maxLen)
+    public static ErrorCodeBool HidGetProductString(HidDevice dev, char* @string, nuint maxLen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HidGetProductString(dev, @string, maxLen);
     }
 
-    public static BoolInverted HidGetSerialNumberString(HidDevice dev, char* @string, nuint maxLen)
+    public static ErrorCodeBool HidGetSerialNumberString(HidDevice dev, char* @string, nuint maxLen)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _HidGetSerialNumberString(dev, @string, maxLen);
     }
 
-    public static BoolInverted HidGetIndexedString(
+    public static ErrorCodeBool HidGetIndexedString(
         HidDevice dev,
         int stringIndex,
         char* @string,
