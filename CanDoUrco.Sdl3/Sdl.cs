@@ -47,6 +47,11 @@ public static partial class Sdl
             : logger?.IsEnabled(LogLevel.Critical) ?? false ? LogLevel.Critical
             : LogLevel.None;
 
+        if (logger?.IsEnabled(LogLevel.Trace) ?? false)
+        {
+            LogCategory.MakeOrGet(CustomLogCategory).AppendCallerInfo = true;
+        }
+
         _SetLogPriorities(
             logLevel switch
             {
