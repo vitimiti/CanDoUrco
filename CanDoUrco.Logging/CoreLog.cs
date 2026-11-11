@@ -23,13 +23,6 @@ public static class CoreLog
         foreach (var (categoryName, category) in LogCategory.Categories)
         {
             category.Logger = Factory.CreateLogger(categoryName);
-            if (
-                (category.Logger?.IsEnabled(LogLevel.Trace) ?? false)
-                || (category.Logger?.IsEnabled(LogLevel.Debug) ?? false)
-            )
-            {
-                category.AppendCallerInfo = true;
-            }
         }
     }
 }

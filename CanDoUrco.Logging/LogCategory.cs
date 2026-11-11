@@ -15,6 +15,8 @@ namespace CanDoUrco.Logging;
 
 public sealed class LogCategory
 {
+    private bool? _appendCallerInfo;
+
     internal static readonly Dictionary<string, LogCategory> Categories = [];
 
     private bool LoggingEnabled => CoreLog.IsEnabled && IsCategoryEnabled;
@@ -23,7 +25,11 @@ public sealed class LogCategory
 
     public bool IsCategoryEnabled = true;
 
-    public bool AppendCallerInfo = false;
+    public bool AppendCallerInfo
+    {
+        get => _appendCallerInfo ?? Logger?.IsEnabled(LogLevel.Trace) == true;
+        set => _appendCallerInfo = value;
+    }
 
     public ILogger? Logger { get; internal set; }
 
