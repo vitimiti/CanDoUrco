@@ -1,6 +1,7 @@
 # Can Do Urco
 
-This repository contains reusable libraries and other projects.
+This repository contains reusable libraries and other projects for applications
+that require 2D and 3D rendering.
 
 ## Contents
 
