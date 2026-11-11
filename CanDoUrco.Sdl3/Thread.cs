@@ -218,6 +218,8 @@ public static unsafe partial class Sdl
         public static implicit operator Thread(nint value) => new(value);
 
         public static implicit operator nint(Thread thread) => thread.Value;
+
+        public static implicit operator bool(Thread thread) => thread.Value != 0;
     }
 
     public readonly record struct ThreadID(ulong Value)

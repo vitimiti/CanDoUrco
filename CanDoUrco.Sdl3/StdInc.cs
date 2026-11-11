@@ -1812,6 +1812,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Environment env) => env.Value;
 
         public static implicit operator Environment(nint value) => new(value);
+
+        public static implicit operator bool(Environment env) => env.Value != 0;
     }
 
     public readonly record struct IconVData(nint Value)
@@ -1819,5 +1821,7 @@ public static unsafe partial class Sdl
         public static implicit operator nint(IconVData env) => env.Value;
 
         public static implicit operator IconVData(nint value) => new(value);
+
+        public static implicit operator bool(IconVData env) => env.Value != 0;
     }
 }

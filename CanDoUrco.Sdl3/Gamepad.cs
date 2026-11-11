@@ -909,6 +909,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Gamepad gamepad) => gamepad.Value;
 
         public static implicit operator Gamepad(nint value) => new(value);
+
+        public static implicit operator bool(Gamepad gamepad) => gamepad.Value != 0;
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -272,6 +272,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Tray tray) => tray.Value;
 
         public static implicit operator Tray(nint value) => new(value);
+
+        public static implicit operator bool(Tray tray) => tray.Value != 0;
     }
 
     public readonly record struct TrayMenu(nint Value)
@@ -279,6 +281,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(TrayMenu menu) => menu.Value;
 
         public static implicit operator TrayMenu(nint value) => new(value);
+
+        public static implicit operator bool(TrayMenu menu) => menu.Value != 0;
     }
 
     public readonly record struct TrayEntry(nint Value)
@@ -286,6 +290,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(TrayEntry entry) => entry.Value;
 
         public static implicit operator TrayEntry(nint value) => new(value);
+
+        public static implicit operator bool(TrayEntry entry) => entry.Value != 0;
     }
 
     public readonly record struct TrayEntryFlags(uint Value)

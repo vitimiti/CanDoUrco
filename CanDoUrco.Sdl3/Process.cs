@@ -149,5 +149,7 @@ public static partial class Sdl
         public static implicit operator nint(Process process) => process.Value;
 
         public static implicit operator Process(nint value) => new(value);
+
+        public static implicit operator bool(Process process) => process.Value != 0;
     }
 }

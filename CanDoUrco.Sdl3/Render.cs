@@ -1654,6 +1654,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Renderer renderer) => renderer.Value;
 
         public static implicit operator Renderer(nint value) => new(value);
+
+        public static implicit operator bool(Renderer renderer) => renderer.Value != 0;
     }
 
     public readonly record struct GpuRenderState(nint Value)
@@ -1661,6 +1663,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuRenderState state) => state.Value;
 
         public static implicit operator GpuRenderState(nint value) => new(value);
+
+        public static implicit operator bool(GpuRenderState state) => state.Value != 0;
     }
 
     [StructLayout(LayoutKind.Sequential)]

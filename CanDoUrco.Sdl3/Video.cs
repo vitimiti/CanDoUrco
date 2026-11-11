@@ -1534,6 +1534,8 @@ public static unsafe partial class Sdl
         public static implicit operator Window(nint value) => new(value);
 
         public static implicit operator nint(Window window) => window.Value;
+
+        public static implicit operator bool(Window window) => window.Value != 0;
     }
 
     public readonly record struct WindowFlags(ulong Value)
@@ -1559,6 +1561,8 @@ public static unsafe partial class Sdl
         public static implicit operator GLContext(nint value) => new(value);
 
         public static implicit operator nint(GLContext glContext) => glContext.Value;
+
+        public static implicit operator bool(GLContext glContext) => glContext.Value != 0;
     }
 
     public readonly record struct EglDisplay(nint Value)
@@ -1566,6 +1570,8 @@ public static unsafe partial class Sdl
         public static implicit operator EglDisplay(nint value) => new(value);
 
         public static implicit operator nint(EglDisplay eglDisplay) => eglDisplay.Value;
+
+        public static implicit operator bool(EglDisplay eglDisplay) => eglDisplay.Value != 0;
     }
 
     public readonly record struct EglConfig(nint Value)
@@ -1573,6 +1579,8 @@ public static unsafe partial class Sdl
         public static implicit operator EglConfig(nint value) => new(value);
 
         public static implicit operator nint(EglConfig eglConfig) => eglConfig.Value;
+
+        public static implicit operator bool(EglConfig eglConfig) => eglConfig.Value != 0;
     }
 
     public readonly record struct EglSurface(nint Value)
@@ -1580,6 +1588,8 @@ public static unsafe partial class Sdl
         public static implicit operator EglSurface(nint value) => new(value);
 
         public static implicit operator nint(EglSurface eglSurface) => eglSurface.Value;
+
+        public static implicit operator bool(EglSurface eglSurface) => eglSurface.Value != 0;
     }
 
     public readonly record struct EglAttrib(nint Value)
@@ -1587,6 +1597,8 @@ public static unsafe partial class Sdl
         public static implicit operator EglAttrib(nint value) => new(value);
 
         public static implicit operator nint(EglAttrib eglAttrib) => eglAttrib.Value;
+
+        public static implicit operator bool(EglAttrib eglAttrib) => eglAttrib.Value != 0;
     }
 
     public readonly record struct EglInt(int Value)

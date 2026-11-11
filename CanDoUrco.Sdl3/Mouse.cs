@@ -336,6 +336,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Cursor cursor) => cursor.Value;
 
         public static implicit operator Cursor(nint value) => new(value);
+
+        public static implicit operator bool(Cursor cursor) => cursor.Value != 0;
     }
 
     public readonly record struct MouseButtonFlags(uint Value)

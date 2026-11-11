@@ -707,6 +707,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Joystick joystick) => joystick.Value;
 
         public static implicit operator Joystick(nint value) => new(value);
+
+        public static implicit operator bool(Joystick joystick) => joystick.Value != 0;
     }
 
     public readonly record struct JoystickID(uint Value)

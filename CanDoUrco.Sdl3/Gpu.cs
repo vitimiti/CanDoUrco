@@ -1920,6 +1920,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuDevice gpuDevice) => gpuDevice.Value;
 
         public static implicit operator GpuDevice(nint value) => new(value);
+
+        public static implicit operator bool(GpuDevice gpuDevice) => gpuDevice.Value != 0;
     }
 
     public readonly record struct GpuBuffer(nint Value)
@@ -1927,6 +1929,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuBuffer gpuBuffer) => gpuBuffer.Value;
 
         public static implicit operator GpuBuffer(nint value) => new(value);
+
+        public static implicit operator bool(GpuBuffer gpuBuffer) => gpuBuffer.Value != 0;
     }
 
     public readonly record struct GpuTransferBuffer(nint Value)
@@ -1935,6 +1939,9 @@ public static unsafe partial class Sdl
             gpuTransferBuffer.Value;
 
         public static implicit operator GpuTransferBuffer(nint value) => new(value);
+
+        public static implicit operator bool(GpuTransferBuffer gpuTransferBuffer) =>
+            gpuTransferBuffer.Value != 0;
     }
 
     public readonly record struct GpuTexture(nint Value)
@@ -1942,6 +1949,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuTexture gpuTexture) => gpuTexture.Value;
 
         public static implicit operator GpuTexture(nint value) => new(value);
+
+        public static implicit operator bool(GpuTexture gpuTexture) => gpuTexture.Value != 0;
     }
 
     public readonly record struct GpuSampler(nint Value)
@@ -1949,6 +1958,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuSampler gpuSampler) => gpuSampler.Value;
 
         public static implicit operator GpuSampler(nint value) => new(value);
+
+        public static implicit operator bool(GpuSampler gpuSampler) => gpuSampler.Value != 0;
     }
 
     public readonly record struct GpuShader(nint Value)
@@ -1956,6 +1967,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuShader gpuShader) => gpuShader.Value;
 
         public static implicit operator GpuShader(nint value) => new(value);
+
+        public static implicit operator bool(GpuShader gpuShader) => gpuShader.Value != 0;
     }
 
     public readonly record struct GpuComputePipeline(nint Value)
@@ -1964,6 +1977,9 @@ public static unsafe partial class Sdl
             gpuComputePipeline.Value;
 
         public static implicit operator GpuComputePipeline(nint value) => new(value);
+
+        public static implicit operator bool(GpuComputePipeline gpuComputePipeline) =>
+            gpuComputePipeline.Value != 0;
     }
 
     public readonly record struct GpuGraphicsPipeline(nint Value)
@@ -1972,6 +1988,9 @@ public static unsafe partial class Sdl
             gpuGraphicsPipeline.Value;
 
         public static implicit operator GpuGraphicsPipeline(nint value) => new(value);
+
+        public static implicit operator bool(GpuGraphicsPipeline gpuGraphicsPipeline) =>
+            gpuGraphicsPipeline.Value != 0;
     }
 
     public readonly record struct GpuCommandBuffer(nint Value)
@@ -1980,6 +1999,9 @@ public static unsafe partial class Sdl
             gpuCommandBuffer.Value;
 
         public static implicit operator GpuCommandBuffer(nint value) => new(value);
+
+        public static implicit operator bool(GpuCommandBuffer gpuCommandBuffer) =>
+            gpuCommandBuffer.Value != 0;
     }
 
     public readonly record struct GpuRenderPass(nint Value)
@@ -1987,6 +2009,9 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuRenderPass gpuRenderPass) => gpuRenderPass.Value;
 
         public static implicit operator GpuRenderPass(nint value) => new(value);
+
+        public static implicit operator bool(GpuRenderPass gpuRenderPass) =>
+            gpuRenderPass.Value != 0;
     }
 
     public readonly record struct GpuComputePass(nint Value)
@@ -1994,6 +2019,9 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuComputePass gpuComputePass) => gpuComputePass.Value;
 
         public static implicit operator GpuComputePass(nint value) => new(value);
+
+        public static implicit operator bool(GpuComputePass gpuComputePass) =>
+            gpuComputePass.Value != 0;
     }
 
     public readonly record struct GpuCopyPass(nint Value)
@@ -2001,6 +2029,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuCopyPass gpuCopyPass) => gpuCopyPass.Value;
 
         public static implicit operator GpuCopyPass(nint value) => new(value);
+
+        public static implicit operator bool(GpuCopyPass gpuCopyPass) => gpuCopyPass.Value != 0;
     }
 
     public readonly record struct GpuFence(nint Value)
@@ -2008,6 +2038,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(GpuFence gpuFence) => gpuFence.Value;
 
         public static implicit operator GpuFence(nint value) => new(value);
+
+        public static implicit operator bool(GpuFence gpuFence) => gpuFence.Value != 0;
     }
 
     public readonly record struct GpuTextureUsageFlags(uint Value)

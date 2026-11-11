@@ -291,6 +291,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(HidDevice device) => device.Value;
 
         public static implicit operator HidDevice(nint value) => new(value);
+
+        public static implicit operator bool(HidDevice device) => device.Value != 0;
     }
 
     [StructLayout(LayoutKind.Sequential)]

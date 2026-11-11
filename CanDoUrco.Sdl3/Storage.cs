@@ -242,5 +242,7 @@ public static unsafe partial class Sdl
         public static implicit operator Storage(nint value) => new(value);
 
         public static implicit operator nint(Storage storage) => storage.Value;
+
+        public static implicit operator bool(Storage storage) => storage.Value != 0;
     }
 }

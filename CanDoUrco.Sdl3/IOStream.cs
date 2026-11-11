@@ -516,6 +516,8 @@ public static unsafe partial class Sdl
         public static implicit operator IOStream(nint value) => new(value);
 
         public static implicit operator nint(IOStream value) => value.Value;
+
+        public static implicit operator bool(IOStream value) => value.Value != 0;
     }
 
     public enum IOStatus

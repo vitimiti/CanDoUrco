@@ -192,6 +192,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Camera camera) => camera.Value;
 
         public static implicit operator Camera(nint value) => new(value);
+
+        public static implicit operator bool(Camera camera) => camera.Value != 0;
     }
 
     [StructLayout(LayoutKind.Sequential)]

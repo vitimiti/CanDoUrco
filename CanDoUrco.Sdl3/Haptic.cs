@@ -371,6 +371,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Haptic haptic) => haptic.Value;
 
         public static implicit operator Haptic(nint value) => new(value);
+
+        public static implicit operator bool(Haptic haptic) => haptic.Value != 0;
     }
 
     public readonly record struct HapticEffectType(uint Value)

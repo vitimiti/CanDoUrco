@@ -306,6 +306,8 @@ public static partial class Sdl
         public static implicit operator nint(Mutex mutex) => mutex.Value;
 
         public static implicit operator Mutex(nint value) => new(value);
+
+        public static implicit operator bool(Mutex mutex) => mutex.Value != 0;
     }
 
     public readonly record struct RWLock(nint Value)
@@ -313,6 +315,8 @@ public static partial class Sdl
         public static implicit operator nint(RWLock rwLock) => rwLock.Value;
 
         public static implicit operator RWLock(nint value) => new(value);
+
+        public static implicit operator bool(RWLock rwLock) => rwLock.Value != 0;
     }
 
     public readonly record struct Semaphore(nint Value)
@@ -320,6 +324,8 @@ public static partial class Sdl
         public static implicit operator nint(Semaphore sem) => sem.Value;
 
         public static implicit operator Semaphore(nint value) => new(value);
+
+        public static implicit operator bool(Semaphore sem) => sem.Value != 0;
     }
 
     public readonly record struct Condition(nint Value)
@@ -327,6 +333,8 @@ public static partial class Sdl
         public static implicit operator nint(Condition cond) => cond.Value;
 
         public static implicit operator Condition(nint value) => new(value);
+
+        public static implicit operator bool(Condition cond) => cond.Value != 0;
     }
 
     [StructLayout(LayoutKind.Sequential)]

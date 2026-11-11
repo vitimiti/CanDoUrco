@@ -172,6 +172,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(Sensor sensor) => sensor.Value;
 
         public static implicit operator Sensor(nint value) => new(value);
+
+        public static implicit operator bool(Sensor sensor) => sensor.Value != 0;
     }
 
     public readonly record struct SensorID(uint Value)

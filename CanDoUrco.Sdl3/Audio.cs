@@ -837,6 +837,8 @@ public static unsafe partial class Sdl
         public static implicit operator nint(AudioStream stream) => stream.Value;
 
         public static implicit operator AudioStream(nint value) => new(value);
+
+        public static implicit operator bool(AudioStream stream) => stream.Value != 0;
     }
 
     [StructLayout(LayoutKind.Sequential)]
