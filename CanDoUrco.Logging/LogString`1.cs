@@ -64,6 +64,8 @@ public readonly ref struct LogString<TLevel>
 
     public void AppendLiteral(string value) => _sb?.Append(value);
 
+    public void AppendFormatted<T>(T value) => _sb?.Append(value);
+
     public void AppendFormatted(IFormatProvider? provider, string format, params object?[] args) =>
         _sb?.AppendFormat(provider, format, args);
 
