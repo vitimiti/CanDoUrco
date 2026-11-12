@@ -7,12 +7,13 @@
 
 using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Framework.Options;
+using CanDoUrco.Framework.Video;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl3;
 
 namespace CanDoUrco.Framework;
 
-public sealed class App
+public sealed class App : IDisposable
 {
     internal const string CustomLogCategory = "CanDoUrco.Framework";
 
@@ -20,19 +21,36 @@ public sealed class App
 
     private bool _initialized;
 
+    public Window Window { get; }
+
     public App(Action<AppOptions>? configure = null)
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         var options = new AppOptions();
         configure?.Invoke(options);
 
+        InitializeSdl();
+
+        Window = new Window(options);
+
         _options = options;
+        _initialized = true;
         LogCategory.MakeOrGet(CustomLogCategory).Debug($"App initialized with options: {_options}");
+    }
+
+    public void Dispose()
+    {
+        if (_initialized)
+        {
+            Window.Dispose();
+            Sdl.Quit();
+        }
+
+        _initialized = false;
     }
 
     public void Run()
     {
-        InitializeSdl();
         if (!_initialized)
         {
             LogCategory
@@ -89,7 +107,5 @@ public sealed class App
                 );
             return;
         }
-
-        _initialized = true;
     }
 }
