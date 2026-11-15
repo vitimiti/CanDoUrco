@@ -36,6 +36,10 @@ public static unsafe partial class Sdl
 
     public static ReadOnlySpan<byte> PropAudioStreamAutoCleanupBoolean =>
         "SDL.audiostream.auto_cleanup\0"u8;
+    public static ReadOnlySpan<byte> PropAudioDeviceContainerIdString =>
+        "SDL.audio.device.container_id\0"u8;
+    public static ReadOnlySpan<byte> PropAudioDeviceUniqueIdString =>
+        "SDL.audio.device.unique_id\0"u8;
 
     [LibraryImport(DllName, EntryPoint = "SDL_GetNumAudioDrivers")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -72,6 +76,10 @@ public static unsafe partial class Sdl
     [LibraryImport(DllName, EntryPoint = "SDL_GetAudioDeviceChannelMap")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     private static partial int* _GetAudioDeviceChannelMap(AudioDeviceID devID, out int count);
+
+    [LibraryImport(DllName, EntryPoint = "SDL_GetAudioDeviceProperties")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    private static partial PropertiesID _GetAudioDeviceProperties(AudioDeviceID devID);
 
     [LibraryImport(DllName, EntryPoint = "SDL_OpenAudioDevice")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -349,12 +357,10 @@ public static unsafe partial class Sdl
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return new AudioFormat(
-            (ushort)(
-                (ushort)(signed ? 1 : 0) << 15
-                | (ushort)(bigEndian ? 1 : 0) << 12
-                | (ushort)(flt ? 1 : 0) << 8
-                | (ushort)(size & AudioMaskBitsize)
-            )
+            (uint)(signed ? 1 : 0) << 15
+                | (uint)(bigEndian ? 1 : 0) << 12
+                | (uint)(flt ? 1 : 0) << 8
+                | (size & AudioMaskBitsize)
         );
     }
 
@@ -462,6 +468,12 @@ public static unsafe partial class Sdl
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
         return _GetAudioDeviceChannelMap(devID, out count);
+    }
+
+    public static PropertiesID GetAudioDeviceProperties(AudioDeviceID devID)
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return _GetAudioDeviceProperties(devID);
     }
 
     public static AudioDeviceID OpenAudioDevice(AudioDeviceID devID, AudioSpec* spec)
@@ -818,11 +830,11 @@ public static unsafe partial class Sdl
         return _GetSilenceValueForFormat(format);
     }
 
-    public readonly record struct AudioFormat(ushort Value)
+    public readonly record struct AudioFormat(uint Value)
     {
-        public static implicit operator ushort(AudioFormat format) => format.Value;
+        public static implicit operator uint(AudioFormat format) => format.Value;
 
-        public static implicit operator AudioFormat(ushort value) => new(value);
+        public static implicit operator AudioFormat(uint value) => new(value);
     }
 
     public readonly record struct AudioDeviceID(uint Value)
