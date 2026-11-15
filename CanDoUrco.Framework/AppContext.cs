@@ -35,19 +35,51 @@ public sealed class AppContext : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public AudioSubsystem AudioSubsystem => new(this);
+    public AudioSubsystem InitAudioSubsystem()
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return new AudioSubsystem(this);
+    }
 
-    public CameraSubsystem CameraSubsystem => new(this);
+    public CameraSubsystem InitCameraSubsystem()
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return new CameraSubsystem(this);
+    }
 
-    public EventsSubsystem EventsSubsystem => new(this);
+    public EventsSubsystem InitEventsSubsystem()
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return new EventsSubsystem(this);
+    }
 
-    public GamepadSubsystem GamepadSubsystem => new(this);
+    public GamepadSubsystem InitGamepadSubsystem()
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return new GamepadSubsystem(this);
+    }
 
-    public HapticSubsystem HapticSubsystem => new(this);
+    public HapticSubsystem InitHapticSubsystem()
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return new HapticSubsystem(this);
+    }
 
-    public JoystickSubsystem JoystickSubsystem => new(this);
+    public JoystickSubsystem InitJoystickSubsystem()
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return new JoystickSubsystem(this);
+    }
 
-    public SensorSubsystem SensorSubsystem => new(this);
+    public SensorSubsystem InitSensorSubsystem()
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return new SensorSubsystem(this);
+    }
 
-    public VideoSubsystem VideoSubsystem => new(this);
+    public VideoSubsystem InitVideoSubsystem()
+    {
+        LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        return new VideoSubsystem(this);
+    }
 }
