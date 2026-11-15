@@ -14,6 +14,8 @@ namespace CanDoUrco.Framework;
 
 public sealed class AppContext : IDisposable
 {
+    private bool _disposed;
+
     internal const string CustomLogCategory = "CanDoUrco.Framework";
 
     public AppContext(Action<ILoggingBuilder>? builder = null)
@@ -30,56 +32,72 @@ public sealed class AppContext : IDisposable
     public void Dispose()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        if (_disposed)
+        {
+            return;
+        }
 
         Sdl.Quit();
+        _disposed = true;
         GC.SuppressFinalize(this);
     }
 
     public AudioSubsystem InitAudioSubsystem()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ThrowIfDisposed();
         return new AudioSubsystem(this);
     }
 
     public CameraSubsystem InitCameraSubsystem()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ThrowIfDisposed();
         return new CameraSubsystem(this);
     }
 
     public EventsSubsystem InitEventsSubsystem()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ThrowIfDisposed();
         return new EventsSubsystem(this);
     }
 
     public GamepadSubsystem InitGamepadSubsystem()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ThrowIfDisposed();
         return new GamepadSubsystem(this);
     }
 
     public HapticSubsystem InitHapticSubsystem()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ThrowIfDisposed();
         return new HapticSubsystem(this);
     }
 
     public JoystickSubsystem InitJoystickSubsystem()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ThrowIfDisposed();
         return new JoystickSubsystem(this);
     }
 
     public SensorSubsystem InitSensorSubsystem()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ThrowIfDisposed();
         return new SensorSubsystem(this);
     }
 
     public VideoSubsystem InitVideoSubsystem()
     {
         LogCategory.MakeOrGet(CustomLogCategory).Trace();
+        ThrowIfDisposed();
         return new VideoSubsystem(this);
     }
+
+    private void ThrowIfDisposed() =>
+        ObjectDisposedException.ThrowIf(_disposed, nameof(AppContext));
 }
