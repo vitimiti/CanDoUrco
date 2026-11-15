@@ -5,7 +5,7 @@
 // v. 2.0. If a copy of the MPL was not distributed with this file, You can
 // obtain one at <https://mozilla.org/MPL/2.0/>.
 
-using CanDoUrco.Framework.Utilities;
+using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl3;
 
@@ -24,9 +24,8 @@ public class SubsystemBase : IDisposable
         _subsystem = subsystem;
         if (!Sdl.Init(subsystem))
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
             throw new InvalidOperationException(
-                $"Failed to initialize SDL subsystem {subsystem}: {error}."
+                $"Failed to initialize SDL subsystem {subsystem}: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
             );
         }
         _initialised = true;

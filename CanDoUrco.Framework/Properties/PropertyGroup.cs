@@ -7,8 +7,8 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
-using CanDoUrco.Framework.Utilities;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl3;
 
@@ -47,8 +47,9 @@ public class PropertyGroup : IDisposable
         Id = Sdl.CreateProperties();
         if (Id == 0)
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException($"Failed to create property group: {error}.");
+            throw new InvalidOperationException(
+                $"Failed to create property group: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+            );
         }
         _ownsProperties = true;
     }
@@ -68,8 +69,9 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         if (!Sdl.CopyProperties(Id, destination.Id))
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException($"Failed to copy property group: {error}.");
+            throw new InvalidOperationException(
+                $"Failed to copy property group: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+            );
         }
     }
 
@@ -78,8 +80,9 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         if (!Sdl.LockProperties(Id))
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException($"Failed to lock property group: {error}.");
+            throw new InvalidOperationException(
+                $"Failed to lock property group: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+            );
         }
         return new LockedPropertyGroup(this);
     }
@@ -89,37 +92,46 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        if (freePtrAction is not null)
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
         {
-            var handle = GCHandle.Alloc(freePtrAction);
-            var userdata = (void*)GCHandle.ToIntPtr(handle);
-            if (
-                !Sdl.SetPointerPropertyWithCleanup(
-                    Id,
-                    managedName,
-                    value.ToPointer(),
-                    &FreePtrCallback,
-                    userdata
-                )
-            )
+            Span<byte> buffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, buffer);
+
+            if (freePtrAction is not null)
             {
-                handle.Free();
-                var error = new UnownedUtf8String(Sdl.GetError());
-                throw new InvalidOperationException(
-                    $"Failed to set pointer property with cleanup '{name}': {error}."
-                );
+                var handle = GCHandle.Alloc(freePtrAction);
+                var userdata = (void*)GCHandle.ToIntPtr(handle);
+                if (
+                    !Sdl.SetPointerPropertyWithCleanup(
+                        Id,
+                        managedName.ToUnmanaged(),
+                        value.ToPointer(),
+                        &FreePtrCallback,
+                        userdata
+                    )
+                )
+                {
+                    handle.Free();
+                    throw new InvalidOperationException(
+                        $"Failed to set pointer property with cleanup '{name}': {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    );
+                }
+            }
+            else
+            {
+                if (!Sdl.SetPointerProperty(Id, managedName.ToUnmanaged(), value.ToPointer()))
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to set pointer property '{name}': {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                    );
+                }
             }
         }
-        else
+        finally
         {
-            if (!Sdl.SetPointerProperty(Id, managedName, value.ToPointer()))
-            {
-                var error = new UnownedUtf8String(Sdl.GetError());
-                throw new InvalidOperationException(
-                    $"Failed to set pointer property '{name}': {error}."
-                );
-            }
+            managedName.Free();
         }
     }
 
@@ -128,14 +140,29 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        using var managedValue = new ManagedUtf8String(value);
-        if (!Sdl.SetStringProperty(Id, managedName, managedValue))
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        scoped var managedValue = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException(
-                $"Failed to set string property '{name}': {error}."
-            );
+            Span<byte> nameBuffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, nameBuffer);
+
+            Span<byte> valueBuffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedValue.FromManaged(value, valueBuffer);
+
+            if (!Sdl.SetStringProperty(Id, managedName.ToUnmanaged(), managedValue.ToUnmanaged()))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to set string property '{name}': {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            managedName.Free();
+            managedValue.Free();
         }
     }
 
@@ -144,13 +171,23 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        if (!Sdl.SetNumberProperty(Id, managedName, value))
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException(
-                $"Failed to set number property '{name}': {error}."
-            );
+            Span<byte> buffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, buffer);
+
+            if (!Sdl.SetNumberProperty(Id, managedName.ToUnmanaged(), value))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to set number property '{name}': {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            managedName.Free();
         }
     }
 
@@ -159,11 +196,23 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        if (!Sdl.SetFloatProperty(Id, managedName, value))
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException($"Failed to set float property '{name}': {error}.");
+            Span<byte> buffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, buffer);
+
+            if (!Sdl.SetFloatProperty(Id, managedName.ToUnmanaged(), value))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to set float property '{name}': {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            managedName.Free();
         }
     }
 
@@ -172,13 +221,23 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        if (!Sdl.SetBooleanProperty(Id, managedName, value))
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException(
-                $"Failed to set boolean property '{name}': {error}."
-            );
+            Span<byte> buffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, buffer);
+
+            if (!Sdl.SetBooleanProperty(Id, managedName.ToUnmanaged(), value))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to set boolean property '{name}': {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            managedName.Free();
         }
     }
 
@@ -187,8 +246,19 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        return Sdl.HasProperty(Id, managedName);
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
+        {
+            Span<byte> buffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, buffer);
+
+            return Sdl.HasProperty(Id, managedName.ToUnmanaged());
+        }
+        finally
+        {
+            managedName.Free();
+        }
     }
 
     public unsafe PropertyType GetPropertyType(string name)
@@ -196,8 +266,19 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        return (PropertyType)Sdl.GetPropertyType(Id, managedName);
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
+        {
+            Span<byte> buffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, buffer);
+
+            return (PropertyType)Sdl.GetPropertyType(Id, managedName.ToUnmanaged());
+        }
+        finally
+        {
+            managedName.Free();
+        }
     }
 
     public unsafe nint GetPointerProperty(string name, nint defaultValue = 0)
@@ -205,8 +286,20 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        return (nint)Sdl.GetPointerProperty(Id, managedName, defaultValue.ToPointer());
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
+        {
+            Span<byte> buffer =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, buffer);
+
+            return (nint)
+                Sdl.GetPointerProperty(Id, managedName.ToUnmanaged(), defaultValue.ToPointer());
+        }
+        finally
+        {
+            managedName.Free();
+        }
     }
 
     public unsafe string? GetStringProperty(string name, string? defaultValue = null)
@@ -214,12 +307,31 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        using var managedDefaultValue = new ManagedUtf8String(defaultValue ?? string.Empty);
-        var result = new UnownedUtf8String(
-            Sdl.GetStringProperty(Id, managedName, managedDefaultValue)
-        );
-        return result;
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        scoped var managedDefaultValue = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
+        {
+            Span<byte> bufferName =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, bufferName);
+
+            Span<byte> bufferDefault =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedDefaultValue.FromManaged(defaultValue ?? string.Empty, bufferDefault);
+
+            return Utf8StringMarshaller.ConvertToManaged(
+                Sdl.GetStringProperty(
+                    Id,
+                    managedName.ToUnmanaged(),
+                    managedDefaultValue.ToUnmanaged()
+                )
+            );
+        }
+        finally
+        {
+            managedName.Free();
+            managedDefaultValue.Free();
+        }
     }
 
     public unsafe long GetNumberProperty(string name, long defaultValue = 0)
@@ -227,8 +339,19 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        return Sdl.GetNumberProperty(Id, managedName, defaultValue);
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
+        {
+            Span<byte> bufferName =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, bufferName);
+
+            return Sdl.GetNumberProperty(Id, managedName.ToUnmanaged(), defaultValue);
+        }
+        finally
+        {
+            managedName.Free();
+        }
     }
 
     public unsafe float GetFloatProperty(string name, float defaultValue = 0)
@@ -236,8 +359,19 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        return Sdl.GetFloatProperty(Id, managedName, defaultValue);
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
+        {
+            Span<byte> bufferName =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, bufferName);
+
+            return Sdl.GetFloatProperty(Id, managedName.ToUnmanaged(), defaultValue);
+        }
+        finally
+        {
+            managedName.Free();
+        }
     }
 
     public unsafe bool GetBooleanProperty(string name, bool defaultValue = false)
@@ -245,8 +379,19 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        return Sdl.GetBooleanProperty(Id, managedName, defaultValue);
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
+        {
+            Span<byte> bufferName =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, bufferName);
+
+            return Sdl.GetBooleanProperty(Id, managedName.ToUnmanaged(), defaultValue);
+        }
+        finally
+        {
+            managedName.Free();
+        }
     }
 
     public unsafe void ClearProperty(string name)
@@ -254,11 +399,23 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(name);
 
-        using var managedName = new ManagedUtf8String(name);
-        if (!Sdl.ClearProperty(Id, managedName))
+        scoped var managedName = new Utf8StringMarshaller.ManagedToUnmanagedIn();
+        try
         {
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException($"Failed to clear the property '{name}': {error}.");
+            Span<byte> bufferName =
+                stackalloc byte[Utf8StringMarshaller.ManagedToUnmanagedIn.BufferSize];
+            managedName.FromManaged(name, bufferName);
+
+            if (!Sdl.ClearProperty(Id, managedName.ToUnmanaged()))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to clear the property '{name}': {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+                );
+            }
+        }
+        finally
+        {
+            managedName.Free();
         }
     }
 
@@ -277,8 +434,9 @@ public class PropertyGroup : IDisposable
         )
         {
             handle.Free();
-            var error = new UnownedUtf8String(Sdl.GetError());
-            throw new InvalidOperationException($"Failed to enumerate properties: {error}.");
+            throw new InvalidOperationException(
+                $"Failed to enumerate properties: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
+            );
         }
     }
 
@@ -307,9 +465,13 @@ public class PropertyGroup : IDisposable
             return;
         }
 
+        if (name is null)
+        {
+            return;
+        }
+
         var action = (Action<string>)GCHandle.FromIntPtr((nint)userdata).Target!;
-        string? nameStr = new UnownedUtf8String(name);
-        action(nameStr ?? string.Empty);
+        action(Utf8StringMarshaller.ConvertToManaged(name)!);
         GCHandle.FromIntPtr((nint)userdata).Free();
     }
 }

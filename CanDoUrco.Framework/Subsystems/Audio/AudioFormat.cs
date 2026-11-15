@@ -6,7 +6,7 @@
 // obtain one at <https://mozilla.org/MPL/2.0/>.
 
 using System.Diagnostics;
-using CanDoUrco.Framework.Utilities;
+using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl3;
 
@@ -56,8 +56,9 @@ public readonly record struct AudioFormat(ushort Value)
         {
             if (!Sdl.MixAudio(pDst, pSrc, Value, (uint)length, volume))
             {
-                var error = new UnownedUtf8String(Sdl.GetError());
-                throw new InvalidOperationException($"Failed to mix audio: {error}");
+                throw new InvalidOperationException(
+                    $"Failed to mix audio: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}"
+                );
             }
         }
     }
@@ -65,8 +66,7 @@ public readonly record struct AudioFormat(ushort Value)
     public override unsafe string ToString()
     {
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
-        var name = new UnownedUtf8String(Sdl.GetAudioFormatName(Value));
-        return $"{name} (0x{Value:X4})";
+        return $"{Utf8StringMarshaller.ConvertToManaged(Sdl.GetAudioFormatName(Value))} (0x{Value:X4})";
     }
 
     public static implicit operator AudioFormat(ushort value)

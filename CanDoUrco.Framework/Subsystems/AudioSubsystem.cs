@@ -6,7 +6,7 @@
 // obtain one at <https://mozilla.org/MPL/2.0/>.
 
 using System.Collections.ObjectModel;
-using CanDoUrco.Framework.Utilities;
+using System.Runtime.InteropServices.Marshalling;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl3;
 
@@ -30,16 +30,13 @@ public sealed class AudioSubsystem : SubsystemBase
         var drivers = new string[AudioDriversCount];
         for (int i = 0; i < AudioDriversCount; i++)
         {
-            string? value = new UnownedUtf8String(Sdl.GetAudioDriver(i));
-            if (value is null)
-            {
-                // This should NEVER happen, but just in case!
-                var error = new UnownedUtf8String(Sdl.GetError());
-                throw new InvalidOperationException(
-                    $"Failed to get audio driver at index {i}: {error}."
+            // This should NEVER error, but just in case!
+            drivers[i] =
+                Utf8StringMarshaller.ConvertToManaged(Sdl.GetAudioDriver(i))
+                ?? throw new InvalidOperationException(
+                    $"Failed to get audio driver at index {i}: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
                 );
-            }
-            drivers[i] = value;
+            ;
         }
 
         return new ReadOnlyCollection<string>(drivers);
