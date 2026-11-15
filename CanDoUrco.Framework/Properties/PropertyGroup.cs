@@ -8,6 +8,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using CanDoUrco.Logging;
 using CanDoUrco.Sdl3;
@@ -424,16 +425,28 @@ public class PropertyGroup : IDisposable
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         ArgumentNullException.ThrowIfNull(callback);
 
-        var handle = GCHandle.Alloc(callback);
-        if (
-            !Sdl.EnumerateProperties(
+        var context = new PropertyEnumerationContext(callback);
+        var handle = GCHandle.Alloc(context);
+        bool succeeded;
+        try
+        {
+            succeeded = Sdl.EnumerateProperties(
                 Id,
                 &EnumeratePropertyCallback,
                 (void*)GCHandle.ToIntPtr(handle)
-            )
-        )
+            );
+        }
+        finally
         {
             handle.Free();
+        }
+
+        if (context.Exception is not null)
+        {
+            ExceptionDispatchInfo.Capture(context.Exception).Throw();
+        }
+        if (!succeeded)
+        {
             throw new InvalidOperationException(
                 $"Failed to enumerate properties: {Utf8StringMarshaller.ConvertToManaged(Sdl.GetError())}."
             );
@@ -470,8 +483,25 @@ public class PropertyGroup : IDisposable
             return;
         }
 
-        var action = (Action<string>)GCHandle.FromIntPtr((nint)userdata).Target!;
-        action(Utf8StringMarshaller.ConvertToManaged(name)!);
-        GCHandle.FromIntPtr((nint)userdata).Free();
+        var context = (PropertyEnumerationContext)GCHandle.FromIntPtr((nint)userdata).Target!;
+        if (context.Exception is not null)
+        {
+            return;
+        }
+
+        try
+        {
+            context.Callback(Utf8StringMarshaller.ConvertToManaged(name)!);
+        }
+        catch (Exception exception)
+        {
+            context.Exception = exception;
+        }
+    }
+
+    private sealed class PropertyEnumerationContext(Action<string> callback)
+    {
+        public Action<string> Callback { get; } = callback;
+        public Exception? Exception { get; set; }
     }
 }
