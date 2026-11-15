@@ -13,7 +13,7 @@ using CanDoUrco.Sdl3;
 namespace CanDoUrco.Framework.Subsystems.Audio;
 
 [DebuggerDisplay("{ToString()}")]
-public readonly record struct AudioFormat(ushort Value)
+public readonly record struct AudioFormat(uint Value)
 {
     public static AudioFormat Unknown => new(Sdl.AudioUnknown);
     public static AudioFormat U8 => new(Sdl.AudioU8);
@@ -69,13 +69,19 @@ public readonly record struct AudioFormat(ushort Value)
         return $"{Utf8StringMarshaller.ConvertToManaged(Sdl.GetAudioFormatName(Value))} (0x{Value:X4})";
     }
 
+    public static implicit operator AudioFormat(uint value)
+    {
+        LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
+        return new(value);
+    }
+
     public static implicit operator AudioFormat(ushort value)
     {
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         return new(value);
     }
 
-    public static implicit operator ushort(AudioFormat format)
+    public static implicit operator uint(AudioFormat format)
     {
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
         return format.Value;
