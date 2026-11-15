@@ -17,6 +17,8 @@ public class SubsystemBase : IDisposable
 
     private bool _initialised;
 
+    protected bool Disposed { get; set; }
+
     public unsafe SubsystemBase(AppContext app, uint subsystem)
     {
         LogCategory.MakeOrGet(AppContext.CustomLogCategory).Trace();
@@ -40,6 +42,7 @@ public class SubsystemBase : IDisposable
             _initialised = false;
         }
 
+        Disposed = true;
         GC.SuppressFinalize(this);
     }
 }
